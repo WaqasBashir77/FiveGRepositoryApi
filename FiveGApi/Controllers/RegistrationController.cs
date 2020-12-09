@@ -13,59 +13,60 @@ using System.Web.Http.Description;
 
 namespace FiveGApi.Controllers
 {
-    public class RegistrationController : ApiController
+    [RoutePrefix("api/Registration")]
+       public class RegistrationController : ApiController
     {
         private MIS_DBEntities db = new MIS_DBEntities();
 
         // GET: api/AllRegistrations
-        [Route("api/Registration/AllRegistrations")]
-        [HttpPost]
-        [ResponseType(typeof(IEnumerable<Registration>))]       
-        public IEnumerable<Registration> AllRegistrations([FromUri] PagingParameterModel pagingparametermodel)
+        //[Route("api/Registration/GetRegistrations")]
+        ////[HttpPost]
+        //[ResponseType(typeof(IQueryable<Registration>))]
+        public IQueryable<Registration> GetRegistrations()//[FromUri] PagingParameterModel pagingparametermodel)
         {
+            return db.Registrations;
+            ////Get All Registration From DB
+            //var source = db.Registrations.OrderBy(x=>x.ID);
+            //// Get's No of Rows Count   
+            //int count = source.Count();
+
+            //// Parameter is passed from Query string if it is null then it default Value will be pageNumber:1  
+            //int CurrentPage = pagingparametermodel.pageNumber;
+
+            //// Parameter is passed from Query string if it is null then it default Value will be pageSize:20  
+            //int PageSize = pagingparametermodel.pageSize;
+
+            //// Display TotalCount to Records to User  
+            //int TotalCount = count;
+
+            //// Calculating Totalpage by Dividing (No of Records / Pagesize)  
+            //int TotalPages = (int)Math.Ceiling(count / (double)PageSize);
+
+            //// Returns List of Customer after applying Paging   
+            //var items = source.Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
+
+            //// if CurrentPage is greater than 1 means it has previousPage  
+            //var previousPage = CurrentPage > 1 ? "Yes" : "No";
+
+            //// if TotalPages is greater than CurrentPage means it has nextPage  
+            //var nextPage = CurrentPage < TotalPages ? "Yes" : "No";
+
+            //// Object which we are going to send in header   
+            //var paginationMetadata = new
+            //{
+            //    totalCount = TotalCount,
+            //    pageSize = PageSize,
+            //    currentPage = CurrentPage,
+            //    totalPages = TotalPages,
+            //    previousPage,
+            //    nextPage
+            //};
+
+            //// Setting Header  
+            //HttpContext.Current.Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
+            //// Returing List of Registration Collections  
            
-            //Get All Registration From DB
-            var source = db.Registrations.OrderBy(x=>x.ID);
-            // Get's No of Rows Count   
-            int count = source.Count();
-
-            // Parameter is passed from Query string if it is null then it default Value will be pageNumber:1  
-            int CurrentPage = pagingparametermodel.pageNumber;
-
-            // Parameter is passed from Query string if it is null then it default Value will be pageSize:20  
-            int PageSize = pagingparametermodel.pageSize;
-
-            // Display TotalCount to Records to User  
-            int TotalCount = count;
-
-            // Calculating Totalpage by Dividing (No of Records / Pagesize)  
-            int TotalPages = (int)Math.Ceiling(count / (double)PageSize);
-
-            // Returns List of Customer after applying Paging   
-            var items = source.Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
-
-            // if CurrentPage is greater than 1 means it has previousPage  
-            var previousPage = CurrentPage > 1 ? "Yes" : "No";
-
-            // if TotalPages is greater than CurrentPage means it has nextPage  
-            var nextPage = CurrentPage < TotalPages ? "Yes" : "No";
-
-            // Object which we are going to send in header   
-            var paginationMetadata = new
-            {
-                totalCount = TotalCount,
-                pageSize = PageSize,
-                currentPage = CurrentPage,
-                totalPages = TotalPages,
-                previousPage,
-                nextPage
-            };
-
-            // Setting Header  
-            HttpContext.Current.Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
-            // Returing List of Registration Collections  
-           
-            return items;
+            //return items;
         }
 
         // GET: api/Registrations/5
