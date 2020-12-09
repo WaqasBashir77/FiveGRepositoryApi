@@ -12,6 +12,7 @@ using FiveGApi.Models;
 
 namespace FiveGApi.Controllers
 {
+    [RoutePrefix("api/Projects")]
     public class ProjectsController : ApiController
     {
         private MIS_DBEntities db = new MIS_DBEntities();
@@ -19,6 +20,7 @@ namespace FiveGApi.Controllers
         // GET: api/Projects
         public IQueryable<Project> GetProjects()
         {
+
             return db.Projects;
         }
 
@@ -46,7 +48,18 @@ namespace FiveGApi.Controllers
             }
 
             var existProject = db.Projects.Where(x => x.Id == id).FirstOrDefault();
-            //existProject.ProjectDetails
+            existProject.address = project.address;
+            existProject.city = project.city;
+            existProject.description = project.description;
+            existProject.location = project.location;
+            existProject.noc = project.noc;
+            existProject.projectCurrency = project.projectCurrency;
+            existProject.projectName = project.projectName;
+            existProject.projectType = project.projectType;
+            existProject.status = project.status;
+            existProject.totalArea = project.totalArea;
+            existProject.unit = project.unit;
+
             if (existProject.ProjectDetails.Count > 0)
             {
                 foreach (var item in existProject.ProjectDetails.ToList())
@@ -57,9 +70,6 @@ namespace FiveGApi.Controllers
 
             existProject.ProjectDetails = project.ProjectDetails;
 
-
-
-           // db.Entry(project).State = EntityState.Modified;
 
             try
             {
@@ -123,6 +133,25 @@ namespace FiveGApi.Controllers
         private bool ProjectExists(int id)
         {
             return db.Projects.Count(e => e.Id == id) > 0;
+        }
+
+        [HttpGet]
+        [Route("checkDuplicateCode")]
+        public IHttpActionResult CheckDuplicateProjectCode(string code)
+        {
+            bool isExist = false;
+            if (!string.IsNullOrWhiteSpace(code))
+            {
+                var exist = db.Projects.Where(x => x.projectCode == code).FirstOrDefault();
+                if (exist != null)
+                {
+                    isExist = true;
+                }
+            }
+
+
+
+            return Ok(isExist);
         }
     }
 }
