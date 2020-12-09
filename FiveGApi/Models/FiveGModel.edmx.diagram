@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="fc82873f3d8c4a90a8477c57eb1980df" Name="Diagram1" ZoomLevel="90">
+        <EntityTypeShape EntityType="MIS_DBModel.Booking_Confirm" Width="1.5" PointX="10" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="MIS_DBModel.PaymentInstallment" Width="1.5" PointX="5.25" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MIS_DBModel.PaymentMilestoneDetail" Width="1.5" PointX="8" PointY="12.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MIS_DBModel.PaymentMilestone" Width="1.5" PointX="5.75" PointY="12" IsExpanded="true" />
+        <EntityTypeShape EntityType="MIS_DBModel.Project" Width="1.5" PointX="0.75" PointY="9" IsExpanded="true" />
+        <EntityTypeShape EntityType="MIS_DBModel.ProjectDetail" Width="1.5" PointX="3" PointY="9.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="MIS_DBModel.Property_def" Width="1.5" PointX="7.75" PointY="3.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MIS_DBModel.PropertySale" Width="1.5" PointX="0.75" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MIS_DBModel.Prospect" Width="1.5" PointX="10.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MIS_DBModel.Rebate_Details" Width="1.5" PointX="14.875" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MIS_DBModel.Registration" Width="1.5" PointX="12.375" PointY="3.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="MIS_DBModel.SaleInstallment" Width="1.5" PointX="3" PointY="2" IsExpanded="true" />
+        <EntityTypeShape EntityType="MIS_DBModel.TempTableForInstallment" Width="1.5" PointX="12.75" PointY="11.75" IsExpanded="true" />
+        <AssociationConnector Association="MIS_DBModel.FK_Booking_Confirm_Property_def" ManuallyRouted="false" />
+        <AssociationConnector Association="MIS_DBModel.FK_PaymentInstallment_SaleInstallments" ManuallyRouted="false" />
+        <AssociationConnector Association="MIS_DBModel.FK_PaymentMilestoneDetail_PaymentMilestones" ManuallyRouted="false" />
+        <AssociationConnector Association="MIS_DBModel.FK_ProjectDetail_Project" ManuallyRouted="false" />
+        <AssociationConnector Association="MIS_DBModel.FK_SaleInstallments_PropertySale" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="MIS_DBModel.Booking_Payments" Width="1.5" PointX="12.25" PointY="16.375" />
+        <AssociationConnector Association="MIS_DBModel.FK_Booking_Payments_Booking_Confirm" />
+        <EntityTypeShape EntityType="MIS_DBModel.Lookup_List" Width="1.5" PointX="0.75" PointY="13.75" />
+        <AssociationConnector Association="MIS_DBModel.FK_Rebate_Details_Registration" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
