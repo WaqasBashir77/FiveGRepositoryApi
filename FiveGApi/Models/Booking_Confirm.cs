@@ -67,5 +67,6 @@ namespace FiveGApi.Models
         public virtual Property_def Property_def { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Booking_Payments> Booking_Payments { get; set; }
+        public virtual Property_def Property_def1 { get; set; }
     }
 }

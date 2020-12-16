@@ -16,7 +16,7 @@ namespace FiveGApi.Controllers
     [RoutePrefix("api/Registration")]
        public class RegistrationController : ApiController
     {
-        private MIS_DBEntities db = new MIS_DBEntities();
+        private FiveG_DBEntities db = new FiveG_DBEntities();
 
         // GET: api/AllRegistrations
         //[Route("api/Registration/GetRegistrations")]
@@ -134,6 +134,13 @@ namespace FiveGApi.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+            var Reg = db.Registrations.Where(x=>x.Code==Registration.Code).FirstOrDefault();
+            if(Reg!=null)
+            {
+                var error = new { message = "Party must be unique" }; //<-- anonymous object
+                return this.Content(HttpStatusCode.Conflict, error);
+                
             }
 
             db.Registrations.Add(Registration);

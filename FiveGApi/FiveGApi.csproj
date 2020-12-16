@@ -183,6 +183,7 @@
     <Compile Include="DTOModels\PropertySaleDetailDTO.cs" />
     <Compile Include="DTOModels\PropertySaleDTO.cs" />
     <Compile Include="DTOModels\RegistrationModel.cs" />
+    <Compile Include="DTOModels\ResponseModel.cs" />
     <Compile Include="DTOModels\TempTableForInstallmentDTO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -191,6 +192,9 @@
       <DependentUpon>FiveGModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Booking_Payments.cs">
+      <DependentUpon>FiveGModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Employee.cs">
       <DependentUpon>FiveGModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\FiveGModel.Context.cs">
@@ -209,6 +213,9 @@
       <DependentUpon>FiveGModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\Lookup_List.cs">
+      <DependentUpon>FiveGModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Lookup_Values.cs">
       <DependentUpon>FiveGModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\PaymentInstallment.cs">

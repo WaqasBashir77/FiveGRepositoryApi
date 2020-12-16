@@ -12,7 +12,7 @@ namespace FiveGApi.Controllers
 {
     public class Booking_ConfController : ApiController
     {
-        private MIS_DBEntities db = new MIS_DBEntities();
+        private FiveG_DBEntities db = new FiveG_DBEntities();
 
         // GET: api/Booking_Confirm
         [ResponseType(typeof(IQueryable<Booking_Confirm>))]

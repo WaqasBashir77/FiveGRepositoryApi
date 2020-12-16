@@ -9,16 +9,17 @@ using System.Web.Http;
 
 namespace FiveGApi.Controllers
 {
+    [RoutePrefix("api/Values")]
     public class ValuesController : ApiController
     {
-        private MIS_DBEntities db = new MIS_DBEntities();
+        private FiveG_DBEntities db = new FiveG_DBEntities();
 
         [HttpGet]
         public IHttpActionResult GetPropertySaleLsit()
         {
 
-            List <PropertySale> propertySale = db.PropertySales.ToList();
-          
+            List<PropertySale> propertySale = db.PropertySales.ToList();
+
             if (propertySale == null)
             {
                 return NotFound();
@@ -65,6 +66,7 @@ namespace FiveGApi.Controllers
         [HttpPost]
         public IHttpActionResult addPropertySale(PropertySaleDTO propertySale)
         {
+            ResponseModel response = new ResponseModel();
             try
             {
                 if (propertySale != null)
@@ -91,7 +93,8 @@ namespace FiveGApi.Controllers
                     OriginalPropertySale.CNIC = propertySale.cnic;
                     OriginalPropertySale.Employee = propertySale.employeeId;
                     OriginalPropertySale.Employee_Com = propertySale.employeeCommission;
-
+                    string[] image = propertySale.Purchaser_Picture.Split(',');
+                    // OriginalPropertySale.Purchaser_Picture = Convert.FromBase64String(image[1]);
 
                     List<SaleInstallment> saleInstallmentList = new List<SaleInstallment>();
                     if (propertySale.propertySaleDetails != null)
@@ -127,7 +130,7 @@ namespace FiveGApi.Controllers
                                 paymentInstallment.Booking_ID = OriginalPropertySale.Booking_ID;
                                 paymentInstallment.instrument_bank = item.paymentDetailDTOs.InstrumentBank;
                                 paymentInstallment.instrument_bank_Branch = item.paymentDetailDTOs.InsturmentBankBranch;
-                                paymentInstallment.instrument_date = Convert.ToDateTime( item.paymentDetailDTOs.InsturmentDate);
+                                paymentInstallment.instrument_date = Convert.ToDateTime(item.paymentDetailDTOs.InsturmentDate);
                                 paymentInstallment.instrument_remarks = item.paymentDetailDTOs.paymentDescription;
 
                                 saleInstallment.PaymentInstallments.Add(paymentInstallment);
@@ -136,28 +139,92 @@ namespace FiveGApi.Controllers
                         OriginalPropertySale.SaleInstallments = saleInstallmentList;
                         db.PropertySales.Add(OriginalPropertySale);
                     }
-
-                   
                     db.SaveChanges();
-
+                    response.Code = 1;
                 }
+            }
+            catch (Exception ex)
+            {
+                response.Code = 0;
+            }
+            return Ok(response);
+        }
+
+
+        [HttpGet]
+        [Route("getdetail")]
+        public IHttpActionResult getdetail()
+        {
+
+            List<Lookup_Values> lookup_Values = new List<Lookup_Values>();
+
+            var re = Request;
+            //HttpRequestMessage re = new HttpRequestMessage();
+            var headers = re.Headers;
+            int tempId = Convert.ToInt32(headers.GetValues("Id").First());
+            //Order by Value_Orderno ASC
+            var masterobj = db.PropertySales.Where(x => x.Booking_ID == tempId).FirstOrDefault();
+
+
+            return Ok(masterobj);
+        }
+        // DELETE api/values/5
+        public void Delete(int id)
+        {
+        }
+
+        [HttpGet]
+        [Route("getallbank")]
+        public IHttpActionResult GetAllBank()
+        {
+            List<Lookup_Values> lookup_Values = new List<Lookup_Values>();
+            try
+            {
+                //Order by Value_Orderno ASC
+                lookup_Values = db.Lookup_Values.Where(x => x.Ref_ID == 4 && x.Value_Status == true).OrderBy(x => x.Value_orderNo).ToList();
             }
             catch (Exception ex)
             {
 
                 throw;
             }
-            return Ok();
+            return Ok(lookup_Values);
         }
 
-        // PUT api/values/5
-        public void Put(int id, [FromBody]string value)
+        [HttpGet]
+        [Route("getallcity")]
+        public IHttpActionResult GetAllCity()
         {
+            List<Lookup_Values> lookup_Values = new List<Lookup_Values>();
+            try
+            {
+                //Order by Value_Orderno ASC
+                lookup_Values = db.Lookup_Values.Where(x => x.Ref_ID == 1 && x.Value_Status == true).OrderBy(x => x.Value_orderNo).ToList();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            return Ok(lookup_Values);
         }
 
-        // DELETE api/values/5
-        public void Delete(int id)
+        [HttpGet]
+        [Route("getallUOM")]
+        public IHttpActionResult GetallUOM()
         {
+            List<Lookup_Values> lookup_Values = new List<Lookup_Values>();
+            try
+            {
+                //Order by Value_Orderno ASC
+                lookup_Values = db.Lookup_Values.Where(x => x.Ref_ID == 2 && x.Value_Status == true).OrderBy(x => x.Value_orderNo).ToList();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            return Ok(lookup_Values);
         }
     }
 }

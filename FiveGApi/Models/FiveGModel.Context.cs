@@ -13,10 +13,10 @@ namespace FiveGApi.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class MIS_DBEntities : DbContext
+    public partial class FiveG_DBEntities : DbContext
     {
-        public MIS_DBEntities()
-            : base("name=MIS_DBEntities")
+        public FiveG_DBEntities()
+            : base("name=FiveG_DBEntities")
         {
         }
     
@@ -40,5 +40,7 @@ namespace FiveGApi.Models
         public virtual DbSet<TempTableForInstallment> TempTableForInstallments { get; set; }
         public virtual DbSet<Booking_Payments> Booking_Payments { get; set; }
         public virtual DbSet<Lookup_List> Lookup_List { get; set; }
+        public virtual DbSet<Lookup_Values> Lookup_Values { get; set; }
+        public virtual DbSet<Employee> Employees { get; set; }
     }
 }

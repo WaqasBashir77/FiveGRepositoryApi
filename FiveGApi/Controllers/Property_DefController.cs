@@ -12,7 +12,7 @@ namespace FiveGApi.Controllers
 {
     public class Property_DefController : ApiController
     {
-        private MIS_DBEntities db = new MIS_DBEntities();
+        private FiveG_DBEntities db = new FiveG_DBEntities();
 
         // GET: api/Property_def
         [ResponseType(typeof(IQueryable<Property_def>))]

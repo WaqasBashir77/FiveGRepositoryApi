@@ -28,7 +28,7 @@ namespace FiveGApi.Models
         public string Mobile_1 { get; set; }
         public string Mobile_2 { get; set; }
         public string Member_Reg_No { get; set; }
-        public string Purchaser_Picture { get; set; }
+        public byte[] Purchaser_Picture { get; set; }
         public Nullable<double> Dealer_Comm { get; set; }
         public string Dealer_Name { get; set; }
         public string Address { get; set; }

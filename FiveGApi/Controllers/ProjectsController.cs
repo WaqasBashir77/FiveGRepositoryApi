@@ -15,13 +15,13 @@ namespace FiveGApi.Controllers
     [RoutePrefix("api/Projects")]
     public class ProjectsController : ApiController
     {
-        private MIS_DBEntities db = new MIS_DBEntities();
+        private FiveG_DBEntities db = new FiveG_DBEntities();
 
         // GET: api/Projects
         public IQueryable<Project> GetProjects()
         {
-
-            return db.Projects;
+            var x = db.Projects;
+            return x;
         }
 
         // GET: api/Projects/5

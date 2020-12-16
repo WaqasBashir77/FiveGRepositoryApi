@@ -47,5 +47,6 @@ namespace FiveGApi.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Booking_Confirm> Booking_Confirm { get; set; }
+        public virtual Booking_Confirm Booking_Confirm1 { get; set; }
     }
 }

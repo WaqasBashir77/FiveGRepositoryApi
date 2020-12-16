@@ -8,18 +8,29 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
+using FiveGApi.DTOModels;
 using FiveGApi.Models;
 
 namespace FiveGApi.Controllers
 {
     public class PaymentMilestonesController : ApiController
     {
-        private MIS_DBEntities db = new MIS_DBEntities();
+        private FiveG_DBEntities db = new FiveG_DBEntities();
 
         // GET: api/PaymentMilestones
-        public IQueryable<PaymentMilestone> GetPaymentMilestones()
+        public IHttpActionResult GetPaymentMilestones()
         {
-            return db.PaymentMilestones;
+            List<PaymentMilestone> paymentMilestonesList = new List<PaymentMilestone>();
+            try
+            {
+                paymentMilestonesList = db.PaymentMilestones.ToList();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            return Ok(paymentMilestonesList);
         }
 
         // GET: api/PaymentMilestones/5
@@ -39,9 +50,11 @@ namespace FiveGApi.Controllers
         [ResponseType(typeof(void))]
         public IHttpActionResult PutPaymentMilestone(int id, PaymentMilestone paymentMilestone)
         {
+            ResponseModel response = new ResponseModel();
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                response.Code = 0;
+                return Ok(response);
             }
 
             paymentMilestone.Id = id;
@@ -65,7 +78,7 @@ namespace FiveGApi.Controllers
                 {
                     db.TempTableForInstallments.Remove(item);
                 }
-              
+
             }
             var child = db.PaymentMilestoneDetails.Where(x => x.parentId == id).ToList();
             if (child != null || child.Count > 0)
@@ -124,9 +137,11 @@ namespace FiveGApi.Controllers
             try
             {
                 db.SaveChanges();
+                response.Code = 1;
             }
             catch (DbUpdateConcurrencyException)
             {
+                response.Code = 0;
                 if (!PaymentMilestoneExists(id))
                 {
                     return NotFound();
@@ -137,18 +152,20 @@ namespace FiveGApi.Controllers
                 }
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(response);
         }
 
         // POST: api/PaymentMilestones
         [ResponseType(typeof(PaymentMilestone))]
         public IHttpActionResult PostPaymentMilestone(PaymentMilestone paymentMilestone)
         {
+            ResponseModel response = new ResponseModel();
             try
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ModelState);
+                    response.Code = 0;
+                    return Ok(response);
                 }
 
                 db.PaymentMilestones.Add(paymentMilestone);
@@ -173,22 +190,21 @@ namespace FiveGApi.Controllers
                                 tempTableFor.Installment = item.Milestones;
                             }
                             tempTableForInstallments.Add(tempTableFor);
-                            tempTableFor.Percentage = Convert.ToInt32( item.Percentage);
+                            tempTableFor.Percentage = Convert.ToInt32(item.Percentage);
                         }
                     }
 
                     db.TempTableForInstallments.AddRange(tempTableForInstallments);
                 }
                 db.SaveChanges();
+                response.Code = 1;
             }
             catch (Exception ex)
             {
-
-                throw;
+                Console.WriteLine(ex.ToString());
+                response.Code = 0;
             }
-           
-
-            return CreatedAtRoute("DefaultApi", new { id = paymentMilestone.Id }, paymentMilestone);
+            return Ok(response);
         }
 
         // DELETE: api/PaymentMilestones/5
@@ -221,6 +237,6 @@ namespace FiveGApi.Controllers
             return db.PaymentMilestones.Count(e => e.Id == id) > 0;
         }
 
-       
+
     }
 }
