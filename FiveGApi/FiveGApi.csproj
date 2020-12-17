@@ -52,6 +52,9 @@
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Swashbuckle.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cd1bb07a5ac7c7bc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Swashbuckle.Core.5.6.0\lib\net40\Swashbuckle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -121,6 +124,9 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebActivatorEx.2.0\lib\net40\WebActivatorEx.dll</HintPath>
+    </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
@@ -139,6 +145,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\HelpPage\ApiDescriptionExtensions.cs" />
     <Compile Include="Areas\HelpPage\App_Start\HelpPageConfig.cs" />
@@ -168,9 +175,11 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
-    <Compile Include="Controllers\Booking_ConfController.cs" />
-    <Compile Include="Controllers\Booking_PaymentController.cs" />
-    <Compile Include="Controllers\Property_DefController.cs" />
+    <Compile Include="Controllers\BookingconfirmController.cs" />
+    <Compile Include="Controllers\BookingPaymentController.cs" />
+    <Compile Include="Controllers\BookingPropertyDefController.cs" />
+    <Compile Include="Controllers\Lookup_ListController.cs" />
+    <Compile Include="Controllers\Lookup_ValuesController.cs" />
     <Compile Include="Controllers\RebateDetailsController.cs" />
     <Compile Include="Controllers\RegistrationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -178,74 +187,83 @@
     <Compile Include="Controllers\ProjectsController.cs" />
     <Compile Include="Controllers\ProspectsController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="DTOModels\GeneralDTO.cs" />
     <Compile Include="DTOModels\PagingParameterModel.cs" />
     <Compile Include="DTOModels\PaymentDetailDTO.cs" />
     <Compile Include="DTOModels\PropertySaleDetailDTO.cs" />
     <Compile Include="DTOModels\PropertySaleDTO.cs" />
     <Compile Include="DTOModels\RegistrationModel.cs" />
+    <Compile Include="DTOModels\ResponseModel.cs" />
+    <Compile Include="DTOModels\ResultViewModel.cs" />
     <Compile Include="DTOModels\TempTableForInstallmentDTO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Booking_Confirm.cs">
-      <DependentUpon>FiveGModel.tt</DependentUpon>
+    <Compile Include="Models\BookingConfirm.cs">
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Booking_Payments.cs">
-      <DependentUpon>FiveGModel.tt</DependentUpon>
+    <Compile Include="Models\BookingPayment.cs">
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\FiveGModel.Context.cs">
+    <Compile Include="Models\Employee.cs">
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\FiveG_DBModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>FiveGModel.Context.tt</DependentUpon>
+      <DependentUpon>FiveG_DBModel.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\FiveGModel.cs">
+    <Compile Include="Models\FiveG_DBModel.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>FiveGModel.tt</DependentUpon>
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\FiveGModel.Designer.cs">
+    <Compile Include="Models\FiveG_DBModel.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>FiveGModel.edmx</DependentUpon>
+      <DependentUpon>FiveG_DBModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\Lookup_List.cs">
-      <DependentUpon>FiveGModel.tt</DependentUpon>
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Lookup_Values.cs">
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\PaymentInstallment.cs">
-      <DependentUpon>FiveGModel.tt</DependentUpon>
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\PaymentMilestone.cs">
-      <DependentUpon>FiveGModel.tt</DependentUpon>
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\PaymentMilestoneDetail.cs">
-      <DependentUpon>FiveGModel.tt</DependentUpon>
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Project.cs">
-      <DependentUpon>FiveGModel.tt</DependentUpon>
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ProjectDetail.cs">
-      <DependentUpon>FiveGModel.tt</DependentUpon>
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\PropertyDef.cs">
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\PropertySale.cs">
-      <DependentUpon>FiveGModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Property_def.cs">
-      <DependentUpon>FiveGModel.tt</DependentUpon>
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Prospect.cs">
-      <DependentUpon>FiveGModel.tt</DependentUpon>
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Rebate_Details.cs">
-      <DependentUpon>FiveGModel.tt</DependentUpon>
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Registration.cs">
-      <DependentUpon>FiveGModel.tt</DependentUpon>
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SaleInstallment.cs">
-      <DependentUpon>FiveGModel.tt</DependentUpon>
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\TempTableForInstallment.cs">
-      <DependentUpon>FiveGModel.tt</DependentUpon>
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -258,15 +276,15 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Models\FiveGModel.Context.tt">
+    <Content Include="Models\FiveG_DBModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>FiveGModel.edmx</DependentUpon>
-      <LastGenOutput>FiveGModel.Context.cs</LastGenOutput>
+      <DependentUpon>FiveG_DBModel.edmx</DependentUpon>
+      <LastGenOutput>FiveG_DBModel.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="Models\FiveGModel.tt">
+    <Content Include="Models\FiveG_DBModel.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>FiveGModel.edmx</DependentUpon>
-      <LastGenOutput>FiveGModel.cs</LastGenOutput>
+      <DependentUpon>FiveG_DBModel.edmx</DependentUpon>
+      <LastGenOutput>FiveG_DBModel.cs</LastGenOutput>
     </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -289,12 +307,12 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
-    <EntityDeploy Include="Models\FiveGModel.edmx">
+    <EntityDeploy Include="Models\FiveG_DBModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>FiveGModel.Designer.cs</LastGenOutput>
+      <LastGenOutput>FiveG_DBModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <Content Include="Models\FiveGModel.edmx.diagram">
-      <DependentUpon>FiveGModel.edmx</DependentUpon>
+    <Content Include="Models\FiveG_DBModel.edmx.diagram">
+      <DependentUpon>FiveG_DBModel.edmx</DependentUpon>
     </Content>
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />

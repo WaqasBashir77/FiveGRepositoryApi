@@ -12,12 +12,25 @@ namespace FiveGApi
             config.EnableCors(cors);
             // Web API routes
             config.MapHttpAttributeRoutes();
-            
+
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            config.Routes.MapHttpRoute(
+             name: "ApiByName",
+             routeTemplate: "api/{controller}/{action}",
+             defaults: null,
+             constraints: new { name = @"^[a-z]+$" }
+         );
+            config.Routes.MapHttpRoute(
+      name: "ApiById",
+      routeTemplate: "api/{controller}/{action}/{id}",
+      defaults: null,
+      constraints: new { name = @"^[0-9]+$" }
+  );
         }
     }
 }

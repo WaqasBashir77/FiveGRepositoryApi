@@ -12,7 +12,7 @@ namespace FiveGApi.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Booking_Payments
+    public partial class BookingPayment
     {
         public int Payment_ID { get; set; }
         public Nullable<int> ID { get; set; }
@@ -26,6 +26,6 @@ namespace FiveGApi.Models
         public byte[] instrument_date { get; set; }
         public string instrument_remarks { get; set; }
     
-        public virtual Booking_Confirm Booking_Confirm { get; set; }
+        public virtual BookingConfirm BookingConfirm { get; set; }
     }
 }

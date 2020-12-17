@@ -4,8 +4,8 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="MIS_DBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="Booking_Confirm">
+      <Schema Namespace="MIS_DBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="BookingConfirm">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
@@ -53,7 +53,7 @@
           <Property Name="Updated_By" Type="varchar" MaxLength="50" />
           <Property Name="Updated_On" Type="varchar" MaxLength="50" />
         </EntityType>
-        <EntityType Name="Booking_Payments">
+        <EntityType Name="BookingPayments">
           <Key>
             <PropertyRef Name="Payment_ID" />
           </Key>
@@ -69,6 +69,16 @@
           <Property Name="instrument_date" Type="varbinary" MaxLength="50" />
           <Property Name="instrument_remarks" Type="varchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="Mobile" Type="varchar" MaxLength="50" />
+          <Property Name="Commission" Type="int" />
+          <Property Name="ProfileImage" Type="varchar" MaxLength="250" />
+        </EntityType>
         <EntityType Name="Lookup_List">
           <Key>
             <PropertyRef Name="REF_ID" />
@@ -80,6 +90,20 @@
           <Property Name="Created_By" Type="varchar" MaxLength="250" />
           <Property Name="Modified_On" Type="datetime" />
           <Property Name="Modified_By" Type="varchar" MaxLength="250" />
+        </EntityType>
+        <EntityType Name="Lookup_Values">
+          <Key>
+            <PropertyRef Name="Value_ID" />
+          </Key>
+          <Property Name="Value_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Ref_ID" Type="int" Nullable="false" />
+          <Property Name="Value_Description" Type="varchar" MaxLength="500" />
+          <Property Name="Value_orderNo" Type="int" />
+          <Property Name="Value_Status" Type="bit" />
+          <Property Name="Created_ON" Type="datetime" />
+          <Property Name="Created_By" Type="varchar" MaxLength="250" />
+          <Property Name="Updated_ON" Type="datetime" />
+          <Property Name="Updated_By" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="PaymentInstallment">
           <Key>
@@ -118,7 +142,7 @@
           <Property Name="projectId" Type="int" />
           <Property Name="projectName" Type="varchar" MaxLength="50" />
           <Property Name="GracePeriodDays" Type="int" />
-          <Property Name="Tax" Type="int" />
+          <Property Name="Tax" Type="float" />
           <Property Name="LateFeePercent" Type="varchar" MaxLength="50" />
           <Property Name="description" Type="varchar" MaxLength="250" />
         </EntityType>
@@ -131,14 +155,15 @@
           <Property Name="projectName" Type="varchar" MaxLength="50" />
           <Property Name="projectType" Type="varchar" MaxLength="50" />
           <Property Name="address" Type="varchar" MaxLength="200" />
-          <Property Name="city" Type="varchar" MaxLength="50" />
+          <Property Name="city" Type="int" />
           <Property Name="status" Type="varchar" MaxLength="50" />
           <Property Name="description" Type="varchar" MaxLength="50" />
           <Property Name="totalArea" Type="float" />
-          <Property Name="unit" Type="varchar" MaxLength="50" />
+          <Property Name="unit" Type="int" />
           <Property Name="noc" Type="varchar" MaxLength="50" />
           <Property Name="projectCurrency" Type="varchar" MaxLength="50" />
           <Property Name="location" Type="varchar" MaxLength="250" />
+          <Property Name="PaymentPlanStatus" Type="bit" />
         </EntityType>
         <EntityType Name="ProjectDetail">
           <Key>
@@ -156,7 +181,7 @@
           <Property Name="otherFeatures" Type="varchar" MaxLength="550" />
           <Property Name="projectId" Type="int" />
         </EntityType>
-        <EntityType Name="Property_def">
+        <EntityType Name="PropertyDef">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
@@ -197,7 +222,7 @@
           <Property Name="Mobile_1" Type="varchar" MaxLength="50" />
           <Property Name="Mobile_2" Type="varchar" MaxLength="50" />
           <Property Name="Member_Reg_No" Type="varchar" MaxLength="50" />
-          <Property Name="Purchaser_Picture" Type="varchar" MaxLength="50" />
+          <Property Name="Purchaser_Picture" Type="image" />
           <Property Name="Dealer_Comm" Type="float" />
           <Property Name="Dealer_Name" Type="varchar" MaxLength="50" />
           <Property Name="Address" Type="varchar" MaxLength="50" />
@@ -240,13 +265,12 @@
             <PropertyRef Name="R_ID" />
           </Key>
           <Property Name="R_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="ID" Type="int" />
-          <Property Name="Society_ID" Type="varchar" MaxLength="50" />
-          <Property Name="Project_ID" Type="varchar" MaxLength="50" />
-          <Property Name="Booking_Rebate" Type="decimal" Precision="18" Scale="0" />
-          <Property Name="Confirmation_Rebate" Type="decimal" Precision="18" Scale="0" />
-          <Property Name="Flex_1" Type="varchar" MaxLength="50" />
-          <Property Name="Flex_2" Type="varchar" MaxLength="50" />
+          <Property Name="Reg_ID" Type="int" />
+          <Property Name="Society_ID" Type="int" />
+          <Property Name="Project_ID" Type="int" />
+          <Property Name="Rebate" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="Flex_1" Type="varchar" MaxLength="250" />
+          <Property Name="Flex_2" Type="varchar" MaxLength="250" />
           <Property Name="Created_By" Type="varchar" MaxLength="50" />
           <Property Name="Created_ON" Type="datetime" />
           <Property Name="Updated_By" Type="varchar" MaxLength="50" />
@@ -311,14 +335,14 @@
           <Property Name="Percentage" Type="int" />
           <Property Name="parentId" Type="int" />
         </EntityType>
-        <Association Name="FK_Booking_Payments_Booking_Confirm">
-          <End Role="Booking_Confirm" Type="Self.Booking_Confirm" Multiplicity="0..1" />
-          <End Role="Booking_Payments" Type="Self.Booking_Payments" Multiplicity="*" />
+        <Association Name="FK_BookingPayments_BookingConfirm">
+          <End Role="BookingConfirm" Type="Self.BookingConfirm" Multiplicity="0..1" />
+          <End Role="BookingPayments" Type="Self.BookingPayments" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Booking_Confirm">
+            <Principal Role="BookingConfirm">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="Booking_Payments">
+            <Dependent Role="BookingPayments">
               <PropertyRef Name="ID" />
             </Dependent>
           </ReferentialConstraint>
@@ -367,7 +391,7 @@
               <PropertyRef Name="ID" />
             </Principal>
             <Dependent Role="Rebate_Details">
-              <PropertyRef Name="ID" />
+              <PropertyRef Name="Reg_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -384,24 +408,26 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="MIS_DBModelStoreContainer">
-          <EntitySet Name="Booking_Confirm" EntityType="Self.Booking_Confirm" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Booking_Payments" EntityType="Self.Booking_Payments" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BookingConfirm" EntityType="Self.BookingConfirm" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BookingPayments" EntityType="Self.BookingPayments" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Employee" EntityType="Self.Employee" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Lookup_List" EntityType="Self.Lookup_List" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Lookup_Values" EntityType="Self.Lookup_Values" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PaymentInstallment" EntityType="Self.PaymentInstallment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PaymentMilestoneDetail" EntityType="Self.PaymentMilestoneDetail" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PaymentMilestones" EntityType="Self.PaymentMilestones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Project" EntityType="Self.Project" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProjectDetail" EntityType="Self.ProjectDetail" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Property_def" EntityType="Self.Property_def" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PropertyDef" EntityType="Self.PropertyDef" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PropertySale" EntityType="Self.PropertySale" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Prospect" EntityType="Self.Prospect" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Rebate_Details" EntityType="Self.Rebate_Details" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Registration" EntityType="Self.Registration" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SaleInstallments" EntityType="Self.SaleInstallments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TempTableForInstallment" EntityType="Self.TempTableForInstallment" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK_Booking_Payments_Booking_Confirm" Association="Self.FK_Booking_Payments_Booking_Confirm">
-            <End Role="Booking_Confirm" EntitySet="Booking_Confirm" />
-            <End Role="Booking_Payments" EntitySet="Booking_Payments" />
+          <AssociationSet Name="FK_BookingPayments_BookingConfirm" Association="Self.FK_BookingPayments_BookingConfirm">
+            <End Role="BookingConfirm" EntitySet="BookingConfirm" />
+            <End Role="BookingPayments" EntitySet="BookingPayments" />
           </AssociationSet>
           <AssociationSet Name="FK_PaymentInstallment_SaleInstallments" Association="Self.FK_PaymentInstallment_SaleInstallments">
             <End Role="SaleInstallments" EntitySet="SaleInstallments" />
@@ -424,11 +450,12 @@
             <End Role="SaleInstallments" EntitySet="SaleInstallments" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="MIS_DBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="Booking_Confirm">
+        <EntityType Name="BookingConfirm">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
@@ -475,8 +502,60 @@
           <Property Name="Created_ON" Type="DateTime" Precision="3" />
           <Property Name="Updated_By" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Updated_On" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Property_def" Relationship="Self.FK_Booking_Confirm_Property_def" FromRole="Booking_Confirm" ToRole="Property_def" />
-          <NavigationProperty Name="Booking_Payments" Relationship="MIS_DBModel.FK_Booking_Payments_Booking_Confirm" FromRole="Booking_Confirm" ToRole="Booking_Payments" />
+          <NavigationProperty Name="BookingPayments" Relationship="Self.FK_BookingPayments_BookingConfirm" FromRole="BookingConfirm" ToRole="BookingPayments" />
+        </EntityType>
+        <EntityType Name="BookingPayment">
+          <Key>
+            <PropertyRef Name="Payment_ID" />
+          </Key>
+          <Property Name="Payment_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="Int32" />
+          <Property Name="Payment_mode" Type="Int32" />
+          <Property Name="Ins_Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Instrument_Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Payment_amount" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="instrument_number" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="instrument_bank" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="instrument_bank_Branch" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="instrument_date" Type="Binary" MaxLength="50" FixedLength="false" />
+          <Property Name="instrument_remarks" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="BookingConfirm" Relationship="Self.FK_BookingPayments_BookingConfirm" FromRole="BookingPayments" ToRole="BookingConfirm" />
+        </EntityType>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Mobile" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Commission" Type="Int32" />
+          <Property Name="ProfileImage" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Lookup_List">
+          <Key>
+            <PropertyRef Name="REF_ID" />
+          </Key>
+          <Property Name="REF_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Lookup_Name" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Lookup_Type" Type="Boolean" />
+          <Property Name="Created_On" Type="DateTime" Precision="3" />
+          <Property Name="Created_By" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Modified_On" Type="DateTime" Precision="3" />
+          <Property Name="Modified_By" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Lookup_Values">
+          <Key>
+            <PropertyRef Name="Value_ID" />
+          </Key>
+          <Property Name="Value_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Ref_ID" Type="Int32" Nullable="false" />
+          <Property Name="Value_Description" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Value_orderNo" Type="Int32" />
+          <Property Name="Value_Status" Type="Boolean" />
+          <Property Name="Created_ON" Type="DateTime" Precision="3" />
+          <Property Name="Created_By" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Updated_ON" Type="DateTime" Precision="3" />
+          <Property Name="Updated_By" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="PaymentInstallment">
           <Key>
@@ -517,7 +596,7 @@
           <Property Name="projectId" Type="Int32" />
           <Property Name="projectName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="GracePeriodDays" Type="Int32" />
-          <Property Name="Tax" Type="Int32" />
+          <Property Name="Tax" Type="Double" />
           <Property Name="LateFeePercent" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="description" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="PaymentMilestoneDetails" Relationship="Self.FK_PaymentMilestoneDetail_PaymentMilestones" FromRole="PaymentMilestones" ToRole="PaymentMilestoneDetail" />
@@ -531,14 +610,15 @@
           <Property Name="projectName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="projectType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="address" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="city" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="city" Type="Int32" />
           <Property Name="status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="description" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="totalArea" Type="Double" />
-          <Property Name="unit" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="unit" Type="Int32" />
           <Property Name="noc" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="projectCurrency" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="location" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="PaymentPlanStatus" Type="Boolean" />
           <NavigationProperty Name="ProjectDetails" Relationship="Self.FK_ProjectDetail_Project" FromRole="Project" ToRole="ProjectDetail" />
         </EntityType>
         <EntityType Name="ProjectDetail">
@@ -558,7 +638,7 @@
           <Property Name="projectId" Type="Int32" />
           <NavigationProperty Name="Project" Relationship="Self.FK_ProjectDetail_Project" FromRole="ProjectDetail" ToRole="Project" />
         </EntityType>
-        <EntityType Name="Property_def">
+        <EntityType Name="PropertyDef">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
@@ -586,7 +666,6 @@
           <Property Name="Created_ON" Type="DateTime" Precision="3" />
           <Property Name="Updated_By" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Updated_On" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Booking_Confirm" Relationship="Self.FK_Booking_Confirm_Property_def" FromRole="Property_def" ToRole="Booking_Confirm" />
         </EntityType>
         <EntityType Name="PropertySale">
           <Key>
@@ -600,7 +679,7 @@
           <Property Name="Mobile_1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Mobile_2" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Member_Reg_No" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Purchaser_Picture" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Purchaser_Picture" Type="Binary" MaxLength="Max" FixedLength="false" />
           <Property Name="Dealer_Comm" Type="Double" />
           <Property Name="Dealer_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Address" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
@@ -644,18 +723,17 @@
             <PropertyRef Name="R_ID" />
           </Key>
           <Property Name="R_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ID" Type="Int32" />
-          <Property Name="Society_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Project_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Booking_Rebate" Type="Decimal" Precision="18" Scale="0" />
-          <Property Name="Confirmation_Rebate" Type="Decimal" Precision="18" Scale="0" />
-          <Property Name="Flex_1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Flex_2" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Reg_ID" Type="Int32" />
+          <Property Name="Society_ID" Type="Int32" />
+          <Property Name="Project_ID" Type="Int32" />
+          <Property Name="Rebate" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Flex_1" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Flex_2" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="Created_By" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Created_ON" Type="DateTime" Precision="3" />
           <Property Name="Updated_By" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Updated_On" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Registration" Relationship="MIS_DBModel.FK_Rebate_Details_Registration" FromRole="Rebate_Details" ToRole="Registration" />
+          <NavigationProperty Name="Registration" Relationship="Self.FK_Rebate_Details_Registration" FromRole="Rebate_Details" ToRole="Registration" />
         </EntityType>
         <EntityType Name="Registration">
           <Key>
@@ -681,7 +759,7 @@
           <Property Name="Created_ON" Type="DateTime" Precision="3" />
           <Property Name="Updated_By" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Updated_On" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Rebate_Details" Relationship="MIS_DBModel.FK_Rebate_Details_Registration" FromRole="Registration" ToRole="Rebate_Details" />
+          <NavigationProperty Name="Rebate_Details" Relationship="Self.FK_Rebate_Details_Registration" FromRole="Registration" ToRole="Rebate_Details" />
         </EntityType>
         <EntityType Name="SaleInstallment">
           <Key>
@@ -719,15 +797,15 @@
           <Property Name="Percentage" Type="Int32" />
           <Property Name="parentId" Type="Int32" />
         </EntityType>
-        <Association Name="FK_Booking_Confirm_Property_def">
-          <End Role="Property_def" Type="Self.Property_def" Multiplicity="0..1" />
-          <End Role="Booking_Confirm" Type="Self.Booking_Confirm" Multiplicity="*" />
+        <Association Name="FK_BookingPayments_BookingConfirm">
+          <End Role="BookingConfirm" Type="Self.BookingConfirm" Multiplicity="0..1" />
+          <End Role="BookingPayments" Type="Self.BookingPayment" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Property_def">
+            <Principal Role="BookingConfirm">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="Booking_Confirm">
-              <PropertyRef Name="Property_ID" />
+            <Dependent Role="BookingPayments">
+              <PropertyRef Name="ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -779,23 +857,39 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="MIS_DBEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Booking_Confirm" EntityType="Self.Booking_Confirm" />
+        <Association Name="FK_Rebate_Details_Registration">
+          <End Role="Registration" Type="Self.Registration" Multiplicity="0..1" />
+          <End Role="Rebate_Details" Type="Self.Rebate_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Registration">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Rebate_Details">
+              <PropertyRef Name="Reg_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="MIS_DBEntities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="BookingConfirms" EntityType="Self.BookingConfirm" />
+          <EntitySet Name="BookingPayments" EntityType="Self.BookingPayment" />
+          <EntitySet Name="Employees" EntityType="Self.Employee" />
+          <EntitySet Name="Lookup_List" EntityType="Self.Lookup_List" />
+          <EntitySet Name="Lookup_Values" EntityType="Self.Lookup_Values" />
           <EntitySet Name="PaymentInstallments" EntityType="Self.PaymentInstallment" />
           <EntitySet Name="PaymentMilestoneDetails" EntityType="Self.PaymentMilestoneDetail" />
           <EntitySet Name="PaymentMilestones" EntityType="Self.PaymentMilestone" />
           <EntitySet Name="Projects" EntityType="Self.Project" />
           <EntitySet Name="ProjectDetails" EntityType="Self.ProjectDetail" />
-          <EntitySet Name="Property_def" EntityType="Self.Property_def" />
+          <EntitySet Name="PropertyDefs" EntityType="Self.PropertyDef" />
           <EntitySet Name="PropertySales" EntityType="Self.PropertySale" />
           <EntitySet Name="Prospects" EntityType="Self.Prospect" />
           <EntitySet Name="Rebate_Details" EntityType="Self.Rebate_Details" />
           <EntitySet Name="Registrations" EntityType="Self.Registration" />
           <EntitySet Name="SaleInstallments" EntityType="Self.SaleInstallment" />
           <EntitySet Name="TempTableForInstallments" EntityType="Self.TempTableForInstallment" />
-          <AssociationSet Name="FK_Booking_Confirm_Property_def" Association="Self.FK_Booking_Confirm_Property_def">
-            <End Role="Property_def" EntitySet="Property_def" />
-            <End Role="Booking_Confirm" EntitySet="Booking_Confirm" />
+          <AssociationSet Name="FK_BookingPayments_BookingConfirm" Association="Self.FK_BookingPayments_BookingConfirm">
+            <End Role="BookingConfirm" EntitySet="BookingConfirms" />
+            <End Role="BookingPayments" EntitySet="BookingPayments" />
           </AssociationSet>
           <AssociationSet Name="FK_PaymentInstallment_SaleInstallments" Association="Self.FK_PaymentInstallment_SaleInstallments">
             <End Role="SaleInstallments" EntitySet="SaleInstallments" />
@@ -813,79 +907,20 @@
             <End Role="PropertySale" EntitySet="PropertySales" />
             <End Role="SaleInstallments" EntitySet="SaleInstallments" />
           </AssociationSet>
-          <EntitySet Name="Booking_Payments" EntityType="MIS_DBModel.Booking_Payments" />
-          <AssociationSet Name="FK_Booking_Payments_Booking_Confirm" Association="MIS_DBModel.FK_Booking_Payments_Booking_Confirm">
-            <End Role="Booking_Confirm" EntitySet="Booking_Confirm" />
-            <End Role="Booking_Payments" EntitySet="Booking_Payments" />
-          </AssociationSet>
-          <EntitySet Name="Lookup_List" EntityType="MIS_DBModel.Lookup_List" />
-          <AssociationSet Name="FK_Rebate_Details_Registration" Association="MIS_DBModel.FK_Rebate_Details_Registration">
+          <AssociationSet Name="FK_Rebate_Details_Registration" Association="Self.FK_Rebate_Details_Registration">
             <End Role="Registration" EntitySet="Registrations" />
             <End Role="Rebate_Details" EntitySet="Rebate_Details" />
           </AssociationSet>
         </EntityContainer>
-        <EntityType Name="Booking_Payments">
-          <Key>
-            <PropertyRef Name="Payment_ID" />
-          </Key>
-          <Property Name="Payment_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ID" Type="Int32" />
-          <Property Name="Payment_mode" Type="Int32" />
-          <Property Name="Ins_Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Instrument_Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Payment_amount" Type="Decimal" Precision="18" Scale="0" />
-          <Property Name="instrument_number" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="instrument_bank" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="instrument_bank_Branch" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="instrument_date" Type="Binary" MaxLength="50" FixedLength="false" />
-          <Property Name="instrument_remarks" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Booking_Confirm" Relationship="MIS_DBModel.FK_Booking_Payments_Booking_Confirm" FromRole="Booking_Payments" ToRole="Booking_Confirm" />
-        </EntityType>
-        <Association Name="FK_Booking_Payments_Booking_Confirm">
-          <End Type="MIS_DBModel.Booking_Confirm" Role="Booking_Confirm" Multiplicity="0..1" />
-          <End Type="MIS_DBModel.Booking_Payments" Role="Booking_Payments" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Booking_Confirm">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Booking_Payments">
-              <PropertyRef Name="ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="Lookup_List">
-          <Key>
-            <PropertyRef Name="REF_ID" />
-          </Key>
-          <Property Name="REF_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Lookup_Name" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="Lookup_Type" Type="Boolean" />
-          <Property Name="Created_On" Type="DateTime" Precision="3" />
-          <Property Name="Created_By" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="Modified_On" Type="DateTime" Precision="3" />
-          <Property Name="Modified_By" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <Association Name="FK_Rebate_Details_Registration">
-          <End Type="MIS_DBModel.Registration" Role="Registration" Multiplicity="0..1" />
-          <End Type="MIS_DBModel.Rebate_Details" Role="Rebate_Details" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Registration">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Rebate_Details">
-              <PropertyRef Name="ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="MIS_DBModelStoreContainer" CdmEntityContainer="MIS_DBEntities">
-          <EntitySetMapping Name="Booking_Confirm">
-            <EntityTypeMapping TypeName="MIS_DBModel.Booking_Confirm">
-              <MappingFragment StoreEntitySet="Booking_Confirm">
+        <EntityContainerMapping StorageEntityContainer="MIS_DBModelStoreContainer" CdmEntityContainer="MIS_DBEntities1">
+          <EntitySetMapping Name="BookingConfirms">
+            <EntityTypeMapping TypeName="MIS_DBModel.BookingConfirm">
+              <MappingFragment StoreEntitySet="BookingConfirm">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Ref_num" ColumnName="Ref_num" />
                 <ScalarProperty Name="Form_num" ColumnName="Form_num" />
@@ -929,6 +964,62 @@
                 <ScalarProperty Name="Created_ON" ColumnName="Created_ON" />
                 <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
                 <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BookingPayments">
+            <EntityTypeMapping TypeName="MIS_DBModel.BookingPayment">
+              <MappingFragment StoreEntitySet="BookingPayments">
+                <ScalarProperty Name="Payment_ID" ColumnName="Payment_ID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Payment_mode" ColumnName="Payment_mode" />
+                <ScalarProperty Name="Ins_Type" ColumnName="Ins_Type" />
+                <ScalarProperty Name="Instrument_Type" ColumnName="Instrument_Type" />
+                <ScalarProperty Name="Payment_amount" ColumnName="Payment_amount" />
+                <ScalarProperty Name="instrument_number" ColumnName="instrument_number" />
+                <ScalarProperty Name="instrument_bank" ColumnName="instrument_bank" />
+                <ScalarProperty Name="instrument_bank_Branch" ColumnName="instrument_bank_Branch" />
+                <ScalarProperty Name="instrument_date" ColumnName="instrument_date" />
+                <ScalarProperty Name="instrument_remarks" ColumnName="instrument_remarks" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Employees">
+            <EntityTypeMapping TypeName="MIS_DBModel.Employee">
+              <MappingFragment StoreEntitySet="Employee">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Mobile" ColumnName="Mobile" />
+                <ScalarProperty Name="Commission" ColumnName="Commission" />
+                <ScalarProperty Name="ProfileImage" ColumnName="ProfileImage" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Lookup_List">
+            <EntityTypeMapping TypeName="MIS_DBModel.Lookup_List">
+              <MappingFragment StoreEntitySet="Lookup_List">
+                <ScalarProperty Name="REF_ID" ColumnName="REF_ID" />
+                <ScalarProperty Name="Lookup_Name" ColumnName="Lookup_Name" />
+                <ScalarProperty Name="Lookup_Type" ColumnName="Lookup_Type" />
+                <ScalarProperty Name="Created_On" ColumnName="Created_On" />
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="Modified_On" ColumnName="Modified_On" />
+                <ScalarProperty Name="Modified_By" ColumnName="Modified_By" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Lookup_Values">
+            <EntityTypeMapping TypeName="MIS_DBModel.Lookup_Values">
+              <MappingFragment StoreEntitySet="Lookup_Values">
+                <ScalarProperty Name="Value_ID" ColumnName="Value_ID" />
+                <ScalarProperty Name="Ref_ID" ColumnName="Ref_ID" />
+                <ScalarProperty Name="Value_Description" ColumnName="Value_Description" />
+                <ScalarProperty Name="Value_orderNo" ColumnName="Value_orderNo" />
+                <ScalarProperty Name="Value_Status" ColumnName="Value_Status" />
+                <ScalarProperty Name="Created_ON" ColumnName="Created_ON" />
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="Updated_ON" ColumnName="Updated_ON" />
+                <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -992,6 +1083,7 @@
                 <ScalarProperty Name="noc" ColumnName="noc" />
                 <ScalarProperty Name="projectCurrency" ColumnName="projectCurrency" />
                 <ScalarProperty Name="location" ColumnName="location" />
+                <ScalarProperty Name="PaymentPlanStatus" ColumnName="PaymentPlanStatus" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1012,9 +1104,9 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Property_def">
-            <EntityTypeMapping TypeName="MIS_DBModel.Property_def">
-              <MappingFragment StoreEntitySet="Property_def">
+          <EntitySetMapping Name="PropertyDefs">
+            <EntityTypeMapping TypeName="MIS_DBModel.PropertyDef">
+              <MappingFragment StoreEntitySet="PropertyDef">
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Society" ColumnName="Society" />
@@ -1098,11 +1190,10 @@
             <EntityTypeMapping TypeName="MIS_DBModel.Rebate_Details">
               <MappingFragment StoreEntitySet="Rebate_Details">
                 <ScalarProperty Name="R_ID" ColumnName="R_ID" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Reg_ID" ColumnName="Reg_ID" />
                 <ScalarProperty Name="Society_ID" ColumnName="Society_ID" />
                 <ScalarProperty Name="Project_ID" ColumnName="Project_ID" />
-                <ScalarProperty Name="Booking_Rebate" ColumnName="Booking_Rebate" />
-                <ScalarProperty Name="Confirmation_Rebate" ColumnName="Confirmation_Rebate" />
+                <ScalarProperty Name="Rebate" ColumnName="Rebate" />
                 <ScalarProperty Name="Flex_1" ColumnName="Flex_1" />
                 <ScalarProperty Name="Flex_2" ColumnName="Flex_2" />
                 <ScalarProperty Name="Created_By" ColumnName="Created_By" />
@@ -1171,36 +1262,6 @@
                 <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
                 <ScalarProperty Name="Percentage" ColumnName="Percentage" />
                 <ScalarProperty Name="parentId" ColumnName="parentId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Booking_Payments">
-            <EntityTypeMapping TypeName="MIS_DBModel.Booking_Payments">
-              <MappingFragment StoreEntitySet="Booking_Payments">
-                <ScalarProperty Name="instrument_remarks" ColumnName="instrument_remarks" />
-                <ScalarProperty Name="instrument_date" ColumnName="instrument_date" />
-                <ScalarProperty Name="instrument_bank_Branch" ColumnName="instrument_bank_Branch" />
-                <ScalarProperty Name="instrument_bank" ColumnName="instrument_bank" />
-                <ScalarProperty Name="instrument_number" ColumnName="instrument_number" />
-                <ScalarProperty Name="Payment_amount" ColumnName="Payment_amount" />
-                <ScalarProperty Name="Instrument_Type" ColumnName="Instrument_Type" />
-                <ScalarProperty Name="Ins_Type" ColumnName="Ins_Type" />
-                <ScalarProperty Name="Payment_mode" ColumnName="Payment_mode" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Payment_ID" ColumnName="Payment_ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Lookup_List">
-            <EntityTypeMapping TypeName="MIS_DBModel.Lookup_List">
-              <MappingFragment StoreEntitySet="Lookup_List">
-                <ScalarProperty Name="Modified_By" ColumnName="Modified_By" />
-                <ScalarProperty Name="Modified_On" ColumnName="Modified_On" />
-                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
-                <ScalarProperty Name="Created_On" ColumnName="Created_On" />
-                <ScalarProperty Name="Lookup_Type" ColumnName="Lookup_Type" />
-                <ScalarProperty Name="Lookup_Name" ColumnName="Lookup_Name" />
-                <ScalarProperty Name="REF_ID" ColumnName="REF_ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

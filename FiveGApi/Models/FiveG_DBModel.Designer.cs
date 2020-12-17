@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'F:\FiveG\WebApiProject\2ND-03-12-2020\FiveGApi\FiveGApi\Models\FiveGModel.edmx'. 
+﻿// T4 code generation is enabled for model 'F:\FiveG\WebApiProject\2ND-03-12-2020\FiveGApi\FiveGRepositoryApi\FiveGApi\Models\FiveG_DBModel.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.

@@ -13,15 +13,16 @@ using System.Web.Http.Description;
 
 namespace FiveGApi.Controllers
 {
-    public class Booking_PaymentController : ApiController
+    [RoutePrefix("api/BookingPayment")]
+    public class BookingPaymentController : ApiController
     {
-        private MIS_DBEntities db = new MIS_DBEntities();
+        private FiveG_DBEntities db = new FiveG_DBEntities();
 
         // GET: api/Booking_Payments
-        [ResponseType(typeof(IQueryable<Booking_Payments>))]
-        public IQueryable<Booking_Payments> AllBooking_Payments([FromUri] PagingParameterModel pagingparametermodel)
+        [ResponseType(typeof(IQueryable<BookingPayment>))]
+        public IQueryable<BookingPayment> GetBookingPaymentsAll([FromUri] PagingParameterModel pagingparametermodel)
         {
-            var source= db.Booking_Payments;
+            var source = db.BookingPayments;
             // Get's No of Rows Count   
             int count = source.Count();
 
@@ -60,14 +61,14 @@ namespace FiveGApi.Controllers
             // Setting Header  
             HttpContext.Current.Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
             // Returing List of Customers Collections  
-            return (IQueryable<Booking_Payments>)items;
+            return (IQueryable<BookingPayment>)items;
         }
 
         // GET: api/Booking_Payments/5
-        [ResponseType(typeof(Booking_Payments))]
+        [ResponseType(typeof(BookingPayment))]
         public IHttpActionResult GetBooking_Payments(int id)
         {
-            Booking_Payments Booking_Payments = db.Booking_Payments.Find(id);
+            BookingPayment Booking_Payments = db.BookingPayments.Find(id);
 
             if (Booking_Payments == null)
             {
@@ -79,14 +80,14 @@ namespace FiveGApi.Controllers
 
         // PUT: api/Booking_Payments/5
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutBooking_Payments(int id, Booking_Payments Booking_Payments)
+        public IHttpActionResult PutBooking_Payments(int id, BookingPayment Booking_Payments)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var existBooking_Payments = db.Booking_Payments.Where(x => x.ID == id).FirstOrDefault();
+            var existBooking_Payments = db.BookingPayments.Where(x => x.ID == id).FirstOrDefault();
             ////existBooking_Payments.Booking_PaymentsDetails
             //if (existBooking_Payments.Booking_PaymentsDetails.Count > 0)
             //{
@@ -101,14 +102,14 @@ namespace FiveGApi.Controllers
 
 
             // db.Entry(Booking_Payments).State = EntityState.Modified;
-           // existBooking_Payments.up = DateTime.Now.ToString();
+            // existBooking_Payments.up = DateTime.Now.ToString();
             try
             {
                 db.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!Booking_PaymentsExists((int)Booking_Payments.ID))
+                if (!BookingPaymentsExists((int)Booking_Payments.ID))
                 {
                     return NotFound();
                 }
@@ -122,31 +123,31 @@ namespace FiveGApi.Controllers
         }
 
         // POST: api/Booking_Payments
-        [ResponseType(typeof(Booking_Payments))]
-        public IHttpActionResult PostBooking_Payments(Booking_Payments Booking_Payments)
+        [ResponseType(typeof(BookingPayment))]
+        public IHttpActionResult PostBooking_Payments(BookingPayment Booking_Payments)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Booking_Payments.Add(Booking_Payments);
+            db.BookingPayments.Add(Booking_Payments);
             db.SaveChanges();
 
             return CreatedAtRoute("DefaultApi", new { id = Booking_Payments.ID }, Booking_Payments);
         }
 
         // DELETE: api/Booking_Payments/5
-        [ResponseType(typeof(Booking_Payments))]
+        [ResponseType(typeof(BookingPayment))]
         public IHttpActionResult DeleteBooking_Payments(int id)
         {
-            Booking_Payments Booking_Payments = db.Booking_Payments.Find(id);
+            BookingPayment Booking_Payments = db.BookingPayments.Find(id);
             if (Booking_Payments == null)
             {
                 return NotFound();
             }
 
-            db.Booking_Payments.Remove(Booking_Payments);
+            db.BookingPayments.Remove(Booking_Payments);
             db.SaveChanges();
 
             return Ok(Booking_Payments);
@@ -161,9 +162,9 @@ namespace FiveGApi.Controllers
             base.Dispose(disposing);
         }
 
-        private bool Booking_PaymentsExists(int id)
+        private bool BookingPaymentsExists(int id)
         {
-            return db.Booking_Payments.Count(e => e.ID == id) > 0;
+            return db.BookingPayments.Count(e => e.ID == id) > 0;
         }
     }
 }

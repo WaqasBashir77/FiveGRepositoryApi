@@ -12,20 +12,16 @@ namespace FiveGApi.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Rebate_Details
+    public partial class Lookup_Values
     {
-        public int R_ID { get; set; }
-        public Nullable<int> Reg_ID { get; set; }
-        public Nullable<int> Society_ID { get; set; }
-        public Nullable<int> Project_ID { get; set; }
-        public Nullable<decimal> Rebate { get; set; }
-        public string Flex_1 { get; set; }
-        public string Flex_2 { get; set; }
-        public string Created_By { get; set; }
+        public int Value_ID { get; set; }
+        public int Ref_ID { get; set; }
+        public string Value_Description { get; set; }
+        public Nullable<int> Value_orderNo { get; set; }
+        public Nullable<bool> Value_Status { get; set; }
         public Nullable<System.DateTime> Created_ON { get; set; }
+        public string Created_By { get; set; }
+        public Nullable<System.DateTime> Updated_ON { get; set; }
         public string Updated_By { get; set; }
-        public string Updated_On { get; set; }
-    
-        public virtual Registration Registration { get; set; }
     }
 }

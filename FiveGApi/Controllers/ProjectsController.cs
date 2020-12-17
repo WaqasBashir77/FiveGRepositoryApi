@@ -15,13 +15,24 @@ namespace FiveGApi.Controllers
     [RoutePrefix("api/Projects")]
     public class ProjectsController : ApiController
     {
-        private MIS_DBEntities db = new MIS_DBEntities();
+
+        private FiveG_DBEntities db = new FiveG_DBEntities();
 
         // GET: api/Projects
         public IQueryable<Project> GetProjects()
         {
+            IQueryable<Project> projects;
 
-            return db.Projects;
+            try
+            {
+                projects = db.Projects;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            return projects;
         }
 
         // GET: api/Projects/5
@@ -98,7 +109,7 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+            project.PaymentPlanStatus = false;
             db.Projects.Add(project);
             db.SaveChanges();
 

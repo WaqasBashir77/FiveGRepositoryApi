@@ -16,7 +16,7 @@ namespace FiveGApi.Controllers
 {
     public class RebateDetailsController : ApiController
     {
-        private MIS_DBEntities db = new MIS_DBEntities();
+        private FiveG_DBEntities db = new FiveG_DBEntities();
 
         // GET: api/Rebate_Details
 

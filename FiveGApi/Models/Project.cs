@@ -25,14 +25,15 @@ namespace FiveGApi.Models
         public string projectName { get; set; }
         public string projectType { get; set; }
         public string address { get; set; }
-        public string city { get; set; }
+        public Nullable<int> city { get; set; }
         public string status { get; set; }
         public string description { get; set; }
         public Nullable<double> totalArea { get; set; }
-        public string unit { get; set; }
+        public Nullable<int> unit { get; set; }
         public string noc { get; set; }
         public string projectCurrency { get; set; }
         public string location { get; set; }
+        public Nullable<bool> PaymentPlanStatus { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProjectDetail> ProjectDetails { get; set; }
