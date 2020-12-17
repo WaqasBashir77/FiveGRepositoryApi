@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using FiveGApi.Custom;
+using System.Web.Http;
 using System.Web.Http.Cors;
 
 namespace FiveGApi
@@ -12,6 +13,8 @@ namespace FiveGApi
             config.EnableCors(cors);
             // Web API routes
             config.MapHttpAttributeRoutes();
+            //Custom Exception Filter
+            config.Filters.Add(new CustomExceptionFilter());
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
