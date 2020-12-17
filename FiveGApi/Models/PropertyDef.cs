@@ -12,14 +12,8 @@ namespace FiveGApi.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Property_def
+    public partial class PropertyDef
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Property_def()
-        {
-            this.Booking_Confirm = new HashSet<Booking_Confirm>();
-        }
-    
         public int ID { get; set; }
         public string Name { get; set; }
         public string Society { get; set; }
@@ -44,9 +38,5 @@ namespace FiveGApi.Models
         public Nullable<System.DateTime> Created_ON { get; set; }
         public string Updated_By { get; set; }
         public string Updated_On { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Booking_Confirm> Booking_Confirm { get; set; }
-        public virtual Booking_Confirm Booking_Confirm1 { get; set; }
     }
 }

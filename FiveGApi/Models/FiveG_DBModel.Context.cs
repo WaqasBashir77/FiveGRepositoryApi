@@ -25,22 +25,22 @@ namespace FiveGApi.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Booking_Confirm> Booking_Confirm { get; set; }
+        public virtual DbSet<BookingConfirm> BookingConfirms { get; set; }
+        public virtual DbSet<BookingPayment> BookingPayments { get; set; }
+        public virtual DbSet<Employee> Employees { get; set; }
+        public virtual DbSet<Lookup_List> Lookup_List { get; set; }
+        public virtual DbSet<Lookup_Values> Lookup_Values { get; set; }
         public virtual DbSet<PaymentInstallment> PaymentInstallments { get; set; }
         public virtual DbSet<PaymentMilestoneDetail> PaymentMilestoneDetails { get; set; }
         public virtual DbSet<PaymentMilestone> PaymentMilestones { get; set; }
         public virtual DbSet<Project> Projects { get; set; }
         public virtual DbSet<ProjectDetail> ProjectDetails { get; set; }
-        public virtual DbSet<Property_def> Property_def { get; set; }
+        public virtual DbSet<PropertyDef> PropertyDefs { get; set; }
         public virtual DbSet<PropertySale> PropertySales { get; set; }
         public virtual DbSet<Prospect> Prospects { get; set; }
         public virtual DbSet<Rebate_Details> Rebate_Details { get; set; }
         public virtual DbSet<Registration> Registrations { get; set; }
         public virtual DbSet<SaleInstallment> SaleInstallments { get; set; }
         public virtual DbSet<TempTableForInstallment> TempTableForInstallments { get; set; }
-        public virtual DbSet<Booking_Payments> Booking_Payments { get; set; }
-        public virtual DbSet<Lookup_List> Lookup_List { get; set; }
-        public virtual DbSet<Lookup_Values> Lookup_Values { get; set; }
-        public virtual DbSet<Employee> Employees { get; set; }
     }
 }

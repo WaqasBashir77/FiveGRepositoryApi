@@ -23,6 +23,11 @@ namespace FiveGApi
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            //var json = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
+            //json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.All;
+
+            //var formatters = GlobalConfiguration.Configuration.Formatters;
+            //formatters.Remove(formatters.XmlFormatter);
         }
     }
 }

@@ -196,6 +196,12 @@ namespace FiveGApi.Controllers
 
                     db.TempTableForInstallments.AddRange(tempTableForInstallments);
                 }
+
+                var getProperty = db.Projects.Where(x => x.Id == paymentMilestone.projectId).FirstOrDefault();
+                if (getProperty != null)
+                {
+                    getProperty.PaymentPlanStatus = true;
+                }
                 db.SaveChanges();
                 response.Code = 1;
             }

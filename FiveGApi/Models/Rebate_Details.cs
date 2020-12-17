@@ -15,11 +15,10 @@ namespace FiveGApi.Models
     public partial class Rebate_Details
     {
         public int R_ID { get; set; }
-        public Nullable<int> ID { get; set; }
-        public string Society_ID { get; set; }
-        public string Project_ID { get; set; }
-        public Nullable<decimal> Booking_Rebate { get; set; }
-        public Nullable<decimal> Confirmation_Rebate { get; set; }
+        public Nullable<int> Reg_ID { get; set; }
+        public Nullable<int> Society_ID { get; set; }
+        public Nullable<int> Project_ID { get; set; }
+        public Nullable<decimal> Rebate { get; set; }
         public string Flex_1 { get; set; }
         public string Flex_2 { get; set; }
         public string Created_By { get; set; }

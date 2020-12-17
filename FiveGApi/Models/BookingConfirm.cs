@@ -12,12 +12,12 @@ namespace FiveGApi.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Booking_Confirm
+    public partial class BookingConfirm
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Booking_Confirm()
+        public BookingConfirm()
         {
-            this.Booking_Payments = new HashSet<Booking_Payments>();
+            this.BookingPayments = new HashSet<BookingPayment>();
         }
     
         public int ID { get; set; }
@@ -64,9 +64,7 @@ namespace FiveGApi.Models
         public string Updated_By { get; set; }
         public string Updated_On { get; set; }
     
-        public virtual Property_def Property_def { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Booking_Payments> Booking_Payments { get; set; }
-        public virtual Property_def Property_def1 { get; set; }
+        public virtual ICollection<BookingPayment> BookingPayments { get; set; }
     }
 }

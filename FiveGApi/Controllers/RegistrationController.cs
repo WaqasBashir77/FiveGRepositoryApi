@@ -1,30 +1,38 @@
 ﻿using FiveGApi.DTOModels;
 using FiveGApi.Models;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
 
 namespace FiveGApi.Controllers
 {
     [RoutePrefix("api/Registration")]
-       public class RegistrationController : ApiController
+    public class RegistrationController : ApiController
     {
         private FiveG_DBEntities db = new FiveG_DBEntities();
 
         // GET: api/AllRegistrations
         //[Route("api/Registration/GetRegistrations")]
         ////[HttpPost]
-        //[ResponseType(typeof(IQueryable<Registration>))]
-        public IQueryable<Registration> GetRegistrations()//[FromUri] PagingParameterModel pagingparametermodel)
+        [ResponseType(typeof(IQueryable<FiveGApi.Models.Registration>))]
+        public IQueryable<FiveGApi.Models.Registration> GetRegistration()//[FromUri] PagingParameterModel pagingparametermodel)
         {
-            return db.Registrations;
+            IQueryable<Registration> registration;
+
+            try
+            {
+                registration = db.Registrations;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return registration;
             ////Get All Registration From DB
             //var source = db.Registrations.OrderBy(x=>x.ID);
             //// Get's No of Rows Count   
@@ -65,15 +73,46 @@ namespace FiveGApi.Controllers
             //// Setting Header  
             //HttpContext.Current.Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
             //// Returing List of Registration Collections  
-           
+
             //return items;
         }
 
         // GET: api/Registrations/5
-        [ResponseType(typeof(Registration))]
+        [ResponseType(typeof(FiveGApi.Models.Registration))]
         public IHttpActionResult GetRegistration(int id)
         {
             Registration Registration = db.Registrations.Find(id);
+            if (Registration == null)
+            {
+                return NotFound();
+            }
+            return Ok(Registration);
+        }
+        [Route("GetPartyCodeValidation")]
+        [ResponseType(typeof(bool))]
+        public IHttpActionResult GetPartyCodeValidation(string partyCode)
+        {
+            var Reg = db.Registrations.Where(x => x.Code == partyCode).FirstOrDefault();
+            if (Reg != null)
+            {
+                var error = new { message = "Party must be unique" }; //<-- anonymous object
+                return this.Content(HttpStatusCode.Conflict, error);
+            }
+
+            return Ok(partyCode);
+        }
+        [Route("GetRegistrationByType")]
+        [HttpGet]
+        [ResponseType(typeof(List<FiveGApi.DTOModels.ResultViewModel>))]
+        public IHttpActionResult GetRegistrationByType(string type)
+        {
+            var Registration = db.Registrations.Where(x => x.Type == type).Select(item => new ResultViewModel
+            {
+                ID = item.ID,
+                Name = item.StaffName,
+                isSelected = false
+
+            }).ToList();
 
             if (Registration == null)
             {
@@ -82,31 +121,35 @@ namespace FiveGApi.Controllers
 
             return Ok(Registration);
         }
-
         // PUT: api/Registrations/5
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutRegistration(int id, Registration Registration)
+        public IHttpActionResult PutRegistration(int id, FiveGApi.Models.Registration Registration)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
             var existRegistration = db.Registrations.Where(x => x.ID == id).FirstOrDefault();
-            ////existRegistration.RegistrationDetails
-            //if (existRegistration.RegistrationDetails.Count > 0)
-            //{
-            //    foreach (var item in existRegistration.RegistrationDetails.ToList())
-            //    {
-            //        existRegistration.RegistrationDetails.Remove(item);
-            //    }
-            //}
-
-            //existRegistration.RegistrationDetails = Registration.RegistrationDetails;
-
-
-
-            // db.Entry(Registration).State = EntityState.Modified;
+            var Reg = db.Registrations.Where(x => x.Code == Registration.Code && x.ID != id).FirstOrDefault();
+            if (Reg != null)
+            {
+                var error = new { message = "Party must be unique" }; //<-- anonymous object
+                return this.Content(HttpStatusCode.Conflict, error);
+            }
+            rebate_Details(id, Registration.Rebate_Details);
+            existRegistration.Name = Registration.Name;
+            existRegistration.StaffName = Registration.StaffName;
+            existRegistration.Designation = Registration.Designation;
+            existRegistration.Type = Registration.Type;
+            existRegistration.Contact_no = Registration.Contact_no;
+            existRegistration.CNIC = Registration.CNIC;
+            existRegistration.Affliate_Staff_ID = Registration.Affliate_Staff_ID;
+            existRegistration.Company = Registration.Company;
+            existRegistration.Sub_Office = Registration.Sub_Office;
+            existRegistration.GL_Mapping_ID = Registration.GL_Mapping_ID;
+            existRegistration.Resale_Comm = Registration.Resale_Comm;
+            existRegistration.Remarks = Registration.Remarks;
+            existRegistration.Updated_By = "1";
             existRegistration.Updated_On = DateTime.Now.ToString();
             try
             {
@@ -124,33 +167,39 @@ namespace FiveGApi.Controllers
                 }
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return StatusCode(HttpStatusCode.OK);
         }
 
         // POST: api/Registrations
-        [ResponseType(typeof(Registration))]
-        public IHttpActionResult PostRegistration(Registration Registration)
+        [ResponseType(typeof(FiveGApi.Models.Registration))]
+        public IHttpActionResult PostRegistration(FiveGApi.Models.Registration Registration)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var Reg = db.Registrations.Where(x=>x.Code==Registration.Code).FirstOrDefault();
-            if(Reg!=null)
+            var Reg = db.Registrations.Where(x => x.Code == Registration.Code).FirstOrDefault();
+            if (Reg != null)
             {
                 var error = new { message = "Party must be unique" }; //<-- anonymous object
                 return this.Content(HttpStatusCode.Conflict, error);
-                
+
             }
 
             db.Registrations.Add(Registration);
+            foreach (var item in Registration.Rebate_Details)
+            {
+                item.Reg_ID = Registration.ID;
+                db.Rebate_Details.Add(item);
+
+            }
             db.SaveChanges();
 
             return CreatedAtRoute("DefaultApi", new { id = Registration.ID }, Registration);
         }
 
         // DELETE: api/Registrations/5
-        [ResponseType(typeof(Registration))]
+        [ResponseType(typeof(FiveGApi.Models.Registration))]
         public IHttpActionResult DeleteRegistration(int id)
         {
             Registration Registration = db.Registrations.Find(id);
@@ -177,6 +226,33 @@ namespace FiveGApi.Controllers
         private bool RegistrationExists(int id)
         {
             return db.Registrations.Count(e => e.ID == id) > 0;
+        }
+        private IQueryable<FiveGApi.Models.Rebate_Details> rebate_Details(int regID, ICollection<FiveGApi.Models.Rebate_Details> rebate_Details)
+        {
+
+
+            foreach (var item in rebate_Details)
+            {
+                if (item.R_ID > 0)
+                {
+                    var existRebateExisted = db.Rebate_Details.Where(x => x.R_ID == item.R_ID).FirstOrDefault();
+                    existRebateExisted.Society_ID = item.Society_ID;
+                    existRebateExisted.Project_ID = item.Project_ID;
+                    existRebateExisted.Rebate = item.Rebate;
+                    existRebateExisted.Updated_On = DateTime.Now.ToString();
+                    existRebateExisted.Updated_By = "1";
+                    db.SaveChanges();
+                }
+                else
+                {
+                    item.Reg_ID = regID;
+                    item.Created_By = "1";
+                    db.Rebate_Details.Add(item);
+                    db.SaveChanges();
+                }
+
+            }
+            return db.Rebate_Details.Where(x => x.Reg_ID == regID);
         }
     }
 }
