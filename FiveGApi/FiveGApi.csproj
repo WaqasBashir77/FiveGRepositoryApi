@@ -186,7 +186,9 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\BookingconfirmController.cs" />
     <Compile Include="Controllers\BookingPaymentController.cs" />
-    <Compile Include="Controllers\BookingPropertyDefController.cs" />
+    <Compile Include="Controllers\DeliverySheetController.cs" />
+    <Compile Include="Controllers\PaymentDeliveryController.cs" />
+    <Compile Include="Controllers\PropertyDefController.cs" />
     <Compile Include="Controllers\Lookup_ListController.cs" />
     <Compile Include="Controllers\Lookup_ValuesController.cs" />
     <Compile Include="Controllers\RebateDetailsController.cs" />
@@ -195,6 +197,7 @@
     <Compile Include="Controllers\PaymentMilestonesController.cs" />
     <Compile Include="Controllers\ProjectsController.cs" />
     <Compile Include="Controllers\ProspectsController.cs" />
+    <Compile Include="Controllers\SocietySlipController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Custom\CustomExceptionFilter.cs" />
     <Compile Include="DTOModels\GeneralDTO.cs" />
@@ -213,6 +216,9 @@
       <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\BookingPayment.cs">
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Delivery_Sheet.cs">
       <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Employee.cs">
@@ -248,6 +254,9 @@
     <Compile Include="Models\PaymentMilestoneDetail.cs">
       <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Payment_Delivery.cs">
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Project.cs">
       <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
@@ -270,6 +279,9 @@
       <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SaleInstallment.cs">
+      <DependentUpon>FiveG_DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Society_Slip.cs">
       <DependentUpon>FiveG_DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\TempTableForInstallment.cs">

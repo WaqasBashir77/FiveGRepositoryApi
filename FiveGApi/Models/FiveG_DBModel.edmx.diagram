@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="c749a8b849a84b37b017a40b2441cf87" Name="Diagram1" ZoomLevel="90">
+      <Diagram DiagramId="c749a8b849a84b37b017a40b2441cf87" Name="Diagram1" ZoomLevel="84">
         <EntityTypeShape EntityType="MIS_DBModel.BookingConfirm" Width="1.5" PointX="7.75" PointY="12.25" IsExpanded="true" />
         <EntityTypeShape EntityType="MIS_DBModel.BookingPayment" Width="1.5" PointX="10" PointY="15.375" IsExpanded="true" />
         <EntityTypeShape EntityType="MIS_DBModel.Employee" Width="1.5" PointX="9.75" PointY="11.75" IsExpanded="true" />
@@ -28,6 +28,9 @@
         <AssociationConnector Association="MIS_DBModel.FK_ProjectDetail_Project" ManuallyRouted="false" />
         <AssociationConnector Association="MIS_DBModel.FK_SaleInstallments_PropertySale" ManuallyRouted="false" />
         <AssociationConnector Association="MIS_DBModel.FK_Rebate_Details_Registration" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="MIS_DBModel.Delivery_Sheet" Width="1.5" PointX="14.375" PointY="7.75" />
+        <EntityTypeShape EntityType="MIS_DBModel.Society_Slip" Width="1.5" PointX="14.375" PointY="13.75" />
+        <EntityTypeShape EntityType="MIS_DBModel.Payment_Delivery" Width="1.5" PointX="15.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

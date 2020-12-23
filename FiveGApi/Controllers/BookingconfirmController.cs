@@ -15,13 +15,25 @@ namespace FiveGApi.Controllers
     {
 
 
-        private FiveG_DBEntities db = new FiveG_DBEntities();
-
+        private MIS_DBEntities1 db = new MIS_DBEntities1();
+        [Route("GetALLBookingConfirmed")]
+        [HttpGet]       
         // GET: api/BookingConfirm
         [ResponseType(typeof(IQueryable<BookingConfirm>))]
-        public IQueryable<BookingConfirm> GetBookingConfAll()
+        public IQueryable<BookingConfirm> GetALLBookingConfirmed()
         {
-            return db.BookingConfirms;
+            IQueryable<BookingConfirm> bookingConfirm;
+
+            try
+            {
+                bookingConfirm = db.BookingConfirms;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return bookingConfirm;
+           
         }
 
         // GET: api/BookingConfirm/5
@@ -48,8 +60,46 @@ namespace FiveGApi.Controllers
             }
 
             var existBookingConfirm = db.BookingConfirms.Where(x => x.ID == id).FirstOrDefault();
-            BookingPaymentDetails(id, BookingConfirm);
-
+            
+            existBookingConfirm.Ref_num = BookingConfirm.Ref_num;
+            existBookingConfirm.Form_num = BookingConfirm.Form_num;
+            existBookingConfirm.Authorize_Status = BookingConfirm.Authorize_Status;
+            existBookingConfirm.File_Status = BookingConfirm.File_Status;
+            existBookingConfirm.Replaced_Form = BookingConfirm.Replaced_Form;
+            existBookingConfirm.Applicant_name = BookingConfirm.Applicant_name;
+            existBookingConfirm.CNIC = BookingConfirm.CNIC;
+            existBookingConfirm.Form_Rec_Date = BookingConfirm.Form_Rec_Date;
+            existBookingConfirm.Contact_Num = BookingConfirm.Contact_Num;
+            existBookingConfirm.Property_ID = BookingConfirm.Property_ID;
+            existBookingConfirm.Member_Num = BookingConfirm.Member_Num;
+            existBookingConfirm.Book_Emp  = BookingConfirm.Book_Emp;
+            existBookingConfirm.Book_Dealer = BookingConfirm.Book_Emp;
+            existBookingConfirm.Booking_Percent = BookingConfirm.Booking_Percent;
+            existBookingConfirm.Booking_amount = BookingConfirm.Booking_amount;
+            existBookingConfirm.Confirm_Percent = BookingConfirm.Confirm_Percent;
+            existBookingConfirm.Confirm_amount = BookingConfirm.Confirm_amount;
+            existBookingConfirm.MS_amount = BookingConfirm.MS_amount;
+            existBookingConfirm.Total_amount = BookingConfirm.Total_amount;
+            existBookingConfirm.Tax_Percent = BookingConfirm.Tax_Percent;
+            existBookingConfirm.Rebate_Percent = BookingConfirm.Rebate_Percent;
+            existBookingConfirm.Emp_Rebate = BookingConfirm.Emp_Rebate;
+            existBookingConfirm.Dealer_Rebate = BookingConfirm.Dealer_Rebate;
+            existBookingConfirm.Emp_B_RAmt = BookingConfirm.Emp_B_RAmt;
+            existBookingConfirm.Emp_C_RAmt = BookingConfirm.Emp_C_RAmt;
+            existBookingConfirm.Dealer_B_RAmt = BookingConfirm.Dealer_B_RAmt;
+            existBookingConfirm.Dealer_C_RAmt = BookingConfirm.Dealer_C_RAmt;
+            existBookingConfirm.Com_B_RAmt = BookingConfirm.Com_B_RAmt;
+            existBookingConfirm.Com_C_RAmt = BookingConfirm.Com_C_RAmt;
+            existBookingConfirm.Payment_B_Status = BookingConfirm.Payment_B_Status;
+            existBookingConfirm.Payment_C_Status = BookingConfirm.Payment_C_Status;
+            existBookingConfirm.Payment_MSFee_Status = BookingConfirm.Payment_B_Status;
+            existBookingConfirm.Booking_Date = BookingConfirm.Booking_Date;
+            existBookingConfirm.Confirmation_Date = BookingConfirm.Confirmation_Date;
+            existBookingConfirm.MSFee_Date = BookingConfirm.MSFee_Date;
+            existBookingConfirm.Remarks = BookingConfirm.Remarks;
+            existBookingConfirm.Confirmation_Date = BookingConfirm.Confirmation_Date;            
+            existBookingConfirm.Updated_By = BookingConfirm.Updated_By;
+            existBookingConfirm.Updated_On = BookingConfirm.Updated_On;
 
             // db.Entry(BookingConfirm).State = EntityState.Modified;
             existBookingConfirm.Updated_On = DateTime.Now.ToString();
@@ -57,6 +107,7 @@ namespace FiveGApi.Controllers
             try
             {
                 db.SaveChanges();
+                BookingPaymentDetails(id, BookingConfirm);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -69,7 +120,7 @@ namespace FiveGApi.Controllers
                     throw;
                 }
             }
-            return StatusCode(HttpStatusCode.NoContent);
+            return StatusCode(HttpStatusCode.OK);
         }
 
         // POST: api/BookingConfirm

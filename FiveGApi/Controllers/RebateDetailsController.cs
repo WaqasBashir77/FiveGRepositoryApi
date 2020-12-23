@@ -16,12 +16,12 @@ namespace FiveGApi.Controllers
 {
     public class RebateDetailsController : ApiController
     {
-        private FiveG_DBEntities db = new FiveG_DBEntities();
+        private MIS_DBEntities1 db = new MIS_DBEntities1();
 
         // GET: api/Rebate_Details
 
         [ResponseType(typeof(IQueryable<Rebate_Details>))]
-        public IQueryable<Rebate_Details> AllRebate_Details(int RDID)
+        public IQueryable<Rebate_Details> GetAllRebate_Details(int RDID)
         {
             return db.Rebate_Details;
         }

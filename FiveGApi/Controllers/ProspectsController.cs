@@ -14,7 +14,7 @@ namespace FiveGApi.Controllers
 {
     public class ProspectsController : ApiController
     {
-        private FiveG_DBEntities db = new FiveG_DBEntities();
+        private MIS_DBEntities1 db = new MIS_DBEntities1();
 
         // GET: api/Prospects
         public IQueryable<Prospect> GetProspects()

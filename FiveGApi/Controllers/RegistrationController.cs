@@ -14,13 +14,13 @@ namespace FiveGApi.Controllers
     [RoutePrefix("api/Registration")]
     public class RegistrationController : ApiController
     {
-        private FiveG_DBEntities db = new FiveG_DBEntities();
+        private MIS_DBEntities1 db = new MIS_DBEntities1();
 
         // GET: api/AllRegistrations
-        //[Route("api/Registration/GetRegistrations")]
-        ////[HttpPost]
+        [Route("GetALLRegistrations")]
+        [HttpGet]
         [ResponseType(typeof(IQueryable<FiveGApi.Models.Registration>))]
-        public IQueryable<FiveGApi.Models.Registration> GetRegistration()//[FromUri] PagingParameterModel pagingparametermodel)
+        public IQueryable<FiveGApi.Models.Registration> GetALLRegistrations()//[FromUri] PagingParameterModel pagingparametermodel)
         {
             IQueryable<Registration> registration;
 
@@ -79,7 +79,7 @@ namespace FiveGApi.Controllers
 
         // GET: api/Registrations/5
         [ResponseType(typeof(FiveGApi.Models.Registration))]
-        public IHttpActionResult GetRegistration(int id)
+        public IHttpActionResult GetRegistrationByID(int id)
         {
             Registration Registration = db.Registrations.Find(id);
             if (Registration == null)
@@ -130,10 +130,10 @@ namespace FiveGApi.Controllers
                 return BadRequest(ModelState);
             }
             var existRegistration = db.Registrations.Where(x => x.ID == id).FirstOrDefault();
-            var Reg = db.Registrations.Where(x => x.Code == Registration.Code && x.ID != id).FirstOrDefault();
+            var Reg = db.Registrations.Where(x => x.Code == existRegistration.Code && x.ID != id).FirstOrDefault();
             if (Reg != null)
             {
-                var error = new { message = "Party must be unique" }; //<-- anonymous object
+                var error = new { message = "Party Code must be unique" }; //<-- anonymous object
                 return this.Content(HttpStatusCode.Conflict, error);
             }
             rebate_Details(id, Registration.Rebate_Details);
