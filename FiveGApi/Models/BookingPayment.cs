@@ -23,9 +23,7 @@ namespace FiveGApi.Models
         public string instrument_number { get; set; }
         public string instrument_bank { get; set; }
         public string instrument_bank_Branch { get; set; }
-        public byte[] instrument_date { get; set; }
+        public Nullable<System.DateTime> instrument_date { get; set; }
         public string instrument_remarks { get; set; }
-    
-        public virtual BookingConfirm BookingConfirm { get; set; }
     }
 }

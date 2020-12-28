@@ -106,20 +106,39 @@ namespace FiveGApi.Controllers
         [ResponseType(typeof(List<FiveGApi.DTOModels.ResultViewModel>))]
         public IHttpActionResult GetRegistrationByType(string type)
         {
-            var Registration = db.Registrations.Where(x => x.Type == type).Select(item => new ResultViewModel
+            if (type == "staff")
             {
-                ID = item.ID,
-                Name = item.StaffName,
-                isSelected = false
+                var Registration = db.Registrations.Where(x => x.Type == type).Select(item => new ResultViewModel
+                {
+                    ID = item.ID,
+                    Name = item.StaffName,
+                    isSelected = false
 
-            }).ToList();
+                }).ToList(); if (Registration == null)
+                {
+                    return NotFound();
+                }
 
-            if (Registration == null)
-            {
-                return NotFound();
+                return Ok(Registration);
             }
+            else
+            {
+                var Registration = db.Registrations.Where(x => x.Type == type).Select(item => new ResultViewModel
+                {
+                    ID = item.ID,
+                    Name = item.Name,
+                    isSelected = false
 
-            return Ok(Registration);
+                }).ToList(); if (Registration == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(Registration);
+            }
+            
+
+           
         }
         // PUT: api/Registrations/5
         [ResponseType(typeof(void))]

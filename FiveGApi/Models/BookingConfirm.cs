@@ -14,12 +14,6 @@ namespace FiveGApi.Models
     
     public partial class BookingConfirm
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public BookingConfirm()
-        {
-            this.BookingPayments = new HashSet<BookingPayment>();
-        }
-    
         public int ID { get; set; }
         public string Ref_num { get; set; }
         public string Form_num { get; set; }
@@ -50,9 +44,9 @@ namespace FiveGApi.Models
         public Nullable<decimal> Dealer_C_RAmt { get; set; }
         public Nullable<decimal> Com_B_RAmt { get; set; }
         public Nullable<decimal> Com_C_RAmt { get; set; }
-        public Nullable<bool> Payment_B_Status { get; set; }
-        public Nullable<bool> Payment_C_Status { get; set; }
-        public Nullable<bool> Payment_MSFee_Status { get; set; }
+        public string Payment_B_Status { get; set; }
+        public string Payment_C_Status { get; set; }
+        public string Payment_MSFee_Status { get; set; }
         public Nullable<System.DateTime> Booking_Date { get; set; }
         public Nullable<System.DateTime> Confirmation_Date { get; set; }
         public Nullable<System.DateTime> MSFee_Date { get; set; }
@@ -63,8 +57,5 @@ namespace FiveGApi.Models
         public Nullable<System.DateTime> Created_ON { get; set; }
         public string Updated_By { get; set; }
         public string Updated_On { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<BookingPayment> BookingPayments { get; set; }
     }
 }

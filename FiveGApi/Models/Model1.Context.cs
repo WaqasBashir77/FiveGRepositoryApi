@@ -27,9 +27,11 @@ namespace FiveGApi.Models
     
         public virtual DbSet<BookingConfirm> BookingConfirms { get; set; }
         public virtual DbSet<BookingPayment> BookingPayments { get; set; }
+        public virtual DbSet<Delivery_Sheet> Delivery_Sheet { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
         public virtual DbSet<Lookup_List> Lookup_List { get; set; }
         public virtual DbSet<Lookup_Values> Lookup_Values { get; set; }
+        public virtual DbSet<Payment_Delivery> Payment_Delivery { get; set; }
         public virtual DbSet<PaymentInstallment> PaymentInstallments { get; set; }
         public virtual DbSet<PaymentMilestoneDetail> PaymentMilestoneDetails { get; set; }
         public virtual DbSet<PaymentMilestone> PaymentMilestones { get; set; }
@@ -41,9 +43,7 @@ namespace FiveGApi.Models
         public virtual DbSet<Rebate_Details> Rebate_Details { get; set; }
         public virtual DbSet<Registration> Registrations { get; set; }
         public virtual DbSet<SaleInstallment> SaleInstallments { get; set; }
-        public virtual DbSet<TempTableForInstallment> TempTableForInstallments { get; set; }
-        public virtual DbSet<Delivery_Sheet> Delivery_Sheet { get; set; }
         public virtual DbSet<Society_Slip> Society_Slip { get; set; }
-        public virtual DbSet<Payment_Delivery> Payment_Delivery { get; set; }
+        public virtual DbSet<TempTableForInstallment> TempTableForInstallments { get; set; }
     }
 }
