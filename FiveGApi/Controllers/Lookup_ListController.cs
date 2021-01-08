@@ -13,7 +13,7 @@ namespace FiveGApi.Controllers
 {
     public class Lookup_ListController : ApiController
     {
-        private FiveG_DBEntities db = new FiveG_DBEntities();
+        private MIS_DBEntities1 db = new MIS_DBEntities1();
         // GET: api/Lookup_List
         public IQueryable<Lookup_List> GetLookup_ListALL()
         {

@@ -12,12 +12,12 @@ namespace FiveGApi.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class BookingPayment
+    public partial class Payment_Delivery
     {
         public int Payment_ID { get; set; }
-        public Nullable<int> ID { get; set; }
-        public Nullable<int> Payment_mode { get; set; }
-        public string Ins_Type { get; set; }
+        public Nullable<int> Ins_ID { get; set; }
+        public Nullable<int> Unit_ID { get; set; }
+        public Nullable<int> Payment_Mode { get; set; }
         public string Instrument_Type { get; set; }
         public Nullable<decimal> Payment_amount { get; set; }
         public string instrument_number { get; set; }
@@ -25,8 +25,5 @@ namespace FiveGApi.Models
         public string instrument_bank_Branch { get; set; }
         public Nullable<System.DateTime> instrument_date { get; set; }
         public string instrument_remarks { get; set; }
-        public string Authorize_Status { get; set; }
-        public string Authorize_By { get; set; }
-        public Nullable<System.DateTime> Authorize_Date { get; set; }
     }
 }

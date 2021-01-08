@@ -15,13 +15,57 @@ namespace FiveGApi.Controllers
     {
 
 
-        private FiveG_DBEntities db = new FiveG_DBEntities();
-
+        private MIS_DBEntities1 db = new MIS_DBEntities1();
+        [Route("GetALLBookingConfirmed")]
+        [HttpGet]       
         // GET: api/BookingConfirm
         [ResponseType(typeof(IQueryable<BookingConfirm>))]
-        public IQueryable<BookingConfirm> GetBookingConfAll()
+        public IQueryable<BookingConfirm> GetALLBookingConfirmed()
         {
-            return db.BookingConfirms;
+            IQueryable<BookingConfirm> bookingConfirm;
+
+            try
+            {
+                bookingConfirm = db.BookingConfirms;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return bookingConfirm;
+           
+        }
+        [Route("GetALLBookingConfirmedByFormNumberOrFormID")]
+        [HttpGet]
+        // GET: api/BookingConfirm
+        [ResponseType(typeof(IQueryable<BookingConfirm>))]
+        public IQueryable<BookingConfirm> GetALLBookingConfirmedByFormNumberOrFormID(string refNumber,string formNumber)
+        {
+            IQueryable<BookingConfirm> bookingConfirm;
+
+            try
+            {
+                if(refNumber==null)
+                {
+                    bookingConfirm = db.BookingConfirms.Where(x=> x.Form_num == formNumber);
+
+                }else if(formNumber==null)
+                {
+                    bookingConfirm = db.BookingConfirms.Where(x => x.Ref_num == refNumber);
+
+                }
+                else
+                {
+                    bookingConfirm = db.BookingConfirms.Where(x => x.Ref_num == refNumber || x.Form_num == formNumber);
+
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return bookingConfirm;
+
         }
 
         // GET: api/BookingConfirm/5
@@ -48,28 +92,51 @@ namespace FiveGApi.Controllers
             }
 
             var existBookingConfirm = db.BookingConfirms.Where(x => x.ID == id).FirstOrDefault();
-            BookingPaymentDetails(id, BookingConfirm);
-
-
-            // db.Entry(BookingConfirm).State = EntityState.Modified;
-            existBookingConfirm.Updated_On = DateTime.Now.ToString();
-
-            try
+            if (existBookingConfirm != null)
             {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
+                existBookingConfirm.Ref_num = BookingConfirm.Ref_num;
+                existBookingConfirm.Form_num = BookingConfirm.Form_num;
+                existBookingConfirm.Authorize_Status = BookingConfirm.Authorize_Status;
+                existBookingConfirm.File_Status = BookingConfirm.File_Status;
+                existBookingConfirm.Replaced_Form = BookingConfirm.Replaced_Form;
+                existBookingConfirm.Applicant_name = BookingConfirm.Applicant_name;
+                existBookingConfirm.CNIC = BookingConfirm.CNIC;
+                existBookingConfirm.Form_Rec_Date = BookingConfirm.Form_Rec_Date;
+                existBookingConfirm.Contact_Num = BookingConfirm.Contact_Num;
+                existBookingConfirm.Property_ID = BookingConfirm.Property_ID;
+                existBookingConfirm.Member_Num = BookingConfirm.Member_Num;
+                existBookingConfirm.Book_Emp = BookingConfirm.Book_Emp;
+                existBookingConfirm.Book_Dealer = BookingConfirm.Book_Dealer;
+                existBookingConfirm.MS_amount = BookingConfirm.MS_amount;
+                existBookingConfirm.Remarks = BookingConfirm.Remarks;
+                existBookingConfirm.Confirmation_Date = BookingConfirm.Confirmation_Date;
+                existBookingConfirm.Updated_By = BookingConfirm.Updated_By;
+                existBookingConfirm.Updated_On = BookingConfirm.Updated_On;
+                // db.Entry(BookingConfirm).State = EntityState.Modified;
+                existBookingConfirm.Updated_On = DateTime.Now.ToString();
+
+                try
+                {
+                    db.SaveChanges();
+                    //BookingPaymentDetails(id, BookingConfirm);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!BookingConfExists((int)BookingConfirm.ID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return StatusCode(HttpStatusCode.OK);
+            }else
             {
-                if (!BookingConfExists((int)BookingConfirm.ID))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                var error = new { message = "Not Exist Entity against this" }; //<-- anonymous object
+                return this.Content(HttpStatusCode.NotFound, error);
             }
-            return StatusCode(HttpStatusCode.NoContent);
         }
 
         // POST: api/BookingConfirm
@@ -80,10 +147,44 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+            var property = db.PropertyDefs.Where(x => x.ID == BookingConfirm.Property_ID).FirstOrDefault();
+            BookingConfirm.Booking_Percent = property.Booking_percent;
+            BookingConfirm.Booking_amount = ((property.Price / 100) * property.Booking_percent);
+            BookingConfirm.Confirm_Percent = property.Confirm_percent;
+            BookingConfirm.Confirm_amount = ((property.Price / 100) * property.Confirm_percent);
+            BookingConfirm.Tax_Percent = property.Tax_percent;
+            BookingConfirm.Total_amount = property.Price;
+            BookingConfirm.Rebate_Percent = property.Rebate_percent;
+            int employeeID = Convert.ToInt32(BookingConfirm.Book_Emp);
+            var employeRebate=db.Rebate_Details.Where(x => x.Reg_ID == employeeID).Select(x => x.Rebate).FirstOrDefault();
+            BookingConfirm.Emp_Rebate = employeRebate;
+            int dealerID = Convert.ToInt32(BookingConfirm.Book_Dealer);
+            var dealerRebate = db.Rebate_Details.Where(x => x.Reg_ID == dealerID).Select(x => x.Rebate).FirstOrDefault();
+            BookingConfirm.Dealer_Rebate = dealerRebate;
+            BookingConfirm.Emp_B_RAmt = 0;
+            BookingConfirm.Emp_C_RAmt = 0;
+            BookingConfirm.Dealer_B_RAmt = 0;
+            BookingConfirm.Dealer_C_RAmt = 0;
+            BookingConfirm.Com_B_RAmt = 0;
+            BookingConfirm.Com_C_RAmt = 0;
+            BookingConfirm.Flex_1 = "true";
+            BookingConfirm.Flex_2 = "true";
+            BookingConfirm.Created_By = "1";
+            BookingConfirm.Payment_B_Status = "unPaid";
+            BookingConfirm.Payment_C_Status = "unPaid";
+            BookingConfirm.Payment_MSFee_Status = "unPaid";
+            BookingConfirm.Flex_1 = "1";
+            BookingConfirm.Flex_2 = "1";
+            BookingConfirm.Created_By = "1";
+            BookingConfirm.Created_ON = DateTime.Now;            
+            //BookingConfirm.Emp_B_RAmt = (((property.Price / 100) * employeRebate) / 2);
+            //BookingConfirm.Emp_C_RAmt = (((property.Price / 100) * employeRebate) / 2);
+            //BookingConfirm.Dealer_B_RAmt = (((property.Price / 100) * dealerRebate) / 2);
+            //BookingConfirm.Dealer_C_RAmt = (((property.Price / 100) * dealerRebate) / 2);
+            //BookingConfirm.Com_B_RAmt = (((property.Price / 100) * employeRebate) / 2);
+            //BookingConfirm.Com_C_RAmt = ((property.Price / 100) * property.Rebate_percent);
             db.BookingConfirms.Add(BookingConfirm);
             db.SaveChanges();
-
             return CreatedAtRoute("DefaultApi", new { id = BookingConfirm.ID }, BookingConfirm);
         }
 
@@ -102,7 +203,85 @@ namespace FiveGApi.Controllers
 
             return Ok(BookingConfirm);
         }
+        // DELETE: api/BookingConfirm/5
+        [Route("AuthorizedBookingConfCount")]
+        [ResponseType(typeof(BookingConfirm))]
+        [HttpGet]
+        public IHttpActionResult AuthorizedBookingConfCount(int Propertyid)
+        {
+            var BookingConfirm = db.BookingConfirms.Where(x=>x.Authorize_Status== "Authorized"&&x.Property_ID== Propertyid).Count();
+            return Ok(BookingConfirm);
+        }
+        [Route("BookingConfByPropertyID")]
+        [ResponseType(typeof(List<BookingConfirm>))]
+        [HttpGet]
+        public IHttpActionResult BookingConfByPropertyID(int Propertyid)
+        {
+            var BookingConfirm = db.BookingConfirms.Where(x => x.Property_ID == Propertyid).ToList();
+            return Ok(BookingConfirm);
+        }
+        [Route("UnAuthorizedBookingConfCount")]
+        [ResponseType(typeof(BookingConfirm))]
+        [HttpGet]
+        public IHttpActionResult UnAuthorizedBookingConfCount(int Propertyid)
+        {
+            var BookingConfirm = db.BookingConfirms.Where(x => x.Authorize_Status != "Authorized" && x.Property_ID == Propertyid).Count();
+            return Ok(BookingConfirm);
+        }
+        [Route("BookingConfTotalPaymentsCount")]
+        [ResponseType(typeof(BookingPayment))]
+        [HttpGet]
+        public IHttpActionResult BookingConfTotalPaymentsCount(int BookingID)
+        {
+            var BookingConfirm = db.BookingPayments.Where(x=> x.ID == BookingID).Count();
+            return Ok(BookingConfirm);
+        }
+        [Route("BookingPaymentsTotalAuthorizedPaymentsCount")]
+        [ResponseType(typeof(BookingPayment))]
+        [HttpGet]
+        public IHttpActionResult BookingPaymentsTotalAuthorizedPaymentsCount(int BookingID)
+        {
+            var BookingConfirm = db.BookingPayments.Where(x => x.Authorize_Status == "Authorized" && x.ID == BookingID).Count();
+            return Ok(BookingConfirm);
+        }
+        [Route("BookingPaymentsTotalUnAuthorizedPaymentsCount")]
+        [ResponseType(typeof(BookingPayment))]
+        [HttpGet]
+        public IHttpActionResult BookingPaymentsTotalUnAuthorizedPaymentsCount(int BookingID)
+        {
+            var BookingConfirm = db.BookingPayments.Where(x => x.Authorize_Status != "Authorized" && x.ID == BookingID).Count();
+            return Ok(BookingConfirm);
+        }
+        [Route("BookingTotalPayments")]
+        [ResponseType(typeof(BookingPayment))]
+        [HttpGet]
+        public IHttpActionResult BookingTotalPayments(int BookingID)
+        {            
+            var result = db.BookingPayments.Where(o => o.ID==BookingID)
+                   .Sum(g => g.Payment_amount);
 
+            return Ok(result);
+        }
+        [Route("BookingAuthorizedTotalPayments")]
+        [ResponseType(typeof(BookingPayment))]
+        [HttpGet]
+        public IHttpActionResult BookingAuthorizedTotalPayments(int BookingID)
+        {
+            var result = db.BookingPayments.Where(x => x.ID == BookingID && x.Authorize_Status == "Authorized")
+                   .Sum(g => g.Payment_amount);
+
+            return Ok(result);
+        }
+        [Route("BookingUnAuthorizedTotalPayments")]
+        [ResponseType(typeof(BookingPayment))]
+        [HttpGet]
+        public IHttpActionResult BookingUnAuthorizedTotalPayments(int BookingID)
+        {
+            var result = db.BookingPayments.Where(x => x.ID == BookingID && x.Authorize_Status != "Authorized")
+                   .Sum(g => g.Payment_amount);
+
+            return Ok(result);
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -111,41 +290,79 @@ namespace FiveGApi.Controllers
             }
             base.Dispose(disposing);
         }
-
+        [Route("AuthorizeBookingConfirm")]
+        [ResponseType(typeof(void))]
+        [HttpGet]
+        public IHttpActionResult AuthorizeBookingConfirm(int BookingID,string AuthorizedBy)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var existBooking_Confirm = db.BookingConfirms.Where(x => x.ID == BookingID).FirstOrDefault();
+            existBooking_Confirm.Authorize_By = AuthorizedBy;
+            existBooking_Confirm.Authorize_Status = "Authorized";
+            existBooking_Confirm.Authorize_Date = DateTime.Now;
+            if (existBooking_Confirm != null)
+            {
+                try
+                {
+                    db.SaveChanges();
+                    //BookingPaymentDetails(id, BookingConfirm);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!BookingConfExists((int)existBooking_Confirm.ID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return StatusCode(HttpStatusCode.OK);
+            }
+            else
+            {
+                var error = new { message = "Not Exist Entity against this" }; //<-- anonymous object
+                return this.Content(HttpStatusCode.NotFound, error);
+            }
+        }
         private bool BookingConfExists(int id)
         {
             return db.BookingConfirms.Count(e => e.ID == id) > 0;
         }
-        private IQueryable<BookingPayment> BookingPaymentDetails(int BookingID, BookingConfirm BookingConfirm)
-        {
+        //private IQueryable<BookingPayment> BookingPaymentDetails(int BookingID, BookingConfirm BookingConfirm)
+        //{
 
 
-            foreach (var item in BookingConfirm.BookingPayments)
-            {
-                if (item.ID > 0)
-                {
-                    var existBookingPaymentExisted = db.BookingPayments.Where(x => x.ID == item.ID).FirstOrDefault();
-                    existBookingPaymentExisted.Payment_mode = item.Payment_mode;
-                    existBookingPaymentExisted.Instrument_Type = item.Instrument_Type;
-                    existBookingPaymentExisted.Ins_Type = item.Ins_Type;
-                    existBookingPaymentExisted.Payment_amount = item.Payment_amount;
-                    existBookingPaymentExisted.instrument_number = item.instrument_number;
-                    existBookingPaymentExisted.instrument_bank = item.instrument_bank;
-                    existBookingPaymentExisted.instrument_bank_Branch = item.instrument_bank_Branch;
-                    existBookingPaymentExisted.instrument_date = item.instrument_date;
-                    existBookingPaymentExisted.instrument_remarks = item.instrument_remarks;
-                    db.SaveChanges();
-                }
-                else
-                {
-                    item.ID = BookingID;
-                    db.BookingPayments.Add(item);
-                    db.SaveChanges();
-                }
+        //    foreach (var item in BookingConfirm.BookingPayments)
+        //    {
+        //        if (item.ID > 0)
+        //        {
+        //            var existBookingPaymentExisted = db.BookingPayments.Where(x => x.ID == item.ID).FirstOrDefault();
+        //            existBookingPaymentExisted.Payment_mode = item.Payment_mode;
+        //            existBookingPaymentExisted.Instrument_Type = item.Instrument_Type;
+        //            existBookingPaymentExisted.Ins_Type = item.Ins_Type;
+        //            existBookingPaymentExisted.Payment_amount = item.Payment_amount;
+        //            existBookingPaymentExisted.instrument_number = item.instrument_number;
+        //            existBookingPaymentExisted.instrument_bank = item.instrument_bank;
+        //            existBookingPaymentExisted.instrument_bank_Branch = item.instrument_bank_Branch;
+        //            existBookingPaymentExisted.instrument_date = item.instrument_date;
+        //            existBookingPaymentExisted.instrument_remarks = item.instrument_remarks;
+        //            db.SaveChanges();
+        //        }
+        //        else
+        //        {
+        //            item.ID = BookingID;
+        //            db.BookingPayments.Add(item);
+        //            db.SaveChanges();
+        //        }
 
-            }
-            return db.BookingPayments.Where(x => x.ID == BookingID);
-        }
+        //    }
+        //    return db.BookingPayments.Where(x => x.ID == BookingID);
+        //}
     }
 }
 

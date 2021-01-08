@@ -23,6 +23,7 @@ namespace FiveGApi
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            log4net.Config.XmlConfigurator.Configure();
             //var json = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
             //json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.All;
 

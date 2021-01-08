@@ -15,7 +15,7 @@ namespace FiveGApi.Controllers
 {
     public class PaymentMilestonesController : ApiController
     {
-        private FiveG_DBEntities db = new FiveG_DBEntities();
+        private MIS_DBEntities1 db = new MIS_DBEntities1();
 
         // GET: api/PaymentMilestones
         public IHttpActionResult GetPaymentMilestones()

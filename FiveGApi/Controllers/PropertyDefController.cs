@@ -10,20 +10,24 @@ using System.Web.Http.Description;
 
 namespace FiveGApi.Controllers
 {
-    public class BookingPropertyDefController : ApiController
+    [RoutePrefix("api/PropertyDef")]
+
+    public class PropertyDefController : ApiController
     {
-        private FiveG_DBEntities db = new FiveG_DBEntities();
+        private MIS_DBEntities1 db = new MIS_DBEntities1();
 
         // GET: api/PropertyDef
-        // [ResponseType(typeof(IQueryable<PropertyDef>))]
-        public IQueryable<PropertyDef> GetPropertyDefALL()
+        [ResponseType(typeof(IQueryable<PropertyDef>))]
+        [Route("GetALLPropertyDef")]
+        [HttpGet]
+        public IQueryable<PropertyDef> GetALLPropertyDef()
         {
             return db.PropertyDefs;
         }
 
         // GET: api/PropertyDef/5
         [ResponseType(typeof(PropertyDef))]
-        public IHttpActionResult GetPropertyDef(int id)
+        public IHttpActionResult GetPropertyDefByID(int id)
         {
             PropertyDef PropertyDef = db.PropertyDefs.Find(id);
 
@@ -43,22 +47,28 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            var existPropertyDef = db.PropertyDefs.Where(x => x.ID == id).FirstOrDefault();
-            ////existPropertyDef.PropertyDefDetails
-            //if (existPropertyDef.PropertyDefDetails.Count > 0)
-            //{
-            //    foreach (var item in existPropertyDef.PropertyDefDetails.ToList())
-            //    {
-            //        existPropertyDef.PropertyDefDetails.Remove(item);
-            //    }
-            //}
-
-            //existPropertyDef.PropertyDefDetails = PropertyDef.PropertyDefDetails;
-
-
-
-            // db.Entry(PropertyDef).State = EntityState.Modified;
+                
+            var existPropertyDef = db.PropertyDefs.Where(x => x.ID == id).FirstOrDefault();          
+            existPropertyDef.Name       = PropertyDef.Name;
+            existPropertyDef.Society = PropertyDef.Society;
+            existPropertyDef.Category = PropertyDef.Category;
+            existPropertyDef.Plot_Size = PropertyDef.Plot_Size;
+            existPropertyDef.Dimensions = PropertyDef.Dimensions;
+            existPropertyDef.Price = PropertyDef.Price;
+            existPropertyDef.Block = PropertyDef.Block;
+            existPropertyDef.Type = PropertyDef.Type;
+            existPropertyDef.Status = PropertyDef.Status;
+            existPropertyDef.Booking_percent = PropertyDef.Booking_percent;
+            existPropertyDef.Confirm_percent = PropertyDef.Confirm_percent;
+            existPropertyDef.Rebate_percent = PropertyDef.Rebate_percent;
+            existPropertyDef.Tax_percent = PropertyDef.Tax_percent;
+            existPropertyDef.Total_Files = PropertyDef.Total_Files;
+            existPropertyDef.Booking_Start = PropertyDef.Booking_Start;
+            existPropertyDef.Booking_End = PropertyDef.Booking_End;
+            existPropertyDef.GL_Mapping_ID = PropertyDef.GL_Mapping_ID;
+            existPropertyDef.Flex_1 = "1";
+            existPropertyDef.Flex_2 ="1";           
+            existPropertyDef.Updated_By = PropertyDef.Updated_By;
             existPropertyDef.Updated_On = DateTime.Now.ToString();
             try
             {
@@ -75,8 +85,7 @@ namespace FiveGApi.Controllers
                     throw;
                 }
             }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            return StatusCode(HttpStatusCode.OK);
         }
 
         // POST: api/PropertyDef
@@ -87,10 +96,12 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+            PropertyDef.Flex_1 = "1";
+            PropertyDef.Flex_2 = "1";
+            PropertyDef.Created_By = "1";
+            PropertyDef.Created_ON = DateTime.Now;
             db.PropertyDefs.Add(PropertyDef);
             db.SaveChanges();
-
             return CreatedAtRoute("DefaultApi", new { id = PropertyDef.ID }, PropertyDef);
         }
 

@@ -13,10 +13,10 @@ namespace FiveGApi.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class FiveG_DBEntities : DbContext
+    public partial class MIS_DBEntities1 : DbContext
     {
-        public FiveG_DBEntities()
-            : base("name=FiveG_DBEntities")
+        public MIS_DBEntities1()
+            : base("name=MIS_DBEntities1")
         {
         }
     
@@ -27,9 +27,11 @@ namespace FiveGApi.Models
     
         public virtual DbSet<BookingConfirm> BookingConfirms { get; set; }
         public virtual DbSet<BookingPayment> BookingPayments { get; set; }
+        public virtual DbSet<Delivery_Sheet> Delivery_Sheet { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
         public virtual DbSet<Lookup_List> Lookup_List { get; set; }
         public virtual DbSet<Lookup_Values> Lookup_Values { get; set; }
+        public virtual DbSet<Payment_Delivery> Payment_Delivery { get; set; }
         public virtual DbSet<PaymentInstallment> PaymentInstallments { get; set; }
         public virtual DbSet<PaymentMilestoneDetail> PaymentMilestoneDetails { get; set; }
         public virtual DbSet<PaymentMilestone> PaymentMilestones { get; set; }
@@ -41,6 +43,10 @@ namespace FiveGApi.Models
         public virtual DbSet<Rebate_Details> Rebate_Details { get; set; }
         public virtual DbSet<Registration> Registrations { get; set; }
         public virtual DbSet<SaleInstallment> SaleInstallments { get; set; }
+        public virtual DbSet<Society_Slip> Society_Slip { get; set; }
         public virtual DbSet<TempTableForInstallment> TempTableForInstallments { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<COA_Combinations> COA_Combinations { get; set; }
+        public virtual DbSet<COA_Segments> COA_Segments { get; set; }
     }
 }

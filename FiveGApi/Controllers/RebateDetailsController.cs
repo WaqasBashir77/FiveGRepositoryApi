@@ -11,17 +11,18 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Data.Entity;
+using FiveGApi.DTOModels;
 
 namespace FiveGApi.Controllers
 {
     public class RebateDetailsController : ApiController
     {
-        private FiveG_DBEntities db = new FiveG_DBEntities();
+        private MIS_DBEntities1 db = new MIS_DBEntities1();
 
         // GET: api/Rebate_Details
 
         [ResponseType(typeof(IQueryable<Rebate_Details>))]
-        public IQueryable<Rebate_Details> AllRebate_Details(int RDID)
+        public IQueryable<Rebate_Details> GetAllRebate_Details(int RDID)
         {
             return db.Rebate_Details;
         }
@@ -103,6 +104,21 @@ namespace FiveGApi.Controllers
             db.SaveChanges();
 
             return Ok(Rebate_Detail);
+        }
+        // DELETE: api/Rebate_Details/5
+        [ResponseType(typeof(List<ResponseModel>))]
+        public IHttpActionResult SegmentTypeEnum()
+        {
+            List<ResponseModel> SegmentType = new List<ResponseModel>();
+            foreach (var item in Enum.GetValues(typeof(COA_Segments_Enums.SegmentType)))
+            {
+                ResponseModel responseModel = new ResponseModel();
+                responseModel.Code= (int)item;
+                responseModel.Data= item;
+                SegmentType.Add(responseModel);
+            }
+
+            return Ok(SegmentType);
         }
 
         protected override void Dispose(bool disposing)
