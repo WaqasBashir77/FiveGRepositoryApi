@@ -47,7 +47,7 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+                
             var existPropertyDef = db.PropertyDefs.Where(x => x.ID == id).FirstOrDefault();          
             existPropertyDef.Name       = PropertyDef.Name;
             existPropertyDef.Society = PropertyDef.Society;
