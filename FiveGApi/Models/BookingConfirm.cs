@@ -57,5 +57,7 @@ namespace FiveGApi.Models
         public Nullable<System.DateTime> Created_ON { get; set; }
         public string Updated_By { get; set; }
         public string Updated_On { get; set; }
+        public string Authorize_By { get; set; }
+        public Nullable<System.DateTime> Authorize_Date { get; set; }
     }
 }

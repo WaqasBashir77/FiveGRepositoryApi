@@ -40,9 +40,35 @@ namespace FiveGApi.Controllers
 
                 return Ok(Delivery_Sheet);
             }
+        // GET: api/Delivery_Sheet/5
+        [Route("GetListDeliverySheetByRef_numOrForm_num")]
+        [ResponseType(typeof(IEnumerable<Delivery_Sheet>))]
+        public IHttpActionResult GetListDeliverySheetByRef_numOrForm_num(string Ref_num,string Form_num)
+        {
+            IEnumerable<Delivery_Sheet> Delivery_Sheet;
+            if (Ref_num==null)
+            {
+                Delivery_Sheet = db.Delivery_Sheet.Where(x => x.Form_num == Form_num).ToList();
+            }
+            else if(Form_num==null)
+            {
+                Delivery_Sheet = db.Delivery_Sheet.Where(x => x.Ref_num == Ref_num).ToList();
 
-            // PUT: api/Delivery_Sheet/5
-            [ResponseType(typeof(void))]
+            }
+            else
+            {
+                Delivery_Sheet = db.Delivery_Sheet.Where(x => x.Ref_num == Ref_num && x.Form_num == Form_num).ToList();
+
+            }
+            if (Delivery_Sheet == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(Delivery_Sheet);
+        }
+        // PUT: api/Delivery_Sheet/5
+        [ResponseType(typeof(void))]
             public IHttpActionResult PutDelivery_Sheet(int id, Delivery_Sheet Delivery_Sheet)
             {
                 if (!ModelState.IsValid)

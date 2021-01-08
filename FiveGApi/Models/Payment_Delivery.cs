@@ -16,7 +16,6 @@ namespace FiveGApi.Models
     {
         public int Payment_ID { get; set; }
         public Nullable<int> Ins_ID { get; set; }
-        public Nullable<int> Booking_ID { get; set; }
         public Nullable<int> Unit_ID { get; set; }
         public Nullable<int> Payment_Mode { get; set; }
         public string Instrument_Type { get; set; }
@@ -24,7 +23,7 @@ namespace FiveGApi.Models
         public string instrument_number { get; set; }
         public string instrument_bank { get; set; }
         public string instrument_bank_Branch { get; set; }
-        public byte[] instrument_date { get; set; }
+        public Nullable<System.DateTime> instrument_date { get; set; }
         public string instrument_remarks { get; set; }
     }
 }

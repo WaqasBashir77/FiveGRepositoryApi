@@ -102,7 +102,6 @@ namespace FiveGApi.Controllers
             PropertyDef.Created_ON = DateTime.Now;
             db.PropertyDefs.Add(PropertyDef);
             db.SaveChanges();
-
             return CreatedAtRoute("DefaultApi", new { id = PropertyDef.ID }, PropertyDef);
         }
 

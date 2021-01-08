@@ -104,9 +104,46 @@ namespace FiveGApi.Controllers
 
             return Ok(Booking_Payments);
         }
-
-        // PUT: api/Booking_Payments/5
-        [Route("PutBooking_Payments")]
+        [Route("AuthorizeBooking_Payments")]
+        [ResponseType(typeof(void))]
+        public IHttpActionResult AuthorizeBooking_Payments(int PaymentID, BookingPayment Booking_Payments)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var existBooking_Payments = db.BookingPayments.Where(x => x.Payment_ID == PaymentID).FirstOrDefault();
+            existBooking_Payments.Authorize_By = Booking_Payments.Authorize_By;
+            existBooking_Payments.Authorize_Status = Booking_Payments.Authorize_Status;
+            existBooking_Payments.Authorize_Date = Booking_Payments.Authorize_Date;
+            if (existBooking_Payments != null)
+            {
+                try
+                {
+                    db.SaveChanges();
+                    //BookingPaymentDetails(id, BookingConfirm);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!BookingConfExists((int)existBooking_Payments.ID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return StatusCode(HttpStatusCode.OK);
+            }
+            else
+            {
+                var error = new { message = "Not Exist Entity against this" }; //<-- anonymous object
+                return this.Content(HttpStatusCode.NotFound, error);
+            }
+        }
+            // PUT: api/Booking_Payments/5
+            [Route("PutBooking_Payments")]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutBooking_Payments(int id, BookingPayment Booking_Payments)
         {
@@ -114,9 +151,7 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-
             var existBooking_Payments = db.BookingPayments.Where(x => x.Payment_ID == id).FirstOrDefault();
-           
             if (existBooking_Payments != null)
             {
                 existBooking_Payments.Ins_Type = Booking_Payments.Ins_Type;
@@ -128,6 +163,9 @@ namespace FiveGApi.Controllers
                 existBooking_Payments.instrument_bank_Branch = Booking_Payments.instrument_bank_Branch;
                 existBooking_Payments.instrument_date = Booking_Payments.instrument_date;
                 existBooking_Payments.instrument_remarks = Booking_Payments.instrument_remarks;
+                existBooking_Payments.Authorize_Status = Booking_Payments.Authorize_Status;
+                existBooking_Payments.Authorize_By = Booking_Payments.Authorize_By;
+                existBooking_Payments.Authorize_Date = Booking_Payments.Authorize_Date;
                 try
                 {
                     db.SaveChanges();
@@ -264,6 +302,7 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest(ModelState);
             }
+            Booking_Payments.Authorize_Status = "No";
             db.BookingPayments.Add(Booking_Payments);
             db.SaveChanges();
             var existBookingConfirm = db.BookingConfirms.Where(x => x.ID == Booking_Payments.ID).FirstOrDefault();
@@ -378,10 +417,8 @@ namespace FiveGApi.Controllers
             {
                 return NotFound();
             }
-
             db.BookingPayments.Remove(Booking_Payments);
             db.SaveChanges();
-
             return Ok(Booking_Payments);
         }
 

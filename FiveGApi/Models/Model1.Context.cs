@@ -45,5 +45,8 @@ namespace FiveGApi.Models
         public virtual DbSet<SaleInstallment> SaleInstallments { get; set; }
         public virtual DbSet<Society_Slip> Society_Slip { get; set; }
         public virtual DbSet<TempTableForInstallment> TempTableForInstallments { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<COA_Combinations> COA_Combinations { get; set; }
+        public virtual DbSet<COA_Segments> COA_Segments { get; set; }
     }
 }

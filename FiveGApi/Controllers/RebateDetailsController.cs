@@ -11,6 +11,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Data.Entity;
+using FiveGApi.DTOModels;
 
 namespace FiveGApi.Controllers
 {
@@ -103,6 +104,21 @@ namespace FiveGApi.Controllers
             db.SaveChanges();
 
             return Ok(Rebate_Detail);
+        }
+        // DELETE: api/Rebate_Details/5
+        [ResponseType(typeof(List<ResponseModel>))]
+        public IHttpActionResult SegmentTypeEnum()
+        {
+            List<ResponseModel> SegmentType = new List<ResponseModel>();
+            foreach (var item in Enum.GetValues(typeof(COA_Segments_Enums.SegmentType)))
+            {
+                ResponseModel responseModel = new ResponseModel();
+                responseModel.Code= (int)item;
+                responseModel.Data= item;
+                SegmentType.Add(responseModel);
+            }
+
+            return Ok(SegmentType);
         }
 
         protected override void Dispose(bool disposing)

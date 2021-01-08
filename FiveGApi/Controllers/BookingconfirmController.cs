@@ -203,7 +203,85 @@ namespace FiveGApi.Controllers
 
             return Ok(BookingConfirm);
         }
+        // DELETE: api/BookingConfirm/5
+        [Route("AuthorizedBookingConfCount")]
+        [ResponseType(typeof(BookingConfirm))]
+        [HttpGet]
+        public IHttpActionResult AuthorizedBookingConfCount(int Propertyid)
+        {
+            var BookingConfirm = db.BookingConfirms.Where(x=>x.Authorize_Status== "Authorized"&&x.Property_ID== Propertyid).Count();
+            return Ok(BookingConfirm);
+        }
+        [Route("BookingConfByPropertyID")]
+        [ResponseType(typeof(List<BookingConfirm>))]
+        [HttpGet]
+        public IHttpActionResult BookingConfByPropertyID(int Propertyid)
+        {
+            var BookingConfirm = db.BookingConfirms.Where(x => x.Property_ID == Propertyid).ToList();
+            return Ok(BookingConfirm);
+        }
+        [Route("UnAuthorizedBookingConfCount")]
+        [ResponseType(typeof(BookingConfirm))]
+        [HttpGet]
+        public IHttpActionResult UnAuthorizedBookingConfCount(int Propertyid)
+        {
+            var BookingConfirm = db.BookingConfirms.Where(x => x.Authorize_Status != "Authorized" && x.Property_ID == Propertyid).Count();
+            return Ok(BookingConfirm);
+        }
+        [Route("BookingConfTotalPaymentsCount")]
+        [ResponseType(typeof(BookingPayment))]
+        [HttpGet]
+        public IHttpActionResult BookingConfTotalPaymentsCount(int BookingID)
+        {
+            var BookingConfirm = db.BookingPayments.Where(x=> x.ID == BookingID).Count();
+            return Ok(BookingConfirm);
+        }
+        [Route("BookingPaymentsTotalAuthorizedPaymentsCount")]
+        [ResponseType(typeof(BookingPayment))]
+        [HttpGet]
+        public IHttpActionResult BookingPaymentsTotalAuthorizedPaymentsCount(int BookingID)
+        {
+            var BookingConfirm = db.BookingPayments.Where(x => x.Authorize_Status == "Authorized" && x.ID == BookingID).Count();
+            return Ok(BookingConfirm);
+        }
+        [Route("BookingPaymentsTotalUnAuthorizedPaymentsCount")]
+        [ResponseType(typeof(BookingPayment))]
+        [HttpGet]
+        public IHttpActionResult BookingPaymentsTotalUnAuthorizedPaymentsCount(int BookingID)
+        {
+            var BookingConfirm = db.BookingPayments.Where(x => x.Authorize_Status != "Authorized" && x.ID == BookingID).Count();
+            return Ok(BookingConfirm);
+        }
+        [Route("BookingTotalPayments")]
+        [ResponseType(typeof(BookingPayment))]
+        [HttpGet]
+        public IHttpActionResult BookingTotalPayments(int BookingID)
+        {            
+            var result = db.BookingPayments.Where(o => o.ID==BookingID)
+                   .Sum(g => g.Payment_amount);
 
+            return Ok(result);
+        }
+        [Route("BookingAuthorizedTotalPayments")]
+        [ResponseType(typeof(BookingPayment))]
+        [HttpGet]
+        public IHttpActionResult BookingAuthorizedTotalPayments(int BookingID)
+        {
+            var result = db.BookingPayments.Where(x => x.ID == BookingID && x.Authorize_Status == "Authorized")
+                   .Sum(g => g.Payment_amount);
+
+            return Ok(result);
+        }
+        [Route("BookingUnAuthorizedTotalPayments")]
+        [ResponseType(typeof(BookingPayment))]
+        [HttpGet]
+        public IHttpActionResult BookingUnAuthorizedTotalPayments(int BookingID)
+        {
+            var result = db.BookingPayments.Where(x => x.ID == BookingID && x.Authorize_Status != "Authorized")
+                   .Sum(g => g.Payment_amount);
+
+            return Ok(result);
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -212,7 +290,45 @@ namespace FiveGApi.Controllers
             }
             base.Dispose(disposing);
         }
-
+        [Route("AuthorizeBookingConfirm")]
+        [ResponseType(typeof(void))]
+        [HttpGet]
+        public IHttpActionResult AuthorizeBookingConfirm(int BookingID,string AuthorizedBy)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var existBooking_Confirm = db.BookingConfirms.Where(x => x.ID == BookingID).FirstOrDefault();
+            existBooking_Confirm.Authorize_By = AuthorizedBy;
+            existBooking_Confirm.Authorize_Status = "Authorized";
+            existBooking_Confirm.Authorize_Date = DateTime.Now;
+            if (existBooking_Confirm != null)
+            {
+                try
+                {
+                    db.SaveChanges();
+                    //BookingPaymentDetails(id, BookingConfirm);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!BookingConfExists((int)existBooking_Confirm.ID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return StatusCode(HttpStatusCode.OK);
+            }
+            else
+            {
+                var error = new { message = "Not Exist Entity against this" }; //<-- anonymous object
+                return this.Content(HttpStatusCode.NotFound, error);
+            }
+        }
         private bool BookingConfExists(int id)
         {
             return db.BookingConfirms.Count(e => e.ID == id) > 0;

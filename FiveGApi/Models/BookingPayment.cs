@@ -25,5 +25,8 @@ namespace FiveGApi.Models
         public string instrument_bank_Branch { get; set; }
         public Nullable<System.DateTime> instrument_date { get; set; }
         public string instrument_remarks { get; set; }
+        public string Authorize_Status { get; set; }
+        public string Authorize_By { get; set; }
+        public Nullable<System.DateTime> Authorize_Date { get; set; }
     }
 }

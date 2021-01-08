@@ -13,11 +13,7 @@ namespace FiveGApi.Controllers
          [RoutePrefix("api/PaymentDelivery")]
         public class PaymentDeliveryController : ApiController
         {
-
-
-
             private MIS_DBEntities1 db = new MIS_DBEntities1();
-
             // GET: api/Payment_Delivery
             [ResponseType(typeof(IQueryable<Payment_Delivery>))]
             [Route("GetALLPayment_Delivery")]
@@ -49,10 +45,8 @@ namespace FiveGApi.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-
                 var existPayment_Delivery = db.Payment_Delivery.Where(x => x.Payment_ID == id).FirstOrDefault();
-                existPayment_Delivery.Ins_ID = Payment_Delivery.Ins_ID;
-                existPayment_Delivery.Booking_ID = Payment_Delivery.Booking_ID;
+                existPayment_Delivery.Ins_ID = Payment_Delivery.Ins_ID;               
                 existPayment_Delivery.Unit_ID = Payment_Delivery.Unit_ID;
                 existPayment_Delivery.Payment_amount = Payment_Delivery.Payment_amount;
                 existPayment_Delivery.Instrument_Type = Payment_Delivery.Instrument_Type;
@@ -60,8 +54,7 @@ namespace FiveGApi.Controllers
                 existPayment_Delivery.instrument_bank = Payment_Delivery.instrument_bank;
                 existPayment_Delivery.instrument_bank_Branch = Payment_Delivery.instrument_bank_Branch;
                 existPayment_Delivery.instrument_date = Payment_Delivery.instrument_date;
-                existPayment_Delivery.instrument_remarks = Payment_Delivery.instrument_remarks;
-              
+                existPayment_Delivery.instrument_remarks = Payment_Delivery.instrument_remarks;              
                 try
                 {
                     db.SaveChanges();
@@ -87,11 +80,9 @@ namespace FiveGApi.Controllers
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
-                }
-               
+                }               
                 db.Payment_Delivery.Add(Payment_Delivery);
                 db.SaveChanges();
-
                 return CreatedAtRoute("DefaultApi", new { id = Payment_Delivery.Payment_ID }, Payment_Delivery);
             }
 

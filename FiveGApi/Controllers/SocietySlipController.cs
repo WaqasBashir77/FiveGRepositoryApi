@@ -60,7 +60,8 @@ namespace FiveGApi.Controllers
                 existSociety_Slip.Deliver_Contact = Society_Slip.Deliver_Contact;
                 existSociety_Slip.MS_number = Society_Slip.MS_number;
                 existSociety_Slip.Receipt_Amount = Society_Slip.Receipt_Amount;
-                existSociety_Slip.Remarks = Society_Slip.Remarks;
+                existSociety_Slip.Letter_Status = Society_Slip.Letter_Status;
+            existSociety_Slip.Remarks = Society_Slip.Remarks;
                 existSociety_Slip.Flex_1 = Society_Slip.Flex_1;
                 existSociety_Slip.Flex_2 = Society_Slip.Flex_2;                
                 existSociety_Slip.Updated_ON = DateTime.Now;
@@ -118,8 +119,33 @@ namespace FiveGApi.Controllers
 
                 return Ok(Society_Slip);
             }
+        [Route("GetListSocietySlipByRef_numOrForm_num")]
+        [ResponseType(typeof(IEnumerable<Society_Slip>))]
+        public IHttpActionResult GetListSocietySlipByRef_numOrForm_num(string Ref_num, string Form_num)
+        {
+            IEnumerable<Society_Slip> Society_Slip;
+            if (Ref_num == null)
+            {
+                Society_Slip = db.Society_Slip.Where(x => x.Form_num == Form_num).ToList();
+            }
+            else if (Form_num == null)
+            {
+                Society_Slip = db.Society_Slip.Where(x => x.Ref_num == Ref_num).ToList();
 
-            protected override void Dispose(bool disposing)
+            }
+            else
+            {
+                Society_Slip = db.Society_Slip.Where(x => x.Ref_num == Ref_num && x.Form_num == Form_num).ToList();
+
+            }
+            if (Society_Slip == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(Society_Slip);
+        }
+        protected override void Dispose(bool disposing)
             {
                 if (disposing)
                 {
