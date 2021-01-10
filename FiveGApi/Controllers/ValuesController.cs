@@ -6,21 +6,21 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using System.Web.Http.Description;
 
 namespace FiveGApi.Controllers
 {
+    //[Authorize]
     [RoutePrefix("api/Values")]
     public class ValuesController : ApiController
     {
-        private MIS_DBEntities1 db = new MIS_DBEntities1();
+        private FiveG_DBEntities db = new FiveG_DBEntities();
 
         [HttpGet]
         public IHttpActionResult GetPropertySaleLsit()
         {
 
-            List<PropertySale> propertySale = db.PropertySales.ToList();
-
+            List <PropertySale> propertySale = db.PropertySales.ToList();
+          
             if (propertySale == null)
             {
                 return NotFound();
@@ -30,12 +30,14 @@ namespace FiveGApi.Controllers
 
         // GET api/values
         [HttpGet]
-        public IHttpActionResult GetPaymentMilestoneByProjectId(int id)
+        public IHttpActionResult GetPaymentMilestoneByProjectId(string id)
         {
 
-            PaymentMilestone paymentMilestone = db.PaymentMilestones.Where(x => x.projectId == id).FirstOrDefault();
-            List<TempTableForInstallment> tempTableFors = db.TempTableForInstallments.Where(x => x.ProjectId == id).ToList();
+            PaymentMilestone paymentMilestone = db.PaymentMilestones.Where(x => x.PaymentScheduleCode == id).FirstOrDefault();
+            List<TempTableForInstallment> tempTableFors = db.TempTableForInstallments.Where(x => x.parentId == id).ToList();
             List<TempTableForInstallmentDTO> tempTableForsDTO = new List<TempTableForInstallmentDTO>();
+            int i = 0;
+            DateTime dateTime = DateTime.Now;
             foreach (var item in tempTableFors)
             {
                 TempTableForInstallmentDTO temp = new TempTableForInstallmentDTO();
@@ -43,8 +45,40 @@ namespace FiveGApi.Controllers
                 temp.Installment = item.Installment;
                 temp.InstallmentType = item.InstallmentType;
                 temp.Percentage = item.Percentage;
-                temp.ProjectId = item.ProjectId;
+               
                 temp.paymentDetailDTOs = new PaymentDetailDTO();
+                if (i != 0 )
+                {
+                    if (item.Frequency == "Monthly")
+                    {
+                        dateTime = dateTime.AddMonths(1);
+                    }
+                    else if (item.Frequency == "Quarterly")
+                    {
+                        dateTime = dateTime.AddMonths(4);
+                    }
+                    else if (item.Frequency == "bianually")
+                    {
+                        dateTime = dateTime.AddMonths(6);
+                    }
+                    if (item.Frequency == "One Time")
+                    {
+                        dateTime = dateTime.AddMonths(1);
+                    }
+                    
+                    string chngeformate = dateTime.ToString("dd/MM/yyyy");
+                    temp.dueDate = chngeformate;// dateTime.Date;
+                    
+                }
+                else
+                {
+                    DateTime date = new DateTime();
+                    date = DateTime.Now;
+                    string chngeformate = date.ToString("dd/MM/yyyy");
+                    temp.dueDate = chngeformate;
+                }
+                
+                i++;
                 tempTableForsDTO.Add(temp);
             }
             if (paymentMilestone == null)
@@ -82,7 +116,7 @@ namespace FiveGApi.Controllers
                     OriginalPropertySale.Mobile_2 = propertySale.mobile_2.ToString();
                     OriginalPropertySale.Member_Reg_No = propertySale.memberRegNo.ToString();
                     OriginalPropertySale.Dealer_Comm = propertySale.dealerCommission;
-                    OriginalPropertySale.Dealer_Name = propertySale.dealerName;
+                    OriginalPropertySale.Dealer_ID = propertySale.dealerId;
                     OriginalPropertySale.Address = propertySale.address;
                     OriginalPropertySale.Email = propertySale.email;
                     OriginalPropertySale.Relationship_With_Nominee = propertySale.relationWithNomine;
@@ -93,6 +127,7 @@ namespace FiveGApi.Controllers
                     OriginalPropertySale.Nominee_G_Number = propertySale.nomineeGNumber;
                     OriginalPropertySale.CNIC = propertySale.cnic;
                     OriginalPropertySale.Employee = propertySale.employeeId;
+                    OriginalPropertySale.PaymentCode = propertySale.PaymentCode;
                     OriginalPropertySale.Employee_Com = propertySale.employeeCommission;
                     if (propertySale.Purchaser_Picture != "")
                     {
@@ -114,7 +149,7 @@ namespace FiveGApi.Controllers
                             saleInstallment.ins_milestone = item.Installment;
                             saleInstallment.ins_milestone_percentage = item.Percentage;
                             saleInstallment.ins_latesurcharge_amount = item.latesurchargeAmount;
-                            saleInstallment.ins_due_date = item.dueDate;
+                            saleInstallment.ins_due_date = item.dueDate.ToString();
                             saleInstallment.ins_payment_status = item.paymentStatus;
                             saleInstallment.ins_balance = item.balance;
                             saleInstallment.Booking_ID = OriginalPropertySale.Booking_ID;
@@ -142,7 +177,7 @@ namespace FiveGApi.Controllers
                                 paymentInstallment.Booking_ID = OriginalPropertySale.Booking_ID;
                                 paymentInstallment.instrument_bank = item.paymentDetailDTOs.InstrumentBank;
                                 paymentInstallment.instrument_bank_Branch = item.paymentDetailDTOs.InsturmentBankBranch;
-                                paymentInstallment.instrument_date = Convert.ToDateTime(item.paymentDetailDTOs.InsturmentDate);
+                                paymentInstallment.instrument_date = Convert.ToDateTime( item.paymentDetailDTOs.InsturmentDate);
                                 paymentInstallment.instrument_remarks = item.paymentDetailDTOs.paymentDescription;
                                 paymentInstallment.instrument_number = item.paymentDetailDTOs.InstrumentNumber;
 
@@ -163,20 +198,20 @@ namespace FiveGApi.Controllers
             return Ok(response);
         }
 
-
+      
         [HttpGet]
         [Route("getdetail")]
         public IHttpActionResult getdetail()
         {
-
+            
             List<Lookup_Values> lookup_Values = new List<Lookup_Values>();
-
-            var re = Request;
-            //HttpRequestMessage re = new HttpRequestMessage();
-            var headers = re.Headers;
-            int tempId = Convert.ToInt32(headers.GetValues("Id").First());
-            //Order by Value_Orderno ASC
-            var masterobj = db.PropertySales.Where(x => x.Booking_ID == tempId).FirstOrDefault();
+          
+                var re = Request;
+                //HttpRequestMessage re = new HttpRequestMessage();
+                var headers = re.Headers;
+               int tempId = Convert.ToInt32( headers.GetValues("Id").First());
+                //Order by Value_Orderno ASC
+                var masterobj = db.PropertySales.Where(x => x.Booking_ID == tempId).FirstOrDefault();
 
 
             return Ok(masterobj);
@@ -266,7 +301,6 @@ namespace FiveGApi.Controllers
                     MasterObj.CNIC = UpdatedObj.CNIC;
                     MasterObj.Dealer_Comm = UpdatedObj.Dealer_Comm;
                     MasterObj.Dealer_ID = UpdatedObj.Dealer_ID;
-                    MasterObj.Dealer_Name = UpdatedObj.Dealer_Name;
                     MasterObj.Discount_Amount = UpdatedObj.Discount_Amount;
                     MasterObj.Email = UpdatedObj.Email;
                     MasterObj.Employee = UpdatedObj.Employee;
@@ -285,24 +319,46 @@ namespace FiveGApi.Controllers
 
                     foreach (var saleitem in UpdatedObj.SaleInstallments.ToList())
                     {
-                        var saleobj = db.SaleInstallments.Where(x => x.Booking_ID == saleitem.Booking_ID && x.Ins_ID == saleitem.Ins_ID && x.Project_ID == saleitem.Project_ID).FirstOrDefault();
+                        SaleInstallment saleInstallment = new SaleInstallment();
+                        if (saleitem.Booking_ID > 0)
+                        {
+                            saleInstallment = db.SaleInstallments.Where(x => x.Booking_ID == saleitem.Booking_ID && x.Ins_ID == saleitem.Ins_ID && x.Project_ID == saleitem.Project_ID).FirstOrDefault();
 
-                        saleobj.ins_due_date = saleitem.ins_due_date;
-                        saleobj.ins_payment_status = saleitem.ins_payment_status;
-                        saleobj.ins_latesurcharge_amount = saleitem.ins_latesurcharge_amount;
-                        saleobj.ins_balance = saleitem.ins_balance;
+                            saleInstallment.ins_due_date = saleitem.ins_due_date;
+                            saleInstallment.ins_payment_status = saleitem.ins_payment_status;
+                            saleInstallment.ins_latesurcharge_amount = saleitem.ins_latesurcharge_amount;
+                            saleInstallment.ins_balance = saleitem.ins_balance;
+                        }
+                        else
+                        {
+                            
+                            saleInstallment.Booking_ID = UpdatedObj.Booking_ID;
+                            saleInstallment.Unit_ID = UpdatedObj.Unit_ID;
+                            saleInstallment.Project_ID = UpdatedObj.Project_ID;
+                            saleInstallment.ins_total_amount = saleitem.ins_total_amount;
+                            saleInstallment.ins_remaining = saleitem.ins_remaining;
+                            saleInstallment.ins_milestone_percentage = saleitem.ins_milestone_percentage;
+                            saleInstallment.ins_latesurcharge_amount = saleitem.ins_latesurcharge_amount;
+                            saleInstallment.ins_due_date = saleitem.ins_due_date;
+                            saleInstallment.ins_balance = saleitem.ins_balance;
+                            saleInstallment.ins_payment_status = saleitem.ins_payment_status;
+
+                            db.SaleInstallments.Add(saleInstallment);
+
+                        }
+                        
 
                         foreach (var item in saleitem.PaymentInstallments.ToList())
                         {
                             if (item.Payment_ID == 0)
                             {
                                 PaymentInstallment paymentInstallment = new PaymentInstallment();
-                                paymentInstallment.Project_ID = saleobj.Project_ID;
-                                paymentInstallment.Unit_ID = saleobj.Unit_ID;
+                                paymentInstallment.Project_ID = UpdatedObj.Project_ID;
+                                paymentInstallment.Unit_ID = UpdatedObj.Unit_ID;
                                 paymentInstallment.Payment_amount = item.Payment_amount;
                                 paymentInstallment.Instrument_Type = item.Instrument_Type;
-                                paymentInstallment.Ins_ID = saleobj.Ins_ID;
-                                paymentInstallment.Booking_ID = saleobj.Booking_ID;
+                                paymentInstallment.Ins_ID = saleInstallment.Ins_ID;
+                                paymentInstallment.Booking_ID = UpdatedObj.Booking_ID;
                                 paymentInstallment.instrument_bank = item.instrument_bank;
                                 paymentInstallment.instrument_bank_Branch = item.instrument_bank_Branch;
                                 paymentInstallment.instrument_date = Convert.ToDateTime(item.instrument_date);
@@ -311,7 +367,7 @@ namespace FiveGApi.Controllers
 
                                 db.PaymentInstallments.Add(paymentInstallment);
                             }
-
+                            
                         }
                     }
                     db.SaveChanges();
@@ -321,7 +377,7 @@ namespace FiveGApi.Controllers
             {
                 Console.WriteLine(ex.Message);
             }
-
+            
             return Ok();
 
         }
@@ -336,22 +392,28 @@ namespace FiveGApi.Controllers
             return Ok(paymentInstallmentList);
 
         }
+
+
         [HttpGet]
-        [Route("GetallSocieties")]
-        public IHttpActionResult GetallSocieties()
+        [Route("getemployees")]
+        public IHttpActionResult getEmployees()
         {
-            List<Lookup_Values> lookup_Values = new List<Lookup_Values>();
-            try
-            {
-                //Get All Societies on the basic of refID==3
-                lookup_Values = db.Lookup_Values.Where(x => x.Ref_ID == 3 && x.Value_Status == true).OrderBy(x => x.Value_orderNo).ToList();
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-            return Ok(lookup_Values);
+
+            var employeesList = db.Registrations.Where(x => x.Type == "Staff").ToList();
+
+            return Ok(employeesList);
+
+        }
+
+        [HttpGet]
+        [Route("getdealers")]
+        public IHttpActionResult getDealers()
+        {
+
+            var dealerList = db.Registrations.Where(x => x.Type == "Dealer").ToList();
+
+            return Ok(dealerList);
+
         }
     }
 }
-

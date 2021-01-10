@@ -12,9 +12,11 @@ using FiveGApi.Models;
 
 namespace FiveGApi.Controllers
 {
+
+    //[Authorize]
     public class ProspectsController : ApiController
     {
-        private MIS_DBEntities1 db = new MIS_DBEntities1();
+        private FiveG_DBEntities db = new FiveG_DBEntities();
 
         // GET: api/Prospects
         public IQueryable<Prospect> GetProspects()

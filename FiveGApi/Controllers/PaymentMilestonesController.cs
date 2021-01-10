@@ -13,9 +13,10 @@ using FiveGApi.Models;
 
 namespace FiveGApi.Controllers
 {
+    //[Authorize]
     public class PaymentMilestonesController : ApiController
     {
-        private MIS_DBEntities1 db = new MIS_DBEntities1();
+        private FiveG_DBEntities db = new FiveG_DBEntities();
 
         // GET: api/PaymentMilestones
         public IHttpActionResult GetPaymentMilestones()
@@ -23,7 +24,7 @@ namespace FiveGApi.Controllers
             List<PaymentMilestone> paymentMilestonesList = new List<PaymentMilestone>();
             try
             {
-                paymentMilestonesList = db.PaymentMilestones.ToList();
+                paymentMilestonesList =  db.PaymentMilestones.ToList();
             }
             catch (Exception ex)
             {
@@ -64,21 +65,19 @@ namespace FiveGApi.Controllers
             }
 
             var milestoneMaster = db.PaymentMilestones.Where(x => x.Id == id).FirstOrDefault();
-            milestoneMaster.projectId = paymentMilestone.projectId;
-            milestoneMaster.projectName = paymentMilestone.projectName;
             milestoneMaster.Tax = paymentMilestone.Tax;
             milestoneMaster.GracePeriodDays = paymentMilestone.GracePeriodDays;
             milestoneMaster.description = paymentMilestone.description;
             milestoneMaster.LateFeePercent = paymentMilestone.LateFeePercent;
 
-            var tempmilestone = db.TempTableForInstallments.Where(x => x.parentId == id).ToList();
+            var tempmilestone = db.TempTableForInstallments.Where(x => x.parentId == paymentMilestone.PaymentScheduleCode).ToList();
             if (tempmilestone != null || tempmilestone.Count > 0)
             {
                 foreach (var item in tempmilestone)
                 {
                     db.TempTableForInstallments.Remove(item);
                 }
-
+              
             }
             var child = db.PaymentMilestoneDetails.Where(x => x.parentId == id).ToList();
             if (child != null || child.Count > 0)
@@ -99,8 +98,8 @@ namespace FiveGApi.Controllers
                     {
                         TempTableForInstallment tempTableFor = new TempTableForInstallment();
                         tempTableFor.InstallmentType = item.Milestones;
-                        tempTableFor.ProjectId = paymentMilestone.projectId ?? default(int);
-                        tempTableFor.parentId = paymentMilestone.Id;
+                        tempTableFor.Frequency = item.Frequency;
+                        tempTableFor.parentId = paymentMilestone.PaymentScheduleCode;
                         if (item.Milestones == "Installment")
                         {
                             tempTableFor.Installment = "Installment " + i.ToString();
@@ -179,8 +178,8 @@ namespace FiveGApi.Controllers
                         {
                             TempTableForInstallment tempTableFor = new TempTableForInstallment();
                             tempTableFor.InstallmentType = item.Milestones;
-                            tempTableFor.ProjectId = paymentMilestone.projectId ?? default(int);
-                            tempTableFor.parentId = paymentMilestone.Id;
+                            tempTableFor.Frequency = item.Frequency;
+                            tempTableFor.parentId = paymentMilestone.PaymentScheduleCode;
                             if (item.Milestones == "Installment")
                             {
                                 tempTableFor.Installment = "Installment " + i.ToString();
@@ -190,18 +189,18 @@ namespace FiveGApi.Controllers
                                 tempTableFor.Installment = item.Milestones;
                             }
                             tempTableForInstallments.Add(tempTableFor);
-                            tempTableFor.Percentage = Convert.ToInt32(item.Percentage);
+                            tempTableFor.Percentage = Convert.ToInt32( item.Percentage);
                         }
                     }
 
                     db.TempTableForInstallments.AddRange(tempTableForInstallments);
                 }
 
-                var getProperty = db.Projects.Where(x => x.Id == paymentMilestone.projectId).FirstOrDefault();
-                if (getProperty != null)
-                {
-                    getProperty.PaymentPlanStatus = true;
-                }
+                //var getProperty = db.Projects.Where(x => x.Id == paymentMilestone.projectId).FirstOrDefault();
+                //if (getProperty != null)
+                //{
+                    //getProperty.PaymentPlanStatus = true;
+                //}
                 db.SaveChanges();
                 response.Code = 1;
             }
@@ -243,6 +242,6 @@ namespace FiveGApi.Controllers
             return db.PaymentMilestones.Count(e => e.Id == id) > 0;
         }
 
-
+       
     }
 }
