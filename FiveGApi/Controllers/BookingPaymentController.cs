@@ -340,8 +340,8 @@ namespace FiveGApi.Controllers
             else if (Booking_Payments.Ins_Type == "Confirmation")
             {
                 existBookingConfirm.Emp_C_RAmt = (((property.Price / 100) * existBookingConfirm.Emp_Rebate)/2);
-                existBookingConfirm.Dealer_C_RAmt = (((property.Price / 100) * existBookingConfirm.Dealer_C_RAmt)/2);
-                existBookingConfirm.Com_C_RAmt = (((property.Price / 100) * existBookingConfirm.Com_C_RAmt));               
+                existBookingConfirm.Dealer_C_RAmt = (((property.Price / 100) * existBookingConfirm.Dealer_Rebate)/2);
+                existBookingConfirm.Com_C_RAmt = (((property.Price / 100) * existBookingConfirm.Rebate_Percent));               
                 var totalPayments = db.BookingPayments.Where(xx => xx.ID == Booking_Payments.ID && xx.Ins_Type == "Confirmation");
                 decimal totalPaymentsClculation = 0;
                 foreach (var item in totalPayments)

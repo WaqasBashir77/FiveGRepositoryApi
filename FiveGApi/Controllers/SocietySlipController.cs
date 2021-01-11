@@ -38,9 +38,22 @@ namespace FiveGApi.Controllers
 
                 return Ok(Society_Slip);
             }
+        [Route("GetSocietyValidation")]
+        [ResponseType(typeof(bool))]
+        public IHttpActionResult GetSocietyValidation(string slipNum)
+        {
+            var Reg = db.Society_Slip.Where(x => x.Slip_num == slipNum).FirstOrDefault();
+            if (Reg != null)
+            {
+                var error = new { message = "Slip number must be unique" }; //<-- anonymous object
+                return this.Content(HttpStatusCode.Conflict, error);
+            }
 
-            // PUT: api/Society_Slip/5
-            [ResponseType(typeof(void))]
+            return Ok(slipNum);
+        }
+
+        // PUT: api/Society_Slip/5
+        [ResponseType(typeof(void))]
             public IHttpActionResult PutSociety_Slip(int id, Society_Slip Society_Slip)
             {
                 if (!ModelState.IsValid)
