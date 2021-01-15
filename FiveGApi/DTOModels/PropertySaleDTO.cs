@@ -16,7 +16,7 @@ namespace FiveGApi.DTOModels
         public int employeeId { get; set; }
         public int employeeCommission { get; set; }
         public int dealerCommission { get; set; }
-        public string dealerName { get; set; }
+        public int dealerId { get; set; }
         public string buyerName { get; set; }
         public string buyerFatherName { get; set; }
         public string address { get; set; }
@@ -29,9 +29,9 @@ namespace FiveGApi.DTOModels
         public string cnic { get; set; }
         public string nomineeGNumber { get; set; }
         public string Purchaser_Picture { get; set; }
+        public string PaymentCode { get; set; }
 
         public List<TempTableForInstallmentDTO> propertySaleDetails { get; set; }
 
-    
-}
+    }
 }

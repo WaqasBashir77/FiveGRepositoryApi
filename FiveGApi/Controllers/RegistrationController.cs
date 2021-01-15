@@ -28,9 +28,9 @@ namespace FiveGApi.Controllers
             {
                 registration = db.Registrations;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                throw ex; 
             }
             return registration;
             ////Get All Registration From DB

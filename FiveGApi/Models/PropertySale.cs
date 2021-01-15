@@ -48,6 +48,7 @@ namespace FiveGApi.Models
         public string Updated_By { get; set; }
         public string Created_By { get; set; }
         public Nullable<System.DateTime> Updated_On { get; set; }
+        public string PaymentCode { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SaleInstallment> SaleInstallments { get; set; }

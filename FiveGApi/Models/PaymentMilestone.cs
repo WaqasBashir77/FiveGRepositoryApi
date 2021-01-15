@@ -22,8 +22,6 @@ namespace FiveGApi.Models
     
         public int Id { get; set; }
         public string PaymentScheduleCode { get; set; }
-        public Nullable<int> projectId { get; set; }
-        public string projectName { get; set; }
         public Nullable<int> GracePeriodDays { get; set; }
         public Nullable<double> Tax { get; set; }
         public string LateFeePercent { get; set; }

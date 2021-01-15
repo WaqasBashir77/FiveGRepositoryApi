@@ -20,6 +20,7 @@ namespace FiveGApi.Models
         public string Frequency { get; set; }
         public int parentId { get; set; }
         public Nullable<int> InstallmentNumber { get; set; }
+        public string code { get; set; }
     
         public virtual PaymentMilestone PaymentMilestone { get; set; }
     }

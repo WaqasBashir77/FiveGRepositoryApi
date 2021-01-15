@@ -5,6 +5,29 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="MIS_DBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Bank_Accounts">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Acc_Name" Type="varchar(max)" />
+          <Property Name="Acc_Number" Type="varchar(max)" />
+          <Property Name="Acc_Title" Type="varchar(max)" />
+          <Property Name="IBAN" Type="varchar" MaxLength="150" />
+          <Property Name="Acc_Currency" Type="varchar" MaxLength="250" />
+          <Property Name="Bank" Type="varchar" MaxLength="250" />
+          <Property Name="Branch" Type="varchar(max)" />
+          <Property Name="Swift_Code" Type="varchar(max)" />
+          <Property Name="Type" Type="varchar(max)" />
+          <Property Name="Status" Type="varchar" MaxLength="250" />
+          <Property Name="GL_Mapping" Type="int" />
+          <Property Name="Flex_1" Type="varchar(max)" />
+          <Property Name="Flex_2" Type="varchar(max)" />
+          <Property Name="Created_By" Type="varchar(max)" />
+          <Property Name="Created_On" Type="datetime" />
+          <Property Name="Updated_By" Type="varchar(max)" />
+          <Property Name="Updated_On" Type="datetime" />
+        </EntityType>
         <EntityType Name="BookingConfirm">
           <Key>
             <PropertyRef Name="ID" />
@@ -148,6 +171,73 @@
           <Property Name="Commission" Type="int" />
           <Property Name="ProfileImage" Type="varchar" MaxLength="250" />
         </EntityType>
+        <EntityType Name="GL_Balances">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="C_CODE" Type="int" />
+          <Property Name="Bal_Date" Type="datetime" />
+          <Property Name="Amount" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="Description" Type="varchar(max)" />
+          <Property Name="Effect_Trans_ID" Type="datetime" />
+          <Property Name="Flex_1" Type="varchar(max)" />
+          <Property Name="Flex_2" Type="varchar(max)" />
+          <Property Name="Created_By" Type="varchar(max)" />
+          <Property Name="Created_On" Type="datetime" />
+          <Property Name="Updated_By" Type="varchar(max)" />
+          <Property Name="Updated_On" Type="datetime" />
+        </EntityType>
+        <EntityType Name="GL_Headers">
+          <Key>
+            <PropertyRef Name="H_ID" />
+          </Key>
+          <Property Name="H_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="J_Date" Type="datetime" />
+          <Property Name="Doc_Date" Type="datetime" />
+          <Property Name="Currency" Type="varchar(max)" />
+          <Property Name="Description" Type="varchar(max)" />
+          <Property Name="Remarks" Type="varchar(max)" />
+          <Property Name="Source" Type="varchar(max)" />
+          <Property Name="Source_Tran_Id" Type="int" />
+          <Property Name="Pay_Mode" Type="varchar(max)" />
+          <Property Name="Pay_Bank" Type="varchar(max)" />
+          <Property Name="Pay_To" Type="varchar(max)" />
+          <Property Name="Pay_Company" Type="varchar(max)" />
+          <Property Name="Pay_Project" Type="varchar(max)" />
+          <Property Name="Pay_Location" Type="varchar(max)" />
+          <Property Name="Dep_Mode" Type="varchar(max)" />
+          <Property Name="Dep_Bank" Type="varchar(max)" />
+          <Property Name="Dep_By" Type="varchar(max)" />
+          <Property Name="Dep_Company" Type="varchar(max)" />
+          <Property Name="Dep_Project" Type="varchar(max)" />
+          <Property Name="Dep_Location" Type="varchar(max)" />
+          <Property Name="Trans_Status" Type="varchar(max)" />
+          <Property Name="Posted_date" Type="varchar(max)" />
+          <Property Name="Flex_1" Type="varchar(max)" />
+          <Property Name="Flex_2" Type="varchar(max)" />
+          <Property Name="Created_By" Type="varchar(max)" />
+          <Property Name="Created_On" Type="datetime" />
+          <Property Name="Updated_By" Type="varchar(max)" />
+          <Property Name="Updated_On" Type="datetime" />
+        </EntityType>
+        <EntityType Name="GL_Lines">
+          <Key>
+            <PropertyRef Name="L_ID" />
+          </Key>
+          <Property Name="L_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="H_ID" Type="int" />
+          <Property Name="C_CODE" Type="int" />
+          <Property Name="Debit" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="Credit" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="Description" Type="varchar(max)" />
+          <Property Name="Flex_1" Type="varchar(max)" />
+          <Property Name="Flex_2" Type="varchar(max)" />
+          <Property Name="Created_By" Type="varchar(max)" />
+          <Property Name="Created_On" Type="datetime" />
+          <Property Name="Updated_By" Type="varchar(max)" />
+          <Property Name="Updated_On" Type="datetime" />
+        </EntityType>
         <EntityType Name="Lookup_List">
           <Key>
             <PropertyRef Name="REF_ID" />
@@ -217,6 +307,7 @@
           <Property Name="Frequency" Type="varchar" MaxLength="50" />
           <Property Name="parentId" Type="int" Nullable="false" />
           <Property Name="InstallmentNumber" Type="int" />
+          <Property Name="code" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="PaymentMilestones">
           <Key>
@@ -224,8 +315,6 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="PaymentScheduleCode" Type="varchar" MaxLength="50" />
-          <Property Name="projectId" Type="int" />
-          <Property Name="projectName" Type="varchar" MaxLength="50" />
           <Property Name="GracePeriodDays" Type="int" />
           <Property Name="Tax" Type="float" />
           <Property Name="LateFeePercent" Type="varchar" MaxLength="50" />
@@ -265,6 +354,8 @@
           <Property Name="childDescription" Type="varchar" MaxLength="150" />
           <Property Name="otherFeatures" Type="varchar" MaxLength="550" />
           <Property Name="projectId" Type="int" />
+          <Property Name="SqFrPrice" Type="int" />
+          <Property Name="featurePrice" Type="int" />
         </EntityType>
         <EntityType Name="PropertyDef">
           <Key>
@@ -327,6 +418,7 @@
           <Property Name="Updated_By" Type="varchar" MaxLength="50" />
           <Property Name="Created_By" Type="varchar" MaxLength="50" />
           <Property Name="Updated_On" Type="date" />
+          <Property Name="PaymentCode" Type="varchar" MaxLength="255" />
         </EntityType>
         <EntityType Name="Prospect">
           <Key>
@@ -441,9 +533,9 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="InstallmentType" Type="varchar" MaxLength="50" />
           <Property Name="Installment" Type="varchar" MaxLength="50" />
-          <Property Name="ProjectId" Type="int" Nullable="false" />
+          <Property Name="Frequency" Type="varchar" MaxLength="50" />
           <Property Name="Percentage" Type="int" />
-          <Property Name="parentId" Type="int" />
+          <Property Name="parentId" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -463,6 +555,18 @@
           <Property Name="CreatedBy" Type="int" />
           <Property Name="LastModifiedDate" Type="datetime" />
         </EntityType>
+        <Association Name="FK_GL_Lines_GL_Headers">
+          <End Role="GL_Headers" Type="Self.GL_Headers" Multiplicity="0..1" />
+          <End Role="GL_Lines" Type="Self.GL_Lines" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GL_Headers">
+              <PropertyRef Name="H_ID" />
+            </Principal>
+            <Dependent Role="GL_Lines">
+              <PropertyRef Name="H_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_PaymentInstallment_SaleInstallments">
           <End Role="SaleInstallments" Type="Self.SaleInstallments" Multiplicity="0..1" />
           <End Role="PaymentInstallment" Type="Self.PaymentInstallment" Multiplicity="*" />
@@ -524,12 +628,16 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="MIS_DBModelStoreContainer">
+          <EntitySet Name="Bank_Accounts" EntityType="Self.Bank_Accounts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BookingConfirm" EntityType="Self.BookingConfirm" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BookingPayments" EntityType="Self.BookingPayments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="COA_Combinations" EntityType="Self.COA_Combinations" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="COA_Segments" EntityType="Self.COA_Segments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Delivery_Sheet" EntityType="Self.Delivery_Sheet" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Employee" EntityType="Self.Employee" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GL_Balances" EntityType="Self.GL_Balances" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GL_Headers" EntityType="Self.GL_Headers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GL_Lines" EntityType="Self.GL_Lines" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Lookup_List" EntityType="Self.Lookup_List" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Lookup_Values" EntityType="Self.Lookup_Values" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Payment_Delivery" EntityType="Self.Payment_Delivery" Schema="dbo" store:Type="Tables" />
@@ -547,6 +655,10 @@
           <EntitySet Name="Society_Slip" EntityType="Self.Society_Slip" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TempTableForInstallment" EntityType="Self.TempTableForInstallment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_GL_Lines_GL_Headers" Association="Self.FK_GL_Lines_GL_Headers">
+            <End Role="GL_Headers" EntitySet="GL_Headers" />
+            <End Role="GL_Lines" EntitySet="GL_Lines" />
+          </AssociationSet>
           <AssociationSet Name="FK_PaymentInstallment_SaleInstallments" Association="Self.FK_PaymentInstallment_SaleInstallments">
             <End Role="SaleInstallments" EntitySet="SaleInstallments" />
             <End Role="PaymentInstallment" EntitySet="PaymentInstallment" />
@@ -743,21 +855,8 @@
           <Property Name="Frequency" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="parentId" Type="Int32" Nullable="false" />
           <Property Name="InstallmentNumber" Type="Int32" />
-          <NavigationProperty Name="PaymentMilestone" Relationship="Self.FK_PaymentMilestoneDetail_PaymentMilestones" FromRole="PaymentMilestoneDetail" ToRole="PaymentMilestones" />
-        </EntityType>
-        <EntityType Name="PaymentMilestone">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PaymentScheduleCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="projectId" Type="Int32" />
-          <Property Name="projectName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="GracePeriodDays" Type="Int32" />
-          <Property Name="Tax" Type="Double" />
-          <Property Name="LateFeePercent" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="description" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="PaymentMilestoneDetails" Relationship="Self.FK_PaymentMilestoneDetail_PaymentMilestones" FromRole="PaymentMilestones" ToRole="PaymentMilestoneDetail" />
+          <Property Name="code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="PaymentMilestone" Relationship="MIS_DBModel.FK_PaymentMilestoneDetail_PaymentMilestones" FromRole="PaymentMilestoneDetail" ToRole="PaymentMilestone" />
         </EntityType>
         <EntityType Name="Project">
           <Key>
@@ -795,6 +894,8 @@
           <Property Name="otherFeatures" Type="String" MaxLength="550" FixedLength="false" Unicode="false" />
           <Property Name="projectId" Type="Int32" />
           <NavigationProperty Name="Project" Relationship="Self.FK_ProjectDetail_Project" FromRole="ProjectDetail" ToRole="Project" />
+          <Property Name="SqFrPrice" Type="Int32" />
+          <Property Name="featurePrice" Type="Int32" />
         </EntityType>
         <EntityType Name="PropertyDef">
           <Key>
@@ -858,6 +959,7 @@
           <Property Name="Created_By" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Updated_On" Type="DateTime" Precision="0" />
           <NavigationProperty Name="SaleInstallments" Relationship="Self.FK_SaleInstallments_PropertySale" FromRole="PropertySale" ToRole="SaleInstallments" />
+          <Property Name="PaymentCode" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Prospect">
           <Key>
@@ -969,17 +1071,6 @@
           <Property Name="Updated_By" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Updated_ON" Type="DateTime" Precision="3" />
         </EntityType>
-        <EntityType Name="TempTableForInstallment">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="InstallmentType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Installment" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ProjectId" Type="Int32" Nullable="false" />
-          <Property Name="Percentage" Type="Int32" />
-          <Property Name="parentId" Type="Int32" />
-        </EntityType>
         <Association Name="FK_PaymentInstallment_SaleInstallments">
           <End Role="SaleInstallments" Type="Self.SaleInstallment" Multiplicity="0..1" />
           <End Role="PaymentInstallment" Type="Self.PaymentInstallment" Multiplicity="*" />
@@ -989,18 +1080,6 @@
             </Principal>
             <Dependent Role="PaymentInstallment">
               <PropertyRef Name="Ins_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_PaymentMilestoneDetail_PaymentMilestones">
-          <End Role="PaymentMilestones" Type="Self.PaymentMilestone" Multiplicity="1" />
-          <End Role="PaymentMilestoneDetail" Type="Self.PaymentMilestoneDetail" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="PaymentMilestones">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="PaymentMilestoneDetail">
-              <PropertyRef Name="parentId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1050,7 +1129,6 @@
           <EntitySet Name="Payment_Delivery" EntityType="Self.Payment_Delivery" />
           <EntitySet Name="PaymentInstallments" EntityType="Self.PaymentInstallment" />
           <EntitySet Name="PaymentMilestoneDetails" EntityType="Self.PaymentMilestoneDetail" />
-          <EntitySet Name="PaymentMilestones" EntityType="Self.PaymentMilestone" />
           <EntitySet Name="Projects" EntityType="Self.Project" />
           <EntitySet Name="ProjectDetails" EntityType="Self.ProjectDetail" />
           <EntitySet Name="PropertyDefs" EntityType="Self.PropertyDef" />
@@ -1060,14 +1138,9 @@
           <EntitySet Name="Registrations" EntityType="Self.Registration" />
           <EntitySet Name="SaleInstallments" EntityType="Self.SaleInstallment" />
           <EntitySet Name="Society_Slip" EntityType="Self.Society_Slip" />
-          <EntitySet Name="TempTableForInstallments" EntityType="Self.TempTableForInstallment" />
           <AssociationSet Name="FK_PaymentInstallment_SaleInstallments" Association="Self.FK_PaymentInstallment_SaleInstallments">
             <End Role="SaleInstallments" EntitySet="SaleInstallments" />
             <End Role="PaymentInstallment" EntitySet="PaymentInstallments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_PaymentMilestoneDetail_PaymentMilestones" Association="Self.FK_PaymentMilestoneDetail_PaymentMilestones">
-            <End Role="PaymentMilestones" EntitySet="PaymentMilestones" />
-            <End Role="PaymentMilestoneDetail" EntitySet="PaymentMilestoneDetails" />
           </AssociationSet>
           <AssociationSet Name="FK_ProjectDetail_Project" Association="Self.FK_ProjectDetail_Project">
             <End Role="Project" EntitySet="Projects" />
@@ -1084,6 +1157,20 @@
           <EntitySet Name="Users" EntityType="MIS_DBModel.User" />
           <EntitySet Name="COA_Combinations" EntityType="MIS_DBModel.COA_Combinations" />
           <EntitySet Name="COA_Segments" EntityType="MIS_DBModel.COA_Segments" />
+          <EntitySet Name="TempTableForInstallments" EntityType="MIS_DBModel.TempTableForInstallment" />
+          <EntitySet Name="PaymentMilestones" EntityType="MIS_DBModel.PaymentMilestone" />
+          <AssociationSet Name="FK_PaymentMilestoneDetail_PaymentMilestones" Association="MIS_DBModel.FK_PaymentMilestoneDetail_PaymentMilestones">
+            <End Role="PaymentMilestone" EntitySet="PaymentMilestones" />
+            <End Role="PaymentMilestoneDetail" EntitySet="PaymentMilestoneDetails" />
+          </AssociationSet>
+          <EntitySet Name="Bank_Accounts" EntityType="MIS_DBModel.Bank_Accounts" />
+          <EntitySet Name="GL_Balances" EntityType="MIS_DBModel.GL_Balances" />
+          <EntitySet Name="GL_Headers" EntityType="MIS_DBModel.GL_Headers" />
+          <EntitySet Name="GL_Lines" EntityType="MIS_DBModel.GL_Lines" />
+          <AssociationSet Name="FK_GL_Lines_GL_Headers" Association="MIS_DBModel.FK_GL_Lines_GL_Headers">
+            <End Role="GL_Headers" EntitySet="GL_Headers" />
+            <End Role="GL_Lines" EntitySet="GL_Lines" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="User">
           <Key>
@@ -1145,6 +1232,145 @@
           <Property Name="Updated_By" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Updated_On" Type="DateTime" Precision="3" />
         </EntityType>
+        <EntityType Name="TempTableForInstallment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InstallmentType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Installment" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Frequency" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Percentage" Type="Int32" />
+          <Property Name="parentId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="PaymentMilestone">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PaymentScheduleCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="GracePeriodDays" Type="Int32" />
+          <Property Name="Tax" Type="Double" />
+          <Property Name="LateFeePercent" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="description" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="PaymentMilestoneDetails" Relationship="MIS_DBModel.FK_PaymentMilestoneDetail_PaymentMilestones" FromRole="PaymentMilestone" ToRole="PaymentMilestoneDetail" />
+        </EntityType>
+        <Association Name="FK_PaymentMilestoneDetail_PaymentMilestones">
+          <End Type="MIS_DBModel.PaymentMilestone" Role="PaymentMilestone" Multiplicity="1" />
+          <End Type="MIS_DBModel.PaymentMilestoneDetail" Role="PaymentMilestoneDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PaymentMilestone">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PaymentMilestoneDetail">
+              <PropertyRef Name="parentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Bank_Accounts">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Acc_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Acc_Number" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Acc_Title" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IBAN" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Acc_Currency" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Bank" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Branch" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Swift_Code" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Type" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="GL_Mapping" Type="Int32" />
+          <Property Name="Flex_1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Flex_2" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Created_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Created_On" Type="DateTime" Precision="3" />
+          <Property Name="Updated_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Updated_On" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="GL_Balances">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="C_CODE" Type="Int32" />
+          <Property Name="Bal_Date" Type="DateTime" Precision="3" />
+          <Property Name="Amount" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Effect_Trans_ID" Type="DateTime" Precision="3" />
+          <Property Name="Flex_1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Flex_2" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Created_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Created_On" Type="DateTime" Precision="3" />
+          <Property Name="Updated_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Updated_On" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="GL_Headers">
+          <Key>
+            <PropertyRef Name="H_ID" />
+          </Key>
+          <Property Name="H_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="J_Date" Type="DateTime" Precision="3" />
+          <Property Name="Doc_Date" Type="DateTime" Precision="3" />
+          <Property Name="Currency" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Source" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Source_Tran_Id" Type="Int32" />
+          <Property Name="Pay_Mode" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Pay_Bank" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Pay_To" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Pay_Company" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Pay_Project" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Pay_Location" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Dep_Mode" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Dep_Bank" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Dep_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Dep_Company" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Dep_Project" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Dep_Location" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Trans_Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Posted_date" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Flex_1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Flex_2" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Created_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Created_On" Type="DateTime" Precision="3" />
+          <Property Name="Updated_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Updated_On" Type="DateTime" />
+          <NavigationProperty Name="GL_Lines" Relationship="MIS_DBModel.FK_GL_Lines_GL_Headers" FromRole="GL_Headers" ToRole="GL_Lines" />
+        </EntityType>
+        <EntityType Name="GL_Lines">
+          <Key>
+            <PropertyRef Name="L_ID" />
+          </Key>
+          <Property Name="L_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="H_ID" Type="Int32" />
+          <Property Name="C_CODE" Type="Int32" />
+          <Property Name="Debit" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="Credit" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Flex_1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Flex_2" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Created_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Created_On" Type="DateTime" Precision="3" />
+          <Property Name="Updated_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Updated_On" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="GL_Headers" Relationship="MIS_DBModel.FK_GL_Lines_GL_Headers" FromRole="GL_Lines" ToRole="GL_Headers" />
+        </EntityType>
+        <Association Name="FK_GL_Lines_GL_Headers">
+          <End Type="MIS_DBModel.GL_Headers" Role="GL_Headers" Multiplicity="0..1" />
+          <End Type="MIS_DBModel.GL_Lines" Role="GL_Lines" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GL_Headers">
+              <PropertyRef Name="H_ID" />
+            </Principal>
+            <Dependent Role="GL_Lines">
+              <PropertyRef Name="H_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1322,26 +1548,13 @@
           <EntitySetMapping Name="PaymentMilestoneDetails">
             <EntityTypeMapping TypeName="MIS_DBModel.PaymentMilestoneDetail">
               <MappingFragment StoreEntitySet="PaymentMilestoneDetail">
+                <ScalarProperty Name="code" ColumnName="code" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Milestones" ColumnName="Milestones" />
                 <ScalarProperty Name="Percentage" ColumnName="Percentage" />
                 <ScalarProperty Name="Frequency" ColumnName="Frequency" />
                 <ScalarProperty Name="parentId" ColumnName="parentId" />
                 <ScalarProperty Name="InstallmentNumber" ColumnName="InstallmentNumber" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="PaymentMilestones">
-            <EntityTypeMapping TypeName="MIS_DBModel.PaymentMilestone">
-              <MappingFragment StoreEntitySet="PaymentMilestones">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="PaymentScheduleCode" ColumnName="PaymentScheduleCode" />
-                <ScalarProperty Name="projectId" ColumnName="projectId" />
-                <ScalarProperty Name="projectName" ColumnName="projectName" />
-                <ScalarProperty Name="GracePeriodDays" ColumnName="GracePeriodDays" />
-                <ScalarProperty Name="Tax" ColumnName="Tax" />
-                <ScalarProperty Name="LateFeePercent" ColumnName="LateFeePercent" />
-                <ScalarProperty Name="description" ColumnName="description" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1368,6 +1581,8 @@
           <EntitySetMapping Name="ProjectDetails">
             <EntityTypeMapping TypeName="MIS_DBModel.ProjectDetail">
               <MappingFragment StoreEntitySet="ProjectDetail">
+                <ScalarProperty Name="featurePrice" ColumnName="featurePrice" />
+                <ScalarProperty Name="SqFrPrice" ColumnName="SqFrPrice" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="unitNumber" ColumnName="unitNumber" />
                 <ScalarProperty Name="unitType" ColumnName="unitType" />
@@ -1415,6 +1630,7 @@
           <EntitySetMapping Name="PropertySales">
             <EntityTypeMapping TypeName="MIS_DBModel.PropertySale">
               <MappingFragment StoreEntitySet="PropertySale">
+                <ScalarProperty Name="PaymentCode" ColumnName="PaymentCode" />
                 <ScalarProperty Name="Booking_ID" ColumnName="Booking_ID" />
                 <ScalarProperty Name="Project_ID" ColumnName="Project_ID" />
                 <ScalarProperty Name="Unit_ID" ColumnName="Unit_ID" />
@@ -1557,18 +1773,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="TempTableForInstallments">
-            <EntityTypeMapping TypeName="MIS_DBModel.TempTableForInstallment">
-              <MappingFragment StoreEntitySet="TempTableForInstallment">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="InstallmentType" ColumnName="InstallmentType" />
-                <ScalarProperty Name="Installment" ColumnName="Installment" />
-                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
-                <ScalarProperty Name="Percentage" ColumnName="Percentage" />
-                <ScalarProperty Name="parentId" ColumnName="parentId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="MIS_DBModel.User">
               <MappingFragment StoreEntitySet="User">
@@ -1629,6 +1833,124 @@
                 <ScalarProperty Name="Segment_Value" ColumnName="Segment_Value" />
                 <ScalarProperty Name="Segment" ColumnName="Segment" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TempTableForInstallments">
+            <EntityTypeMapping TypeName="MIS_DBModel.TempTableForInstallment">
+              <MappingFragment StoreEntitySet="TempTableForInstallment">
+                <ScalarProperty Name="parentId" ColumnName="parentId" />
+                <ScalarProperty Name="Percentage" ColumnName="Percentage" />
+                <ScalarProperty Name="Frequency" ColumnName="Frequency" />
+                <ScalarProperty Name="Installment" ColumnName="Installment" />
+                <ScalarProperty Name="InstallmentType" ColumnName="InstallmentType" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PaymentMilestones">
+            <EntityTypeMapping TypeName="MIS_DBModel.PaymentMilestone">
+              <MappingFragment StoreEntitySet="PaymentMilestones">
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="LateFeePercent" ColumnName="LateFeePercent" />
+                <ScalarProperty Name="Tax" ColumnName="Tax" />
+                <ScalarProperty Name="GracePeriodDays" ColumnName="GracePeriodDays" />
+                <ScalarProperty Name="PaymentScheduleCode" ColumnName="PaymentScheduleCode" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Bank_Accounts">
+            <EntityTypeMapping TypeName="MIS_DBModel.Bank_Accounts">
+              <MappingFragment StoreEntitySet="Bank_Accounts">
+                <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
+                <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
+                <ScalarProperty Name="Created_On" ColumnName="Created_On" />
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="Flex_2" ColumnName="Flex_2" />
+                <ScalarProperty Name="Flex_1" ColumnName="Flex_1" />
+                <ScalarProperty Name="GL_Mapping" ColumnName="GL_Mapping" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Swift_Code" ColumnName="Swift_Code" />
+                <ScalarProperty Name="Branch" ColumnName="Branch" />
+                <ScalarProperty Name="Bank" ColumnName="Bank" />
+                <ScalarProperty Name="Acc_Currency" ColumnName="Acc_Currency" />
+                <ScalarProperty Name="IBAN" ColumnName="IBAN" />
+                <ScalarProperty Name="Acc_Title" ColumnName="Acc_Title" />
+                <ScalarProperty Name="Acc_Number" ColumnName="Acc_Number" />
+                <ScalarProperty Name="Acc_Name" ColumnName="Acc_Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GL_Balances">
+            <EntityTypeMapping TypeName="MIS_DBModel.GL_Balances">
+              <MappingFragment StoreEntitySet="GL_Balances">
+                <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
+                <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
+                <ScalarProperty Name="Created_On" ColumnName="Created_On" />
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="Flex_2" ColumnName="Flex_2" />
+                <ScalarProperty Name="Flex_1" ColumnName="Flex_1" />
+                <ScalarProperty Name="Effect_Trans_ID" ColumnName="Effect_Trans_ID" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Bal_Date" ColumnName="Bal_Date" />
+                <ScalarProperty Name="C_CODE" ColumnName="C_CODE" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GL_Headers">
+            <EntityTypeMapping TypeName="MIS_DBModel.GL_Headers">
+              <MappingFragment StoreEntitySet="GL_Headers">
+                <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
+                <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
+                <ScalarProperty Name="Created_On" ColumnName="Created_On" />
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="Flex_2" ColumnName="Flex_2" />
+                <ScalarProperty Name="Flex_1" ColumnName="Flex_1" />
+                <ScalarProperty Name="Posted_date" ColumnName="Posted_date" />
+                <ScalarProperty Name="Trans_Status" ColumnName="Trans_Status" />
+                <ScalarProperty Name="Dep_Location" ColumnName="Dep_Location" />
+                <ScalarProperty Name="Dep_Project" ColumnName="Dep_Project" />
+                <ScalarProperty Name="Dep_Company" ColumnName="Dep_Company" />
+                <ScalarProperty Name="Dep_By" ColumnName="Dep_By" />
+                <ScalarProperty Name="Dep_Bank" ColumnName="Dep_Bank" />
+                <ScalarProperty Name="Dep_Mode" ColumnName="Dep_Mode" />
+                <ScalarProperty Name="Pay_Location" ColumnName="Pay_Location" />
+                <ScalarProperty Name="Pay_Project" ColumnName="Pay_Project" />
+                <ScalarProperty Name="Pay_Company" ColumnName="Pay_Company" />
+                <ScalarProperty Name="Pay_To" ColumnName="Pay_To" />
+                <ScalarProperty Name="Pay_Bank" ColumnName="Pay_Bank" />
+                <ScalarProperty Name="Pay_Mode" ColumnName="Pay_Mode" />
+                <ScalarProperty Name="Source_Tran_Id" ColumnName="Source_Tran_Id" />
+                <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="Doc_Date" ColumnName="Doc_Date" />
+                <ScalarProperty Name="J_Date" ColumnName="J_Date" />
+                <ScalarProperty Name="H_ID" ColumnName="H_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GL_Lines">
+            <EntityTypeMapping TypeName="MIS_DBModel.GL_Lines">
+              <MappingFragment StoreEntitySet="GL_Lines">
+                <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
+                <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
+                <ScalarProperty Name="Created_On" ColumnName="Created_On" />
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="Flex_2" ColumnName="Flex_2" />
+                <ScalarProperty Name="Flex_1" ColumnName="Flex_1" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Credit" ColumnName="Credit" />
+                <ScalarProperty Name="Debit" ColumnName="Debit" />
+                <ScalarProperty Name="C_CODE" ColumnName="C_CODE" />
+                <ScalarProperty Name="H_ID" ColumnName="H_ID" />
+                <ScalarProperty Name="L_ID" ColumnName="L_ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

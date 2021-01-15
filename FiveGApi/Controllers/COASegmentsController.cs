@@ -24,6 +24,12 @@ namespace FiveGApi.Controllers
         {
             return db.COA_Segments;
         }
+        [Route("GetCOA_SegmentsBySegment")]
+        [ResponseType(typeof(IList<COA_Segments>))]
+        public IList<COA_Segments> GetCOA_SegmentsBySegment(string segment)
+        {
+            return db.COA_Segments.Where(s=>s.Segment==segment).ToList();
+        }
 
         // GET: api/COA_Segments/5
         [ResponseType(typeof(COA_Segments))]

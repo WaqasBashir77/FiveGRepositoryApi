@@ -13,8 +13,10 @@ using FiveGApi.Models;
 
 namespace FiveGApi.Controllers
 {
+    //[Authorize]
     public class PaymentMilestonesController : ApiController
     {
+       // private FiveG_DBEntities db = new FiveG_DBEntities();
         private MIS_DBEntities1 db = new MIS_DBEntities1();
 
         // GET: api/PaymentMilestones
@@ -64,14 +66,12 @@ namespace FiveGApi.Controllers
             }
 
             var milestoneMaster = db.PaymentMilestones.Where(x => x.Id == id).FirstOrDefault();
-            milestoneMaster.projectId = paymentMilestone.projectId;
-            milestoneMaster.projectName = paymentMilestone.projectName;
             milestoneMaster.Tax = paymentMilestone.Tax;
             milestoneMaster.GracePeriodDays = paymentMilestone.GracePeriodDays;
             milestoneMaster.description = paymentMilestone.description;
             milestoneMaster.LateFeePercent = paymentMilestone.LateFeePercent;
 
-            var tempmilestone = db.TempTableForInstallments.Where(x => x.parentId == id).ToList();
+            var tempmilestone = db.TempTableForInstallments.Where(x => x.parentId == paymentMilestone.PaymentScheduleCode).ToList();
             if (tempmilestone != null || tempmilestone.Count > 0)
             {
                 foreach (var item in tempmilestone)
@@ -99,8 +99,8 @@ namespace FiveGApi.Controllers
                     {
                         TempTableForInstallment tempTableFor = new TempTableForInstallment();
                         tempTableFor.InstallmentType = item.Milestones;
-                        tempTableFor.ProjectId = paymentMilestone.projectId ?? default(int);
-                        tempTableFor.parentId = paymentMilestone.Id;
+                        tempTableFor.Frequency = item.Frequency;
+                        tempTableFor.parentId = paymentMilestone.PaymentScheduleCode;
                         if (item.Milestones == "Installment")
                         {
                             tempTableFor.Installment = "Installment " + i.ToString();
@@ -179,8 +179,8 @@ namespace FiveGApi.Controllers
                         {
                             TempTableForInstallment tempTableFor = new TempTableForInstallment();
                             tempTableFor.InstallmentType = item.Milestones;
-                            tempTableFor.ProjectId = paymentMilestone.projectId ?? default(int);
-                            tempTableFor.parentId = paymentMilestone.Id;
+                            tempTableFor.Frequency = item.Frequency;
+                            tempTableFor.parentId = paymentMilestone.PaymentScheduleCode;
                             if (item.Milestones == "Installment")
                             {
                                 tempTableFor.Installment = "Installment " + i.ToString();
@@ -197,11 +197,11 @@ namespace FiveGApi.Controllers
                     db.TempTableForInstallments.AddRange(tempTableForInstallments);
                 }
 
-                var getProperty = db.Projects.Where(x => x.Id == paymentMilestone.projectId).FirstOrDefault();
-                if (getProperty != null)
-                {
-                    getProperty.PaymentPlanStatus = true;
-                }
+                //var getProperty = db.Projects.Where(x => x.Id == paymentMilestone.projectId).FirstOrDefault();
+                //if (getProperty != null)
+                //{
+                //getProperty.PaymentPlanStatus = true;
+                //}
                 db.SaveChanges();
                 response.Code = 1;
             }

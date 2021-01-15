@@ -17,8 +17,8 @@ namespace FiveGApi.Models
         public int Id { get; set; }
         public string InstallmentType { get; set; }
         public string Installment { get; set; }
-        public int ProjectId { get; set; }
+        public string Frequency { get; set; }
         public Nullable<int> Percentage { get; set; }
-        public Nullable<int> parentId { get; set; }
+        public string parentId { get; set; }
     }
 }
