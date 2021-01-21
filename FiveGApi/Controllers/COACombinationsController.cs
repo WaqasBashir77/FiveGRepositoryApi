@@ -46,5 +46,26 @@ namespace FiveGApi.Controllers
 
                   
         }
+        [Route("GetCOA_CombinationID")]
+        [ResponseType(typeof(COA_Combinations))]
+        [HttpGet]
+        public IHttpActionResult GetCOA_CombinationID(int CoID)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var ExistedCOA_Combinations = db.COA_Combinations.Where(x => x.C_ID == CoID).FirstOrDefault();
+            if (ExistedCOA_Combinations != null)
+            {
+                return Ok(ExistedCOA_Combinations.C_Code);
+            }
+            else
+            {                 
+                return NotFound();
+            }
+
+
+        }
     }
 }
