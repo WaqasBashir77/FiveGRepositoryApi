@@ -19,6 +19,7 @@ namespace FiveGApi.Controllers
 
     public class LoginController : ApiController
     {
+        // private FiveG_DBEntities db = new FiveG_DBEntities();
         private MIS_DBEntities1 db = new MIS_DBEntities1();
 
         [Route("api/Login/Authenticate")]
@@ -35,8 +36,7 @@ namespace FiveGApi.Controllers
             HttpResponseMessage responseMsg = new HttpResponseMessage();
             bool isUsernamePasswordValid = false;
 
-            //isUsernamePasswordValid=loginrequest.Password=="admin" ? true:false;
-            var dbUser = db.Users.Where(x => x.UserName == login.Username && x.Password == login.Password).SingleOrDefault(); //_userRepo.GetUser(loginrequest.Username, loginrequest.Password);
+            var dbUser = db.Users.Where(x => x.UserName == login.Username && x.Password == login.Password).SingleOrDefault(); 
             if (dbUser != null)
                 isUsernamePasswordValid = true;
             // if credentials are valid

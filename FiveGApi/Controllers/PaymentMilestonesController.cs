@@ -9,27 +9,38 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using FiveGApi.DTOModels;
+using FiveGApi.Helper;
 using FiveGApi.Models;
 
 namespace FiveGApi.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class PaymentMilestonesController : ApiController
     {
-       // private FiveG_DBEntities db = new FiveG_DBEntities();
+        //private FiveG_DBEntities db = new FiveG_DBEntities();
         private MIS_DBEntities1 db = new MIS_DBEntities1();
-
         // GET: api/PaymentMilestones
         public IHttpActionResult GetPaymentMilestones()
         {
+            var re = Request;
+            var headers = re.Headers;
+            int groupId = 0;
+            if (headers.Contains("GroupId"))
+            {
+                groupId = Convert.ToInt32(headers.GetValues("GroupId").First());
+            }
             List<PaymentMilestone> paymentMilestonesList = new List<PaymentMilestone>();
             try
             {
-                paymentMilestonesList = db.PaymentMilestones.ToList();
+                if (!SecurityGroupDTO.CheckSuperAdmin(groupId))
+                    paymentMilestonesList = db.PaymentMilestones.Where(x => x.SecurityGroupId == groupId).ToList();
+                else
+                    paymentMilestonesList = db.PaymentMilestones.ToList();
+
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine(ex.Message);
                 throw;
             }
             return Ok(paymentMilestonesList);
@@ -39,13 +50,31 @@ namespace FiveGApi.Controllers
         [ResponseType(typeof(PaymentMilestone))]
         public IHttpActionResult GetPaymentMilestone(int id)
         {
+
+            var re = Request;
+            var headers = re.Headers;
+            int groupId = 0;
+            if (headers.Contains("GroupId"))
+            {
+                groupId = Convert.ToInt32(headers.GetValues("GroupId").First());
+            }
+            PaymentMilestone responseMilestone = new PaymentMilestone();
             PaymentMilestone paymentMilestone = db.PaymentMilestones.Find(id);
             if (paymentMilestone == null)
             {
                 return NotFound();
             }
+            bool isAdmin = SecurityGroupDTO.CheckSuperAdmin(groupId);
+            if (paymentMilestone.SecurityGroupId != groupId && !isAdmin)
+            {
+                return Ok(responseMilestone);
+            }
+            else
+            {
+                responseMilestone = paymentMilestone;
+            }
 
-            return Ok(paymentMilestone);
+            return Ok(responseMilestone);
         }
 
         // PUT: api/PaymentMilestones/5
@@ -70,6 +99,8 @@ namespace FiveGApi.Controllers
             milestoneMaster.GracePeriodDays = paymentMilestone.GracePeriodDays;
             milestoneMaster.description = paymentMilestone.description;
             milestoneMaster.LateFeePercent = paymentMilestone.LateFeePercent;
+            milestoneMaster.Update_By = paymentMilestone.Update_By;
+            milestoneMaster.Update_Date = DateTime.Now;
 
             var tempmilestone = db.TempTableForInstallments.Where(x => x.parentId == paymentMilestone.PaymentScheduleCode).ToList();
             if (tempmilestone != null || tempmilestone.Count > 0)
@@ -78,7 +109,7 @@ namespace FiveGApi.Controllers
                 {
                     db.TempTableForInstallments.Remove(item);
                 }
-
+              
             }
             var child = db.PaymentMilestoneDetails.Where(x => x.parentId == id).ToList();
             if (child != null || child.Count > 0)
@@ -101,6 +132,7 @@ namespace FiveGApi.Controllers
                         tempTableFor.InstallmentType = item.Milestones;
                         tempTableFor.Frequency = item.Frequency;
                         tempTableFor.parentId = paymentMilestone.PaymentScheduleCode;
+                        
                         if (item.Milestones == "Installment")
                         {
                             tempTableFor.Installment = "Installment " + i.ToString();
@@ -125,7 +157,11 @@ namespace FiveGApi.Controllers
                     paymentDetail.Milestones = item.Milestones;
                     paymentDetail.InstallmentNumber = item.InstallmentNumber;
                     paymentDetail.Frequency = item.Frequency;
-
+                    paymentDetail.Update_By = paymentMilestone.Update_By;
+                    paymentDetail.Update_Date = DateTime.Now;
+                    paymentDetail.SecurityGroupId = paymentMilestone.SecurityGroupId;
+                    paymentDetail.Created_By = milestoneMaster.Created_By;
+                    paymentDetail.Created_Date = milestoneMaster.Created_Date;
                     paymentDetaillist.Add(paymentDetail);
                 }
 
@@ -190,7 +226,7 @@ namespace FiveGApi.Controllers
                                 tempTableFor.Installment = item.Milestones;
                             }
                             tempTableForInstallments.Add(tempTableFor);
-                            tempTableFor.Percentage = Convert.ToInt32(item.Percentage);
+                            tempTableFor.Percentage = Convert.ToInt32( item.Percentage);
                         }
                     }
 
@@ -200,7 +236,7 @@ namespace FiveGApi.Controllers
                 //var getProperty = db.Projects.Where(x => x.Id == paymentMilestone.projectId).FirstOrDefault();
                 //if (getProperty != null)
                 //{
-                //getProperty.PaymentPlanStatus = true;
+                    //getProperty.PaymentPlanStatus = true;
                 //}
                 db.SaveChanges();
                 response.Code = 1;
@@ -243,6 +279,6 @@ namespace FiveGApi.Controllers
             return db.PaymentMilestones.Count(e => e.Id == id) > 0;
         }
 
-
+       
     }
 }

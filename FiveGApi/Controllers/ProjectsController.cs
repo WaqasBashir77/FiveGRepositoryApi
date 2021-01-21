@@ -9,29 +9,39 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using FiveGApi.DTOModels;
+using FiveGApi.Helper;
 using FiveGApi.Models;
 
 namespace FiveGApi.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [RoutePrefix("api/Projects")]
     public class ProjectsController : ApiController
     {
+        //private FiveG_DBEntities db = new FiveG_DBEntities();
         private MIS_DBEntities1 db = new MIS_DBEntities1();
-
         // GET: api/Projects
         public IQueryable<Project> GetProjects()
         {
-            IQueryable<Project> projects;
+            var re = Request;
+            var headers = re.Headers;
+            int groupId = 0;
+            if (headers.Contains("GroupId"))
+            {
+                groupId = Convert.ToInt32(headers.GetValues("GroupId").First());
+            }
+            IQueryable<Project> projects ;
 
             try
             {
-                projects = db.Projects;
-
+                if (!SecurityGroupDTO.CheckSuperAdmin(groupId))
+                    projects = db.Projects.Where(x => x.SecurityGroupId == groupId);
+                else
+                    projects = db.Projects;
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine(ex.Message);
                 throw;
             }
             return projects;
@@ -41,49 +51,66 @@ namespace FiveGApi.Controllers
         [ResponseType(typeof(ProjectDto))]
         public IHttpActionResult GetProject(int id)
         {
+
+            var re = Request;
+            var headers = re.Headers;
+            int groupId = 0;
+            ProjectDto projectDto = new ProjectDto();
+            if (headers.Contains("GroupId"))
+            {
+                groupId = Convert.ToInt32(headers.GetValues("GroupId").First());
+            }
             Project project = db.Projects.Find(id);
 
             if (project == null)
             {
                 return NotFound();
             }
-
-            ProjectDto projectDto = new ProjectDto();
-            projectDto.address = project.address;
-            projectDto.city = project.city;
-            projectDto.description = project.description;
-            projectDto.Id = project.Id;
-            projectDto.location = project.location;
-            projectDto.noc = project.noc;
-            projectDto.PaymentPlanStatus = project.PaymentPlanStatus;
-            projectDto.projectCode = project.projectCode;
-            projectDto.projectName = project.projectName;
-            projectDto.projectType = project.projectType;
-            projectDto.status = project.status;
-            projectDto.totalArea = project.totalArea;
-            projectDto.unit = project.unit;
-            foreach (var item in project.ProjectDetails)
+            bool isAdmin = SecurityGroupDTO.CheckSuperAdmin(groupId);
+            if (project.SecurityGroupId != groupId && !isAdmin)
             {
-                ProjectDetailDto projectDetail = new ProjectDetailDto();
-                projectDetail.building = item.building;
-                projectDetail.childArea = item.childArea;
-                projectDetail.childDescription = item.childDescription;
-                projectDetail.childStatus = item.childStatus;
-                projectDetail.featurePrice = item.featurePrice;
-                projectDetail.floor = item.floor;
-                projectDetail.floorName = db.Lookup_Values.Where(x => x.Ref_ID == 6 && x.Value_Status == true && x.Value_ID == item.floor).Select(x => x.Value_Description).FirstOrDefault();
-                projectDetail.buildingName = db.Lookup_Values.Where(x => x.Ref_ID == 5 && x.Value_Status == true && x.Value_ID == item.building).Select(x => x.Value_Description).FirstOrDefault();
-                projectDetail.building = item.building;
-                projectDetail.Id = item.Id;
-                projectDetail.otherFeatures = item.otherFeatures;
-                projectDetail.unitNumber = item.unitNumber;
-                projectDetail.unitPrice = item.unitPrice;
-                projectDetail.unitType = item.unitType;
-                projectDetail.SqFrPrice = item.SqFrPrice;
-
-                projectDto.ProjectDetails.Add(projectDetail);
+                return Ok(projectDto);
             }
+            else
+            {
+                
+                projectDto.address = project.address;
+                projectDto.city = project.city;
+                projectDto.description = project.description;
+                projectDto.Id = project.Id;
+                projectDto.location = project.location;
+                projectDto.noc = project.noc;
+                projectDto.PaymentPlanStatus = project.PaymentPlanStatus;
+                projectDto.projectCode = project.projectCode;
+                projectDto.projectName = project.projectName;
+                projectDto.projectType = project.projectType;
+                projectDto.status = project.status;
+                projectDto.totalArea = project.totalArea;
+                projectDto.unit = project.unit;
 
+                foreach (var item in project.ProjectDetails)
+                {
+                    ProjectDetailDto projectDetail = new ProjectDetailDto();
+                    projectDetail.building = item.building;
+                    projectDetail.childArea = item.childArea;
+                    projectDetail.childDescription = item.childDescription;
+                    projectDetail.childStatus = item.childStatus;
+                    projectDetail.featurePrice = item.featurePrice;
+                    projectDetail.floor = item.floor;
+                    projectDetail.floorName = db.Lookup_Values.Where(x => x.Ref_ID == 6 && x.Value_Status == true && x.Value_ID == item.floor).Select(x => x.Value_Description).FirstOrDefault();
+                    projectDetail.buildingName = db.Lookup_Values.Where(x => x.Ref_ID == 5 && x.Value_Status == true && x.Value_ID == item.building).Select(x => x.Value_Description).FirstOrDefault();
+                    projectDetail.building = item.building;
+                    projectDetail.Id = item.Id;
+                    projectDetail.otherFeatures = item.otherFeatures;
+                    projectDetail.unitNumber = item.unitNumber;
+                    projectDetail.unitPrice = item.unitPrice;
+                    projectDetail.unitType = item.unitType;
+                    projectDetail.SqFrPrice = item.SqFrPrice;
+
+
+                    projectDto.ProjectDetails.Add(projectDetail);
+                }
+            }
             return Ok(projectDto);
         }
 
@@ -108,7 +135,10 @@ namespace FiveGApi.Controllers
             existProject.status = project.status;
             existProject.totalArea = project.totalArea;
             existProject.unit = project.unit;
+            existProject.Update_Date = DateTime.Now;
+            existProject.Update_By = project.Update_By;
 
+            
             if (existProject.ProjectDetails.Count > 0)
             {
                 foreach (var item in existProject.ProjectDetails.ToList())
@@ -117,6 +147,11 @@ namespace FiveGApi.Controllers
                 }
             }
 
+            //foreach (var item in project.ProjectDetails.ToList())
+            //{
+            //    item.Update_By = project.Update_By;
+            //    item.Update_Date = DateTime.Now;
+            //}
             existProject.ProjectDetails = project.ProjectDetails;
 
 
@@ -157,7 +192,7 @@ namespace FiveGApi.Controllers
             {
                 Console.WriteLine(ex.Message);
             }
-
+            
 
             return CreatedAtRoute("DefaultApi", new { id = project.Id }, project);
         }
@@ -206,8 +241,8 @@ namespace FiveGApi.Controllers
                 }
             }
 
-
-
+           
+                
             return Ok(isExist);
         }
 

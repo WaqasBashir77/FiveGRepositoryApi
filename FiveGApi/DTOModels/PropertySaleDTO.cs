@@ -27,11 +27,15 @@ namespace FiveGApi.DTOModels
         public string nomineeCnic { get; set; }
         public int nomineeContact { get; set; }
         public string cnic { get; set; }
-        public string nomineeGNumber { get; set; }
+        public string nomineeGNumber{ get; set; }
         public string Purchaser_Picture { get; set; }
         public string PaymentCode { get; set; }
-
+        public DateTime Created_Date { get; set; }
+        public DateTime Update_Date { get; set; }
+        public int? Created_By { get; set; }
+        public int? Update_By { get; set; }
+        public int? SecurityGroupId { get; set; }
         public List<TempTableForInstallmentDTO> propertySaleDetails { get; set; }
-
+       
     }
 }

@@ -27,13 +27,13 @@ namespace FiveGApi
              routeTemplate: "api/{controller}/{action}",
              defaults: null,
              constraints: new { name = @"^[a-z]+$" }
-         );
+           );
             config.Routes.MapHttpRoute(
-      name: "ApiById",
-      routeTemplate: "api/{controller}/{action}/{id}",
-      defaults: null,
-      constraints: new { name = @"^[0-9]+$" }
-  );
+              name: "ApiById",
+              routeTemplate: "api/{controller}/{action}/{id}",
+              defaults: null,
+              constraints: new { name = @"^[0-9]+$" }
+           );
         }
     }
 }

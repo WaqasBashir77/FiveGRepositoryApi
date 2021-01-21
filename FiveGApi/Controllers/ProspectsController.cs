@@ -8,31 +8,70 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
+using FiveGApi.Helper;
 using FiveGApi.Models;
 
 namespace FiveGApi.Controllers
 {
+
+    [Authorize]
     public class ProspectsController : ApiController
     {
+        // private FiveG_DBEntities db = new FiveG_DBEntities();
         private MIS_DBEntities1 db = new MIS_DBEntities1();
-
         // GET: api/Prospects
         public IQueryable<Prospect> GetProspects()
         {
-            return db.Prospects;
+            var re = Request;
+            var headers = re.Headers;
+            int groupId = 0;
+            if (headers.Contains("GroupId"))
+            {
+                groupId = Convert.ToInt32(headers.GetValues("GroupId").First());
+            }
+            IQueryable<Prospect> prospects;
+            try
+            {
+                if (!SecurityGroupDTO.CheckSuperAdmin(groupId))
+                    prospects = db.Prospects.Where(x => x.SecurityGroupId == groupId);
+                else
+                    prospects = db.Prospects;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return prospects;
         }
 
         // GET: api/Prospects/5
         [ResponseType(typeof(Prospect))]
         public IHttpActionResult GetProspect(int id)
         {
+            var re = Request;
+            var headers = re.Headers;
+            int groupId = 0;
+            Prospect Reponseprospect = new Prospect();
+            if (headers.Contains("GroupId"))
+            {
+                groupId = Convert.ToInt32(headers.GetValues("GroupId").First());
+            }
             Prospect prospect = db.Prospects.Find(id);
             if (prospect == null)
             {
                 return NotFound();
             }
-
-            return Ok(prospect);
+            bool isAdmin = SecurityGroupDTO.CheckSuperAdmin(groupId);
+            if (prospect.SecurityGroupId != groupId && !isAdmin)
+            {
+                return Ok(Reponseprospect);
+            }
+            else
+            {
+                Reponseprospect = prospect;
+            }
+            return Ok(Reponseprospect);
         }
 
         // PUT: api/Prospects/5
@@ -45,8 +84,20 @@ namespace FiveGApi.Controllers
             }
 
             prospect.Id = id;
-
-            db.Entry(prospect).State = EntityState.Modified;
+            Prospect Updateprospect = db.Prospects.Find(id);
+            Updateprospect.address = prospect.address;
+            Updateprospect.city = prospect.city;
+            Updateprospect.cnic = prospect.cnic;
+            Updateprospect.employeeId = prospect.employeeId;
+            Updateprospect.knowUs = prospect.knowUs;
+            Updateprospect.mobile = prospect.mobile;
+            Updateprospect.name = prospect.name;
+            Updateprospect.profession = prospect.profession;
+            Updateprospect.projectId = prospect.projectId;
+            Updateprospect.prospectType = prospect.prospectType;
+            Updateprospect.Update_By = prospect.Update_By;
+            Updateprospect.gender = prospect.gender;
+            Updateprospect.Update_Date = DateTime.Now;
 
             try
             {
@@ -75,7 +126,7 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+            prospect.Created_Date = DateTime.Now;
             db.Prospects.Add(prospect);
             db.SaveChanges();
 

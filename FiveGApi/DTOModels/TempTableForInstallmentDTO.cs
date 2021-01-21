@@ -13,11 +13,11 @@ namespace FiveGApi.DTOModels
         public int ProjectId { get; set; }
         public Nullable<int> Percentage { get; set; }
        
-        public double Tax { get; set; }
-        public double amount { get; set; }
-        public double TaxAmount { get; set; }
-        public double latesurchargeAmount { get; set; }
-        public double totalAmount { get; set; }
+        public int Tax { get; set; }
+        public int amount { get; set; }
+        public int TaxAmount { get; set; }
+        public int latesurchargeAmount { get; set; }
+        public int totalAmount { get; set; }
         public string dueDate { get; set; }
         public string paymentStatus { get; set; }
         public double balance { get; set; }

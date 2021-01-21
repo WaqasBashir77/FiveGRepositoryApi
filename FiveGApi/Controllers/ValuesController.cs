@@ -1,4 +1,5 @@
 ﻿using FiveGApi.DTOModels;
+using FiveGApi.Helper;
 using FiveGApi.Models;
 using System;
 using System.Collections.Generic;
@@ -9,23 +10,32 @@ using System.Web.Http;
 
 namespace FiveGApi.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [RoutePrefix("api/Values")]
     public class ValuesController : ApiController
     {
+        //private FiveG_DBEntities db = new FiveG_DBEntities();
         private MIS_DBEntities1 db = new MIS_DBEntities1();
-
-
         [HttpGet]
         public IHttpActionResult GetPropertySaleLsit()
         {
-
-            List<PropertySale> propertySale = db.PropertySales.ToList();
-
-            if (propertySale == null)
+            var re = Request;
+            var headers = re.Headers;
+            int groupId = 0;
+            if (headers.Contains("GroupId"))
             {
-                return NotFound();
+                groupId = Convert.ToInt32(headers.GetValues("GroupId").First());
             }
+            List<PropertySale> propertySale = new List<PropertySale>();
+            if (!SecurityGroupDTO.CheckSuperAdmin(groupId))
+                propertySale = db.PropertySales.Where(x => x.SecurityGroupId == groupId).ToList();
+            else
+                propertySale = db.PropertySales.ToList(); 
+          
+            //if (propertySale == null)
+            //{
+                //return NotFound();
+            //}
             return Ok(propertySale);
         }
 
@@ -46,9 +56,9 @@ namespace FiveGApi.Controllers
                 temp.Installment = item.Installment;
                 temp.InstallmentType = item.InstallmentType;
                 temp.Percentage = item.Percentage;
-
+               
                 temp.paymentDetailDTOs = new PaymentDetailDTO();
-                if (i != 0)
+                if (i != 0 )
                 {
                     if (item.Frequency == "Monthly")
                     {
@@ -66,10 +76,10 @@ namespace FiveGApi.Controllers
                     {
                         dateTime = dateTime.AddMonths(1);
                     }
-
+                    
                     string chngeformate = dateTime.ToString("dd/MM/yyyy");
                     temp.dueDate = chngeformate;// dateTime.Date;
-
+                    
                 }
                 else
                 {
@@ -78,7 +88,7 @@ namespace FiveGApi.Controllers
                     string chngeformate = date.ToString("dd/MM/yyyy");
                     temp.dueDate = chngeformate;
                 }
-
+                
                 i++;
                 tempTableForsDTO.Add(temp);
             }
@@ -130,6 +140,9 @@ namespace FiveGApi.Controllers
                     OriginalPropertySale.Employee = propertySale.employeeId;
                     OriginalPropertySale.PaymentCode = propertySale.PaymentCode;
                     OriginalPropertySale.Employee_Com = propertySale.employeeCommission;
+                    OriginalPropertySale.Created_ON = DateTime.Now;
+                    OriginalPropertySale.Created_By = propertySale.Created_By;
+                    OriginalPropertySale.SecurityGroupId = propertySale.SecurityGroupId;
                     if (propertySale.Purchaser_Picture != "")
                     {
                         string[] image = propertySale.Purchaser_Picture.Split(',');
@@ -157,6 +170,9 @@ namespace FiveGApi.Controllers
                             saleInstallment.ins_amount = item.amount;
                             saleInstallment.ins_amount_tax = item.TaxAmount;
                             saleInstallment.ins_total_amount = item.totalAmount;
+                            saleInstallment.Created_By = propertySale.Created_By;
+                            saleInstallment.Created_ON = DateTime.Now;
+                            saleInstallment.SecurityGroupId = propertySale.SecurityGroupId;
                             if (item.balance == 0 && item.paymentStatus != "Paid")
                             {
                                 saleInstallment.ins_payment_status = "UnPaid";
@@ -178,10 +194,12 @@ namespace FiveGApi.Controllers
                                 paymentInstallment.Booking_ID = OriginalPropertySale.Booking_ID;
                                 paymentInstallment.instrument_bank = item.paymentDetailDTOs.InstrumentBank;
                                 paymentInstallment.instrument_bank_Branch = item.paymentDetailDTOs.InsturmentBankBranch;
-                                paymentInstallment.instrument_date = Convert.ToDateTime(item.paymentDetailDTOs.InsturmentDate);
+                                paymentInstallment.instrument_date = Convert.ToDateTime( item.paymentDetailDTOs.InsturmentDate);
                                 paymentInstallment.instrument_remarks = item.paymentDetailDTOs.paymentDescription;
                                 paymentInstallment.instrument_number = item.paymentDetailDTOs.InstrumentNumber;
-
+                                paymentInstallment.Created_By = propertySale.Created_By;
+                                paymentInstallment.Created_ON = DateTime.Now;
+                                paymentInstallment.SecurityGroupId = propertySale.SecurityGroupId;
                                 saleInstallment.PaymentInstallments.Add(paymentInstallment);
                             }
                         }
@@ -199,20 +217,20 @@ namespace FiveGApi.Controllers
             return Ok(response);
         }
 
-
+      
         [HttpGet]
         [Route("getdetail")]
         public IHttpActionResult getdetail()
         {
-
+            
             List<Lookup_Values> lookup_Values = new List<Lookup_Values>();
-
-            var re = Request;
-            //HttpRequestMessage re = new HttpRequestMessage();
-            var headers = re.Headers;
-            int tempId = Convert.ToInt32(headers.GetValues("Id").First());
-            //Order by Value_Orderno ASC
-            var masterobj = db.PropertySales.Where(x => x.Booking_ID == tempId).FirstOrDefault();
+          
+                var re = Request;
+                //HttpRequestMessage re = new HttpRequestMessage();
+                var headers = re.Headers;
+               int tempId = Convert.ToInt32( headers.GetValues("Id").First());
+                //Order by Value_Orderno ASC
+                var masterobj = db.PropertySales.Where(x => x.Booking_ID == tempId).FirstOrDefault();
 
 
             return Ok(masterobj);
@@ -280,10 +298,24 @@ namespace FiveGApi.Controllers
         [Route("getPropertySaleDataForUpdate")]
         public IHttpActionResult getPropertySaleDataForUpdate(GeneralDTO general)
         {
-
+            var re = Request;
+            var headers = re.Headers;
+            int groupId = 0;
+            if (headers.Contains("GroupId"))
+            {
+                groupId = Convert.ToInt32(headers.GetValues("GroupId").First());
+            }
+            PropertySale propertySale = new PropertySale();
             var getPropertyMaster = db.PropertySales.Where(x => x.Booking_ID == general.Id).FirstOrDefault();
-
-            return Ok(getPropertyMaster);
+            if (getPropertyMaster != null && getPropertyMaster.SecurityGroupId == groupId)
+            {
+                return Ok(propertySale);
+            }
+            if (getPropertyMaster != null)
+            {
+                propertySale = getPropertyMaster;
+            }
+            return Ok(propertySale);
 
         }
 
@@ -317,6 +349,8 @@ namespace FiveGApi.Controllers
                     MasterObj.Address = UpdatedObj.Address;
                     MasterObj.Sale_Status = UpdatedObj.Sale_Status;
                     MasterObj.Description = UpdatedObj.Description;
+                    MasterObj.Updated_By = UpdatedObj.Updated_By;
+                    MasterObj.Updated_On = DateTime.Now;
 
                     foreach (var saleitem in UpdatedObj.SaleInstallments.ToList())
                     {
@@ -329,10 +363,12 @@ namespace FiveGApi.Controllers
                             saleInstallment.ins_payment_status = saleitem.ins_payment_status;
                             saleInstallment.ins_latesurcharge_amount = saleitem.ins_latesurcharge_amount;
                             saleInstallment.ins_balance = saleitem.ins_balance;
+                            saleInstallment.Updated_By = UpdatedObj.Updated_By;
+                            saleInstallment.Updated_On = DateTime.Now;
                         }
                         else
                         {
-
+                            
                             saleInstallment.Booking_ID = UpdatedObj.Booking_ID;
                             saleInstallment.Unit_ID = UpdatedObj.Unit_ID;
                             saleInstallment.Project_ID = UpdatedObj.Project_ID;
@@ -343,11 +379,12 @@ namespace FiveGApi.Controllers
                             saleInstallment.ins_due_date = saleitem.ins_due_date;
                             saleInstallment.ins_balance = saleitem.ins_balance;
                             saleInstallment.ins_payment_status = saleitem.ins_payment_status;
-
+                            saleInstallment.Updated_By = UpdatedObj.Updated_By;
+                            saleInstallment.Updated_On = DateTime.Now;
                             db.SaleInstallments.Add(saleInstallment);
 
                         }
-
+                        
 
                         foreach (var item in saleitem.PaymentInstallments.ToList())
                         {
@@ -365,10 +402,12 @@ namespace FiveGApi.Controllers
                                 paymentInstallment.instrument_date = Convert.ToDateTime(item.instrument_date);
                                 paymentInstallment.instrument_number = item.instrument_number;
                                 paymentInstallment.instrument_remarks = item.instrument_remarks;
+                                paymentInstallment.Created_By = UpdatedObj.Updated_By;
+                                paymentInstallment.Created_ON = DateTime.Now; 
 
                                 db.PaymentInstallments.Add(paymentInstallment);
                             }
-
+                            
                         }
                     }
                     db.SaveChanges();
@@ -378,7 +417,7 @@ namespace FiveGApi.Controllers
             {
                 Console.WriteLine(ex.Message);
             }
-
+            
             return Ok();
 
         }
@@ -415,22 +454,6 @@ namespace FiveGApi.Controllers
 
             return Ok(dealerList);
 
-        }
-        [HttpGet]
-        [Route("GetallSocieties")]
-        public IHttpActionResult GetallSocieties()
-        {
-            List<Lookup_Values> lookup_Values = new List<Lookup_Values>();
-            try
-            {
-                //Get All Societies on the basic of refID==3
-                lookup_Values = db.Lookup_Values.Where(x => x.Ref_ID == 3 && x.Value_Status == true).OrderBy(x => x.Value_orderNo).ToList();
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-            return Ok(lookup_Values);
         }
     }
 }
