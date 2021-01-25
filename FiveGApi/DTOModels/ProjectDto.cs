@@ -21,7 +21,11 @@ namespace FiveGApi.DTOModels
         public string projectCurrency { get; set; }
         public string location { get; set; }
         public Nullable<bool> PaymentPlanStatus { get; set; }
-
+        public DateTime Created_Date { get; set; }
+        public DateTime Update_Date { get; set; }
+        public int? Created_By { get; set; }
+        public int? Update_By { get; set; }
+        public int? Sec_GroupId { get; set; }
         public List<ProjectDetailDto> ProjectDetails { get; set; } = new List<ProjectDetailDto>();
     }
 }

@@ -19,8 +19,8 @@ namespace FiveGApi.Controllers
     [Authorize]
     public class AccountController : ApiController
     {
+        //private FiveG_DBEntities db = new FiveG_DBEntities();
         private MIS_DBEntities1 db = new MIS_DBEntities1();
-
         [HttpPost]
         [Route("Authenticate")]
         public IHttpActionResult Login([FromBody] LoginRequest login)
