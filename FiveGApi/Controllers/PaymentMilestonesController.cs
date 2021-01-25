@@ -13,7 +13,7 @@ using FiveGApi.Models;
 
 namespace FiveGApi.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class PaymentMilestonesController : ApiController
     {
        // private FiveG_DBEntities db = new FiveG_DBEntities();

@@ -12,27 +12,21 @@ namespace FiveGApi.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class PaymentMilestone
+    public partial class Module
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public PaymentMilestone()
+        public Module()
         {
-            this.PaymentMilestoneDetails = new HashSet<PaymentMilestoneDetail>();
+            this.Forms = new HashSet<Form>();
         }
     
         public int Id { get; set; }
-        public string PaymentScheduleCode { get; set; }
-        public Nullable<int> GracePeriodDays { get; set; }
-        public Nullable<double> Tax { get; set; }
-        public string LateFeePercent { get; set; }
-        public string description { get; set; }
-        public Nullable<int> SecurityGroupId { get; set; }
-        public Nullable<System.DateTime> Created_Date { get; set; }
-        public Nullable<int> Created_By { get; set; }
-        public Nullable<System.DateTime> Update_Date { get; set; }
-        public Nullable<int> Update_By { get; set; }
+        public string Name { get; set; }
+        public string Icon { get; set; }
+        public Nullable<bool> Status { get; set; }
+        public Nullable<int> Orderby { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PaymentMilestoneDetail> PaymentMilestoneDetails { get; set; }
+        public virtual ICollection<Form> Forms { get; set; }
     }
 }

@@ -9,7 +9,7 @@ using System.Web.Http;
 
 namespace FiveGApi.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [RoutePrefix("api/Values")]
     public class ValuesController : ApiController
     {

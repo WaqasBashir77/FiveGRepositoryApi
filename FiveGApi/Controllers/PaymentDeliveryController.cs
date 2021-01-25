@@ -10,7 +10,9 @@ using System.Web.Http.Description;
 
 namespace FiveGApi.Controllers
 {
-         [RoutePrefix("api/PaymentDelivery")]
+    [Authorize]
+
+    [RoutePrefix("api/PaymentDelivery")]
         public class PaymentDeliveryController : ApiController
         {
             private MIS_DBEntities1 db = new MIS_DBEntities1();

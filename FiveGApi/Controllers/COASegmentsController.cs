@@ -12,6 +12,8 @@ using System.Web.Http.Description;
 
 namespace FiveGApi.Controllers
 {
+    [Authorize]
+
     [RoutePrefix("api/COASegments")]
     public class COASegmentsController : ApiController
     {
@@ -29,6 +31,26 @@ namespace FiveGApi.Controllers
         public IList<COA_Segments> GetCOA_SegmentsBySegment(string segment)
         {
             return db.COA_Segments.Where(s=>s.Segment==segment).ToList();
+        }
+        [Route("GetCOA_SegmentBySegment_Value")]
+        [ResponseType(typeof(COA_Segments))]
+        public COA_Segments GetCOA_SegmentBySegment_Value(string segment,string SegmentValue)
+        {
+            return db.COA_Segments.Where(s => s.Segment_Value == SegmentValue && s.Segment==segment).FirstOrDefault();
+        }
+        [Route("GetCOA_SegmentBySegment_IsUnique")]
+        [ResponseType(typeof(COA_Segments))]
+        public IHttpActionResult GetCOA_SegmentBySegment_IsUnique(string segment,string segmentVlaue)
+        {
+            var finding= db.COA_Segments.Where(s => s.Segment_Value == segmentVlaue && s.Segment==segment).FirstOrDefault();
+            if (finding != null)
+            {
+                return Ok(finding.ID);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         // GET: api/COA_Segments/5
@@ -93,6 +115,7 @@ namespace FiveGApi.Controllers
 
             return CreatedAtRoute("DefaultApi", new { id = COA_Segments.ID }, COA_Segments);
         }
+
 
         // DELETE: api/COA_Segments/5
         [ResponseType(typeof(COA_Segments))]

@@ -52,5 +52,11 @@ namespace FiveGApi.Models
         public virtual DbSet<GL_Balances> GL_Balances { get; set; }
         public virtual DbSet<GL_Headers> GL_Headers { get; set; }
         public virtual DbSet<GL_Lines> GL_Lines { get; set; }
+        public virtual DbSet<Form> Forms { get; set; }
+        public virtual DbSet<Module> Modules { get; set; }
+        public virtual DbSet<PrivilegesToRole> PrivilegesToRoles { get; set; }
+        public virtual DbSet<Role> Roles { get; set; }
+        public virtual DbSet<RolesToUser> RolesToUsers { get; set; }
+        public virtual DbSet<SecurityGroup> SecurityGroups { get; set; }
     }
 }

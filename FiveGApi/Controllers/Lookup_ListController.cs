@@ -11,6 +11,8 @@ using System.Web.Http.Description;
 
 namespace FiveGApi.Controllers
 {
+    [Authorize]
+
     public class Lookup_ListController : ApiController
     {
         private MIS_DBEntities1 db = new MIS_DBEntities1();

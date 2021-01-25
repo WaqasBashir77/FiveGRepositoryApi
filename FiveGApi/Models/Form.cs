@@ -12,21 +12,20 @@ namespace FiveGApi.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class PaymentMilestoneDetail
+    public partial class Form
     {
         public int Id { get; set; }
-        public string Milestones { get; set; }
-        public Nullable<double> Percentage { get; set; }
-        public string Frequency { get; set; }
-        public int parentId { get; set; }
-        public Nullable<int> InstallmentNumber { get; set; }
-        public string code { get; set; }
-        public Nullable<int> SecurityGroupId { get; set; }
+        public string FormUrl { get; set; }
+        public Nullable<int> ModuleId { get; set; }
+        public string Alias { get; set; }
+        public string Icon { get; set; }
+        public Nullable<bool> Status { get; set; }
+        public Nullable<int> OrderBy { get; set; }
         public Nullable<System.DateTime> Created_Date { get; set; }
         public Nullable<int> Created_By { get; set; }
         public Nullable<System.DateTime> Update_Date { get; set; }
         public Nullable<int> Update_By { get; set; }
     
-        public virtual PaymentMilestone PaymentMilestone { get; set; }
+        public virtual Module Module { get; set; }
     }
 }

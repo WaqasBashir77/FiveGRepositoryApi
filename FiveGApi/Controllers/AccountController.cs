@@ -16,6 +16,7 @@ using System.Linq;
 
 namespace FiveGApi.Controllers
 {
+    [Authorize]
     public class AccountController : ApiController
     {
         private MIS_DBEntities1 db = new MIS_DBEntities1();

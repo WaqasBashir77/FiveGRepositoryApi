@@ -12,6 +12,8 @@ using FiveGApi.Models;
 
 namespace FiveGApi.Controllers
 {
+    [Authorize]
+
     public class ProspectsController : ApiController
     {
         private MIS_DBEntities1 db = new MIS_DBEntities1();

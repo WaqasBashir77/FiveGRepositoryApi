@@ -11,6 +11,8 @@ using System.Web.Http.Description;
 
 namespace FiveGApi.Controllers
 {
+    [Authorize]
+
     [RoutePrefix("api/Registration")]
     public class RegistrationController : ApiController
     {

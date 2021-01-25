@@ -26,6 +26,11 @@ namespace FiveGApi.Models
         public string instrument_bank_Branch { get; set; }
         public Nullable<System.DateTime> instrument_date { get; set; }
         public string instrument_remarks { get; set; }
+        public Nullable<System.DateTime> Created_ON { get; set; }
+        public Nullable<int> Updated_By { get; set; }
+        public Nullable<int> Created_By { get; set; }
+        public Nullable<System.DateTime> Updated_On { get; set; }
+        public Nullable<int> SecurityGroupId { get; set; }
     
         public virtual SaleInstallment SaleInstallment { get; set; }
     }

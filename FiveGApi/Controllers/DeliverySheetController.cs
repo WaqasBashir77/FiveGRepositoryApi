@@ -10,6 +10,8 @@ using System.Web.Http.Description;
 
 namespace FiveGApi.Controllers
 {
+    [Authorize]
+
     [RoutePrefix("api/DeliverySheet")]
     public class DeliverySheetController : ApiController
     {

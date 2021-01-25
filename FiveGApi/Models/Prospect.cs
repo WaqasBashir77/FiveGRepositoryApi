@@ -22,9 +22,15 @@ namespace FiveGApi.Models
         public string profession { get; set; }
         public string knowUs { get; set; }
         public string address { get; set; }
-        public string city { get; set; }
+        public Nullable<int> city { get; set; }
         public string projectId { get; set; }
-        public string employeeId { get; set; }
+        public Nullable<int> employeeId { get; set; }
         public string description { get; set; }
+        public string gender { get; set; }
+        public Nullable<int> SecurityGroupId { get; set; }
+        public Nullable<System.DateTime> Created_Date { get; set; }
+        public Nullable<int> Created_By { get; set; }
+        public Nullable<System.DateTime> Update_Date { get; set; }
+        public Nullable<int> Update_By { get; set; }
     }
 }

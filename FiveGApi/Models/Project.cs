@@ -34,6 +34,11 @@ namespace FiveGApi.Models
         public string projectCurrency { get; set; }
         public string location { get; set; }
         public Nullable<bool> PaymentPlanStatus { get; set; }
+        public Nullable<int> SecurityGroupId { get; set; }
+        public Nullable<System.DateTime> Created_Date { get; set; }
+        public Nullable<int> Created_By { get; set; }
+        public Nullable<System.DateTime> Update_Date { get; set; }
+        public Nullable<int> Update_By { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProjectDetail> ProjectDetails { get; set; }

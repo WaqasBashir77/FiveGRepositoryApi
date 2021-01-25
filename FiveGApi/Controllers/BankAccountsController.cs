@@ -12,7 +12,9 @@ namespace FiveGApi.Controllers
 {
    
         [RoutePrefix("api/BankAccounts")]
-        public class BankAccountsController : ApiController
+    [Authorize]
+
+    public class BankAccountsController : ApiController
         {
         private MIS_DBEntities1 db = new MIS_DBEntities1();
             // GET: api/Bank_Accounts

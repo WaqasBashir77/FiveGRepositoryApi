@@ -27,5 +27,6 @@ namespace FiveGApi.Models
         public Nullable<System.DateTime> CreatedOn { get; set; }
         public Nullable<int> CreatedBy { get; set; }
         public Nullable<System.DateTime> LastModifiedDate { get; set; }
+        public Nullable<int> SecurityGroupId { get; set; }
     }
 }

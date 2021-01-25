@@ -9,6 +9,8 @@ using System.Web.Http.Description;
 
 namespace FiveGApi.Controllers
 {
+    [Authorize]
+
     [RoutePrefix("api/COACombinations")]
     public class COACombinationsController : ApiController
     {

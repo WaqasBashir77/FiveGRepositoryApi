@@ -13,6 +13,8 @@ using System.Web.Http.Description;
 
 namespace FiveGApi.Controllers
 {
+    [Authorize]
+
     [RoutePrefix("api/BookingPayment")]
     public class BookingPaymentController : ApiController
     {

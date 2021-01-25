@@ -13,7 +13,7 @@ using FiveGApi.Models;
 
 namespace FiveGApi.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [RoutePrefix("api/Projects")]
     public class ProjectsController : ApiController
     {

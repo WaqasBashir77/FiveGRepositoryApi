@@ -13,7 +13,7 @@ using FiveGApi.Models;
 
 namespace FiveGApi.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [RoutePrefix("api/GL_Header")]
     public class GlHeaderController : ApiController
     {
@@ -85,7 +85,7 @@ namespace FiveGApi.Controllers
             existgL_Headers.Flex_2 =       gL_Headers.Flex_2; 
             existgL_Headers.Updated_By=    "Admin";
             existgL_Headers.Updated_On = DateTime.Now;
-            gL_LinesUpdate(existgL_Headers.H_ID, existgL_Headers.GL_Lines);
+            gL_LinesUpdate(existgL_Headers.H_ID, gL_Headers.GL_Lines);
 
             try
             {
@@ -164,13 +164,14 @@ namespace FiveGApi.Controllers
         
         private IQueryable<FiveGApi.Models.GL_Lines> gL_LinesUpdate(int H_ID, ICollection<FiveGApi.Models.GL_Lines> gL_Lines)
         {
-
+            var gllinesCount = gL_Lines.Count();
 
             foreach (var item in gL_Lines)
             {
-                if (item.L_ID > 0)
+                var existgL_LinesExisted = db.GL_Lines.Where(x => x.L_ID == item.L_ID).FirstOrDefault();
+
+                if (existgL_LinesExisted!=null)
                 {
-                    var existgL_LinesExisted = db.GL_Lines.Where(x => x.L_ID == item.L_ID).FirstOrDefault();
                     existgL_LinesExisted.H_ID       = item.H_ID;
                     existgL_LinesExisted.C_CODE     = item.C_CODE;
                     existgL_LinesExisted.Debit      = item.Debit;
@@ -180,18 +181,17 @@ namespace FiveGApi.Controllers
                     existgL_LinesExisted.Flex_2     = item.Flex_2;           
                     existgL_LinesExisted.Updated_By = "Admin" ;
                     existgL_LinesExisted.Updated_On = DateTime.Now;
-                    db.SaveChanges();                 
+                    db.SaveChanges();
                 }                                     
                 else
                 {
 
-                   
+                    item.H_ID = H_ID;
                     item.Created_By = "Admin";
                     item.Updated_On = DateTime.Now;
                     db.GL_Lines.Add(item);
                     db.SaveChanges();
-                }
-
+                }               
             }
             return db.GL_Lines.Where(x => x.H_ID == H_ID);
         }
