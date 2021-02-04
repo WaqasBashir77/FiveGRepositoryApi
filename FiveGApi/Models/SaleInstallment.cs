@@ -35,7 +35,7 @@ namespace FiveGApi.Models
         public Nullable<double> ins_remaining { get; set; }
         public Nullable<double> ins_balance { get; set; }
         public Nullable<System.DateTime> Created_ON { get; set; }
-        public Nullable<short> Updated_By { get; set; }
+        public Nullable<int> Updated_By { get; set; }
         public Nullable<int> Created_By { get; set; }
         public Nullable<System.DateTime> Updated_On { get; set; }
         public Nullable<int> SecurityGroupId { get; set; }

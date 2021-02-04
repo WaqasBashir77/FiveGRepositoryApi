@@ -85,7 +85,8 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+            Rebate_Detail.Created_By = "Admin";
+            Rebate_Detail.Created_ON = DateTime.Now;
             db.Rebate_Details.Add(Rebate_Detail);
             db.SaveChanges();
 

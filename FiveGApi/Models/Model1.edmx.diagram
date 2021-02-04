@@ -4,18 +4,18 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="5f094288dd0d42ab85d942c6252afb5e" Name="Diagram1" ZoomLevel="65">
+      <Diagram DiagramId="5f094288dd0d42ab85d942c6252afb5e" Name="Diagram1" ZoomLevel="82">
         <EntityTypeShape EntityType="MIS_DBModel.BookingConfirm" Width="1.5" PointX="7.75" PointY="11.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MIS_DBModel.BookingPayment" Width="1.5" PointX="9.75" PointY="11.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MIS_DBModel.Delivery_Sheet" Width="1.5" PointX="11.75" PointY="11.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MIS_DBModel.Employee" Width="1.5" PointX="12.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MIS_DBModel.Lookup_List" Width="1.5" PointX="0.75" PointY="12.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="MIS_DBModel.Lookup_Values" Width="1.5" PointX="2.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MIS_DBModel.Lookup_Values" Width="1.5" PointX="2.75" PointY="13.125" IsExpanded="true" />
         <EntityTypeShape EntityType="MIS_DBModel.Payment_Delivery" Width="1.5" PointX="12.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MIS_DBModel.PaymentInstallment" Width="1.5" PointX="5.25" PointY="2.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MIS_DBModel.Project" Width="1.5" PointX="2.75" PointY="8" IsExpanded="true" />
         <EntityTypeShape EntityType="MIS_DBModel.ProjectDetail" Width="1.5" PointX="5" PointY="8.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="MIS_DBModel.PropertyDef" Width="1.5" PointX="4.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MIS_DBModel.PropertyDef" Width="1.5" PointX="4.875" PointY="13.5" IsExpanded="true" />
         <EntityTypeShape EntityType="MIS_DBModel.PropertySale" Width="1.5" PointX="0.75" PointY="1.125" IsExpanded="true" />
         <EntityTypeShape EntityType="MIS_DBModel.Prospect" Width="1.5" PointX="13.75" PointY="8.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MIS_DBModel.Rebate_Details" Width="1.5" PointX="10" PointY="2" IsExpanded="true" />
@@ -43,6 +43,9 @@
         <EntityTypeShape EntityType="MIS_DBModel.RolesToUser" Width="1.5" PointX="19.375" PointY="5.75" />
         <EntityTypeShape EntityType="MIS_DBModel.SecurityGroup" Width="1.5" PointX="19.375" PointY="8.75" />
         <AssociationConnector Association="MIS_DBModel.FK_Forms_Module" />
+        <EntityTypeShape EntityType="MIS_DBModel.Booking_Entries" Width="1.5" PointX="10" PointY="22.25" />
+        <EntityTypeShape EntityType="MIS_DBModel.Project_Entries" Width="1.5" PointX="10" PointY="27.125" />
+        <AssociationConnector Association="MIS_DBModel.FK_Project_Entries_BookingConfirm" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -455,5 +455,21 @@ namespace FiveGApi.Controllers
             return Ok(dealerList);
 
         }
+        [HttpGet]
+        [Route("GetallSocieties")]
+        public IHttpActionResult GetallSocieties()
+        {
+            List<Lookup_Values> lookup_Values = new List<Lookup_Values>();
+            try
+            {
+                //Get All Societies on the basic of refID==3
+                lookup_Values = db.Lookup_Values.Where(x => x.Ref_ID == 3 && x.Value_Status == true).OrderBy(x => x.Value_orderNo).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            return Ok(lookup_Values);
+        }
     }
 }

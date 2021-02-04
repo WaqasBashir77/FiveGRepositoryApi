@@ -32,7 +32,7 @@ namespace FiveGApi.DTOModels
         public string PaymentCode { get; set; }
         public DateTime Created_Date { get; set; }
         public DateTime Update_Date { get; set; }
-        public int? Created_By { get; set; }
+        public short? Created_By { get; set; }
         public int? Update_By { get; set; }
         public int? SecurityGroupId { get; set; }
         public List<TempTableForInstallmentDTO> propertySaleDetails { get; set; }

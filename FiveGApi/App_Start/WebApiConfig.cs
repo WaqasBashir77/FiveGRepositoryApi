@@ -1,5 +1,4 @@
-﻿using FiveGApi.Custom;
-using System.Web.Http;
+﻿using System.Web.Http;
 using System.Web.Http.Cors;
 
 namespace FiveGApi
@@ -12,9 +11,10 @@ namespace FiveGApi
             var cors = new EnableCorsAttribute("*", "*", "*");//origins,headers,methods   
             config.EnableCors(cors);
             // Web API routes
+            
             config.MapHttpAttributeRoutes();
-            //Custom Exception Filter
-            config.Filters.Add(new CustomExceptionFilter());
+
+            config.MessageHandlers.Add(new TokenValidationHandler());
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
@@ -27,13 +27,13 @@ namespace FiveGApi
              routeTemplate: "api/{controller}/{action}",
              defaults: null,
              constraints: new { name = @"^[a-z]+$" }
-           );
+         );
             config.Routes.MapHttpRoute(
-              name: "ApiById",
-              routeTemplate: "api/{controller}/{action}/{id}",
-              defaults: null,
-              constraints: new { name = @"^[0-9]+$" }
-           );
+      name: "ApiById",
+      routeTemplate: "api/{controller}/{action}/{id}",
+      defaults: null,
+      constraints: new { name = @"^[0-9]+$" }
+  );
         }
     }
 }

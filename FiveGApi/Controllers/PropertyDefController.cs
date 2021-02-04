@@ -48,8 +48,7 @@ namespace FiveGApi.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
-                
+            }                
             var existPropertyDef = db.PropertyDefs.Where(x => x.ID == id).FirstOrDefault();          
             existPropertyDef.Name       = PropertyDef.Name;
             existPropertyDef.Society = PropertyDef.Society;
@@ -68,6 +67,8 @@ namespace FiveGApi.Controllers
             existPropertyDef.Booking_Start = PropertyDef.Booking_Start;
             existPropertyDef.Booking_End = PropertyDef.Booking_End;
             existPropertyDef.GL_Mapping_ID = PropertyDef.GL_Mapping_ID;
+            existPropertyDef.ConfirmationCommision = PropertyDef.ConfirmationCommision;
+            existPropertyDef.BookingCommision = PropertyDef.BookingCommision;            
             existPropertyDef.Flex_1 = "1";
             existPropertyDef.Flex_2 ="1";           
             existPropertyDef.Updated_By = PropertyDef.Updated_By;

@@ -58,5 +58,7 @@ namespace FiveGApi.Models
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<RolesToUser> RolesToUsers { get; set; }
         public virtual DbSet<SecurityGroup> SecurityGroups { get; set; }
+        public virtual DbSet<Booking_Entries> Booking_Entries { get; set; }
+        public virtual DbSet<Project_Entries> Project_Entries { get; set; }
     }
 }

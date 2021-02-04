@@ -45,6 +45,10 @@ namespace FiveGApi.Controllers
             {
                 string token = createToken(loginrequest.Username);
                 //return the token
+                dbUser.Password = "";
+                dbUser.ConfirmPassword = "";
+                dbUser.NewPassword = "";
+                dbUser.OldPassword = "";
                 var user = new
                 {
                     token = token,

@@ -200,14 +200,23 @@ namespace FiveGApi.Controllers
                 return BadRequest(ModelState);
             }
             var Reg = db.Registrations.Where(x => x.Code == Registration.Code).FirstOrDefault();
+            var Seg = db.COA_Segments.Where(x => x.Segment_Value == Registration.Code && x.Type=="Party").FirstOrDefault();
             if (Reg != null)
             {
                 var error = new { message = "Party must be unique" }; //<-- anonymous object
                 return this.Content(HttpStatusCode.Conflict, error);
 
             }
+            if (Seg != null)
+            {
+                var error = new { message = "Party Code allready exist in Chart Of Account" }; //<-- anonymous object
+                return this.Content(HttpStatusCode.Conflict, error);
 
+            }
+            Registration.Created_By = "Admin";
+            Registration.Created_ON = DateTime.Now;
             db.Registrations.Add(Registration);
+            Registration.Rebate_Details = Registration.Rebate_Details.Select(x => { x.Created_By = "Admin"; x.Created_ON = DateTime.Now; return x; }).ToList();
             foreach (var item in Registration.Rebate_Details)
             {
                 item.Reg_ID = Registration.ID;
@@ -268,6 +277,7 @@ namespace FiveGApi.Controllers
                 {
                     item.Reg_ID = regID;
                     item.Created_By = "1";
+                    item.Created_ON = DateTime.Now;
                     db.Rebate_Details.Add(item);
                     db.SaveChanges();
                 }

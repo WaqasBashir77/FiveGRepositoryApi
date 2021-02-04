@@ -95,6 +95,8 @@ namespace FiveGApi.Controllers
             var existBookingConfirm = db.BookingConfirms.Where(x => x.ID == id).FirstOrDefault();
             if (existBookingConfirm != null)
             {
+                var property = db.PropertyDefs.Where(x => x.ID == BookingConfirm.Property_ID).FirstOrDefault();
+
                 existBookingConfirm.Ref_num = BookingConfirm.Ref_num;
                 existBookingConfirm.Form_num = BookingConfirm.Form_num;
                 existBookingConfirm.Authorize_Status = BookingConfirm.Authorize_Status;
@@ -113,6 +115,15 @@ namespace FiveGApi.Controllers
                 existBookingConfirm.Confirmation_Date = BookingConfirm.Confirmation_Date;
                 existBookingConfirm.Updated_By = BookingConfirm.Updated_By;
                 existBookingConfirm.Updated_On = BookingConfirm.Updated_On;
+                decimal bookingpercentage = (decimal)(property.BookingCommision / 100);
+                decimal confirmpercentage = (decimal)(property.ConfirmationCommision / 100);
+                existBookingConfirm.Emp_B_RAmt = ((((property.Price / 100) * BookingConfirm.Emp_Rebate)) * bookingpercentage);
+                existBookingConfirm.Dealer_B_RAmt = ((((property.Price / 100) * BookingConfirm.Dealer_Rebate)) * bookingpercentage);
+                existBookingConfirm.Com_B_RAmt = (((property.Price / 100) * BookingConfirm.Rebate_Percent)) * bookingpercentage;
+                existBookingConfirm.Emp_C_RAmt = ((((property.Price / 100) * BookingConfirm.Emp_Rebate)) * confirmpercentage);
+                existBookingConfirm.Dealer_C_RAmt = ((((property.Price / 100) * BookingConfirm.Dealer_Rebate)) * confirmpercentage);
+                existBookingConfirm.Com_C_RAmt = (((property.Price / 100) * BookingConfirm.Rebate_Percent)) * confirmpercentage;
+
                 // db.Entry(BookingConfirm).State = EntityState.Modified;
                 existBookingConfirm.Updated_On = DateTime.Now.ToString();
 
@@ -141,6 +152,7 @@ namespace FiveGApi.Controllers
         }
 
         // POST: api/BookingConfirm
+       // [Route("PostBookingConf")]
         [ResponseType(typeof(BookingConfirm))]
         public IHttpActionResult PostBookingConf(BookingConfirm BookingConfirm)
         {
@@ -161,13 +173,7 @@ namespace FiveGApi.Controllers
             BookingConfirm.Emp_Rebate = employeRebate;
             int dealerID = Convert.ToInt32(BookingConfirm.Book_Dealer);
             var dealerRebate = db.Rebate_Details.Where(x => x.Reg_ID == dealerID).Select(x => x.Rebate).FirstOrDefault();
-            BookingConfirm.Dealer_Rebate = dealerRebate;
-            BookingConfirm.Emp_B_RAmt = 0;
-            BookingConfirm.Emp_C_RAmt = 0;
-            BookingConfirm.Dealer_B_RAmt = 0;
-            BookingConfirm.Dealer_C_RAmt = 0;
-            BookingConfirm.Com_B_RAmt = 0;
-            BookingConfirm.Com_C_RAmt = 0;
+            BookingConfirm.Dealer_Rebate = dealerRebate;            
             BookingConfirm.Flex_1 = "true";
             BookingConfirm.Flex_2 = "true";
             BookingConfirm.Created_By = "1";
@@ -177,7 +183,16 @@ namespace FiveGApi.Controllers
             BookingConfirm.Flex_1 = "1";
             BookingConfirm.Flex_2 = "1";
             BookingConfirm.Created_By = "1";
-            BookingConfirm.Created_ON = DateTime.Now;            
+            BookingConfirm.Created_ON = DateTime.Now;
+            decimal bookingpercentage = (decimal)(property.BookingCommision / 100);
+            decimal confirmpercentage = (decimal)(property.ConfirmationCommision / 100);
+            BookingConfirm.Emp_B_RAmt = ((((property.Price / 100) * BookingConfirm.Emp_Rebate) )*bookingpercentage);
+            BookingConfirm.Dealer_B_RAmt = ((((property.Price / 100) * BookingConfirm.Dealer_Rebate) )*bookingpercentage);
+            BookingConfirm.Com_B_RAmt = (((property.Price / 100) * BookingConfirm.Rebate_Percent))*bookingpercentage;
+            BookingConfirm.Emp_C_RAmt = ((((property.Price / 100) * BookingConfirm.Emp_Rebate) ) * confirmpercentage);
+            BookingConfirm.Dealer_C_RAmt = ((((property.Price / 100) * BookingConfirm.Dealer_Rebate) ) * confirmpercentage);
+            BookingConfirm.Com_C_RAmt = (((property.Price / 100) * BookingConfirm.Rebate_Percent) ) * confirmpercentage;
+
             //BookingConfirm.Emp_B_RAmt = (((property.Price / 100) * employeRebate) / 2);
             //BookingConfirm.Emp_C_RAmt = (((property.Price / 100) * employeRebate) / 2);
             //BookingConfirm.Dealer_B_RAmt = (((property.Price / 100) * dealerRebate) / 2);
@@ -186,6 +201,7 @@ namespace FiveGApi.Controllers
             //BookingConfirm.Com_C_RAmt = ((property.Price / 100) * property.Rebate_percent);
             db.BookingConfirms.Add(BookingConfirm);
             db.SaveChanges();
+            insertBookingEntries(BookingConfirm.ID, property, BookingConfirm);
             return CreatedAtRoute("DefaultApi", new { id = BookingConfirm.ID }, BookingConfirm);
         }
 
@@ -333,6 +349,118 @@ namespace FiveGApi.Controllers
         private bool BookingConfExists(int id)
         {
             return db.BookingConfirms.Count(e => e.ID == id) > 0;
+        }
+        [NonAction]
+        public void insertBookingEntries(int bookingID,PropertyDef property,BookingConfirm bookingConfirm)
+        {
+            Booking_Entries booking_EntriesforROS = new Booking_Entries();
+            booking_EntriesforROS.Transaction_ID = bookingID;
+            booking_EntriesforROS.Entry_Date = DateTime.Now;
+            booking_EntriesforROS.Entry_Type = "Rebate";
+            booking_EntriesforROS.Created_By = "Admin";
+            booking_EntriesforROS.Created_On = DateTime.Now;
+            booking_EntriesforROS.Status = "Draft";
+            var c_Code = property.Company + "." + property.Project + "." + property.Location;
+            #region Compant Rebates
+            //////----------------Receivable from society--------------------///////////
+            ///-------------------Booking Rebate Debit------------------------------///////////
+            var coa_Segment = db.COA_Segments.Where(x => x.Name == "Receivable from society").FirstOrDefault();
+            booking_EntriesforROS.C_CODE = c_Code + "." + coa_Segment.Segment_Value + ".000";
+            booking_EntriesforROS.Debit = bookingConfirm.Com_B_RAmt;
+            booking_EntriesforROS.Credit = 0;
+            db.Booking_Entries.Add(booking_EntriesforROS);
+            db.SaveChanges();
+            ///-------------------Confirmation Rebate Debit------------------------------///////////
+            booking_EntriesforROS.C_CODE = c_Code + "." + coa_Segment.Segment_Value + ".000";
+            booking_EntriesforROS.Debit = bookingConfirm.Com_C_RAmt;
+            booking_EntriesforROS.Credit = 0;
+            db.Booking_Entries.Add(booking_EntriesforROS);
+            db.SaveChanges();
+            //////----------------Commission income--------------------///////////
+            ///-------------------Booking Rebate Credit------------------------------///////////            
+            coa_Segment = db.COA_Segments.Where(x => x.Name == "Commission income").FirstOrDefault();
+            booking_EntriesforROS.C_CODE = c_Code + "." + coa_Segment.Segment_Value + ".000";
+            booking_EntriesforROS.Credit = bookingConfirm.Com_B_RAmt;
+            booking_EntriesforROS.Debit = 0;
+            db.Booking_Entries.Add(booking_EntriesforROS);
+            db.SaveChanges();
+            ///-------------------Confirmation Rebate Credit------------------------------///////////            
+            booking_EntriesforROS.C_CODE = c_Code + "." + coa_Segment.Segment_Value + ".000";
+            booking_EntriesforROS.Credit = bookingConfirm.Com_C_RAmt;
+            booking_EntriesforROS.Debit = 0;
+            db.Booking_Entries.Add(booking_EntriesforROS);
+            db.SaveChanges();
+            ////////////////----------------------End Company--------------------//////////////////
+            #endregion Company Rebates
+            #region Staff Rebates
+            //////----------------Receivable from society--------------------///////////
+            ///-------------------Booking Rebate Debit------------------------------///////////
+             coa_Segment = db.COA_Segments.Where(x => x.Name == "Commission to staff").FirstOrDefault();
+            booking_EntriesforROS.C_CODE = c_Code + "." + coa_Segment.Segment_Value + ".000";
+            booking_EntriesforROS.Debit = bookingConfirm.Emp_B_RAmt;
+            booking_EntriesforROS.Credit = 0;
+            db.Booking_Entries.Add(booking_EntriesforROS);
+            db.SaveChanges();
+            ///-------------------Confirmation Rebate Debit------------------------------///////////
+            var bEmpID = Convert.ToInt32(bookingConfirm.Book_Emp);
+            var reg = db.Registrations.Where(x => x.ID == bEmpID).FirstOrDefault();
+            booking_EntriesforROS.C_CODE = c_Code + "." + coa_Segment.Segment_Value + "."+reg.Code;
+            booking_EntriesforROS.Credit = bookingConfirm.Emp_B_RAmt;
+            booking_EntriesforROS.Debit = 0;
+            db.Booking_Entries.Add(booking_EntriesforROS);
+            db.SaveChanges();
+            //////----------------Commission payable to staff--------------------///////////
+            ///-------------------Booking Rebate Credit------------------------------///////////            
+            coa_Segment = db.COA_Segments.Where(x => x.Name == "Commission payable to staff").FirstOrDefault();
+            booking_EntriesforROS.C_CODE = c_Code + "." + coa_Segment.Segment_Value + ".000";
+            booking_EntriesforROS.Debit = bookingConfirm.Emp_C_RAmt;
+            booking_EntriesforROS.Credit = 0;
+            db.Booking_Entries.Add(booking_EntriesforROS);
+            db.SaveChanges();
+            ///-------------------Confirmation Rebate Credit------------------------------///////////            
+            booking_EntriesforROS.C_CODE = c_Code + "." + coa_Segment.Segment_Value + "."+ reg.Code;
+            booking_EntriesforROS.Credit = bookingConfirm.Emp_C_RAmt;
+            booking_EntriesforROS.Debit = 0;
+            db.Booking_Entries.Add(booking_EntriesforROS);
+            db.SaveChanges();
+            ////////////////----------------------End Company--------------------//////////////////
+            #endregion  Staff Rebates
+            #region Agent Rebates
+            if (bookingConfirm.Book_Dealer != null)
+            {
+                var bDeaID = Convert.ToInt32(bookingConfirm.Book_Dealer);
+                //////----------------Commission to agent--------------------///////////
+                ///-------------------Booking Rebate Debit------------------------------///////////
+                coa_Segment = db.COA_Segments.Where(x => x.Name == "Commission to agent").FirstOrDefault();
+                booking_EntriesforROS.C_CODE = c_Code + "." + coa_Segment.Segment_Value + ".000";
+                booking_EntriesforROS.Debit = bookingConfirm.Dealer_B_RAmt;
+                booking_EntriesforROS.Credit = 0;
+                db.Booking_Entries.Add(booking_EntriesforROS);
+                db.SaveChanges();
+                ///-------------------Confirmation Rebate Debit------------------------------///////////
+                 reg = db.Registrations.Where(x => x.ID == bDeaID).FirstOrDefault();
+                booking_EntriesforROS.C_CODE = c_Code + "." + coa_Segment.Segment_Value + "." + reg.Code;
+                booking_EntriesforROS.Credit = bookingConfirm.Dealer_B_RAmt;
+                booking_EntriesforROS.Debit = 0;
+                db.Booking_Entries.Add(booking_EntriesforROS);
+                db.SaveChanges();
+                //////----------------Commission payable to staff--------------------///////////
+                ///-------------------Booking Rebate Credit------------------------------///////////            
+                coa_Segment = db.COA_Segments.Where(x => x.Name == "Commission payable to agent").FirstOrDefault();
+                booking_EntriesforROS.C_CODE = c_Code + "." + coa_Segment.Segment_Value + ".000";
+                booking_EntriesforROS.Debit = bookingConfirm.Dealer_B_RAmt;
+                booking_EntriesforROS.Credit = 0;
+                db.Booking_Entries.Add(booking_EntriesforROS);
+                db.SaveChanges();
+                ///-------------------Confirmation Rebate Credit------------------------------///////////            
+                booking_EntriesforROS.C_CODE = c_Code + "." + coa_Segment.Segment_Value + "." + reg.Code;
+                booking_EntriesforROS.Credit = bookingConfirm.Dealer_B_RAmt;
+                booking_EntriesforROS.Debit = 0;
+                db.Booking_Entries.Add(booking_EntriesforROS);
+                db.SaveChanges();
+                ////////////////----------------------End Company--------------------//////////////////
+            }
+            #endregion Agent Reabtes
         }
         //private IQueryable<BookingPayment> BookingPaymentDetails(int BookingID, BookingConfirm BookingConfirm)
         //{

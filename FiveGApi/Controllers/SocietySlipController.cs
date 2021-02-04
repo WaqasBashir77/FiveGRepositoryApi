@@ -79,7 +79,8 @@ namespace FiveGApi.Controllers
                 existSociety_Slip.Flex_1 = Society_Slip.Flex_1;
                 existSociety_Slip.Flex_2 = Society_Slip.Flex_2;                
                 existSociety_Slip.Updated_ON = DateTime.Now;
-                existSociety_Slip.Updated_By = "1";
+                existSociety_Slip.Delivered_Date = Society_Slip.Delivered_Date;
+            existSociety_Slip.Updated_By = "1";
                 try
                 {
                     db.SaveChanges();

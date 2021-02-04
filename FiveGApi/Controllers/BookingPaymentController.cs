@@ -175,10 +175,7 @@ namespace FiveGApi.Controllers
                     var property = db.PropertyDefs.Where(x => x.ID == existBookingConfirm.Property_ID).FirstOrDefault();
                     if (Booking_Payments.Ins_Type == "Booking")
                     {
-                        existBookingConfirm.Emp_B_RAmt = (((property.Price / 100) * existBookingConfirm.Emp_Rebate) / 2);
-                        existBookingConfirm.Dealer_B_RAmt = (((property.Price / 100) * existBookingConfirm.Dealer_Rebate) / 2);
-                        existBookingConfirm.Com_B_RAmt = (((property.Price / 100) * existBookingConfirm.Rebate_Percent));
-                        existBookingConfirm.Booking_Date = DateTime.Now;
+                         existBookingConfirm.Booking_Date = DateTime.Now;
                         var totalPayments = db.BookingPayments.Where(xx => xx.ID == Booking_Payments.ID && xx.Ins_Type == "Booking");
                         decimal totalPaymentsClculation = 0;
                         foreach (var item in totalPayments)
@@ -205,9 +202,6 @@ namespace FiveGApi.Controllers
                     }
                     else if (Booking_Payments.Ins_Type == "Confirmation")
                     {
-                        existBookingConfirm.Emp_C_RAmt = (((property.Price / 100) * existBookingConfirm.Emp_Rebate) / 2);
-                        existBookingConfirm.Dealer_C_RAmt = (((property.Price / 100) * existBookingConfirm.Dealer_C_RAmt) / 2);
-                        existBookingConfirm.Com_C_RAmt = (((property.Price / 100) * existBookingConfirm.Com_C_RAmt));
                         var totalPayments = db.BookingPayments.Where(xx => xx.ID == Booking_Payments.ID && xx.Ins_Type == "Confirmation");
                         decimal totalPaymentsClculation = 0;
                         foreach (var item in totalPayments)
@@ -311,9 +305,6 @@ namespace FiveGApi.Controllers
             var property = db.PropertyDefs.Where(x => x.ID == existBookingConfirm.Property_ID).FirstOrDefault();
             if (Booking_Payments.Ins_Type== "Booking")
             {
-                existBookingConfirm.Emp_B_RAmt = (((property.Price / 100) * existBookingConfirm.Emp_Rebate)/2);
-                existBookingConfirm.Dealer_B_RAmt = (((property.Price / 100) * existBookingConfirm.Dealer_Rebate)/2);
-                existBookingConfirm.Com_B_RAmt = (((property.Price / 100) * existBookingConfirm.Rebate_Percent) );
                 existBookingConfirm.Booking_Date = DateTime.Now;
                 var totalPayments = db.BookingPayments.Where(xx => xx.ID == Booking_Payments.ID && xx.Ins_Type == "Booking");
                 decimal totalPaymentsClculation = 0;
@@ -341,9 +332,6 @@ namespace FiveGApi.Controllers
             }
             else if (Booking_Payments.Ins_Type == "Confirmation")
             {
-                existBookingConfirm.Emp_C_RAmt = (((property.Price / 100) * existBookingConfirm.Emp_Rebate)/2);
-                existBookingConfirm.Dealer_C_RAmt = (((property.Price / 100) * existBookingConfirm.Dealer_Rebate)/2);
-                existBookingConfirm.Com_C_RAmt = (((property.Price / 100) * existBookingConfirm.Rebate_Percent));               
                 var totalPayments = db.BookingPayments.Where(xx => xx.ID == Booking_Payments.ID && xx.Ins_Type == "Confirmation");
                 decimal totalPaymentsClculation = 0;
                 foreach (var item in totalPayments)
@@ -407,7 +395,34 @@ namespace FiveGApi.Controllers
                 {
                     throw;
                 }
-            }
+            }            
+                var bankAccount = db.Bank_Accounts.Where(x => x.ID == Booking_Payments.Payment_Account).FirstOrDefault();
+                var combination = db.COA_Combinations.Where(x => x.C_ID == bankAccount.GL_Mapping).FirstOrDefault();
+                Booking_Entries booking_EntriesforROS = new Booking_Entries();
+                booking_EntriesforROS.Transaction_ID = Booking_Payments.ID;
+                booking_EntriesforROS.Entry_Date = DateTime.Now;
+                booking_EntriesforROS.Entry_Type = "Reabate";
+                booking_EntriesforROS.Created_By = "Admin";
+                booking_EntriesforROS.Created_On = DateTime.Now;
+                booking_EntriesforROS.Status = "Draft";
+                booking_EntriesforROS.C_CODE = combination.C_Code;
+                booking_EntriesforROS.Debit = Booking_Payments.Payment_amount;
+                booking_EntriesforROS.Credit = 0;
+                db.Booking_Entries.Add(booking_EntriesforROS);
+                db.SaveChanges();
+                Booking_Entries booking_EntriesforROS2 = new Booking_Entries();
+                booking_EntriesforROS2.Transaction_ID = Booking_Payments.ID;
+                booking_EntriesforROS2.Entry_Date = DateTime.Now;
+                booking_EntriesforROS2.Entry_Type = "Reabate";
+                booking_EntriesforROS2.Created_By = "Admin";
+                booking_EntriesforROS2.Created_On = DateTime.Now;
+                booking_EntriesforROS2.Status = "Draft";
+                booking_EntriesforROS2.C_CODE = combination.C_Code;
+                booking_EntriesforROS2.Credit = Booking_Payments.Payment_amount;
+                booking_EntriesforROS2.Debit = 0;
+                db.Booking_Entries.Add(booking_EntriesforROS2);
+                db.SaveChanges();
+           
             return CreatedAtRoute("DefaultApi", new { id = Booking_Payments.ID }, Booking_Payments);
         }
         // DELETE: api/Booking_Payments/5

@@ -85,6 +85,7 @@ namespace FiveGApi.Controllers
                 return BadRequest(ModelState);
             }
             GL_Balances.Created_By = "Admin";
+            GL_Balances.Created_On = DateTime.Now;
             db.GL_Balances.Add(GL_Balances);
             db.SaveChanges();
             return CreatedAtRoute("DefaultApi", new { id = GL_Balances.ID }, GL_Balances);

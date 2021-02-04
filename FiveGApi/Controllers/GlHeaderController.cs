@@ -115,8 +115,10 @@ namespace FiveGApi.Controllers
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
-                }
+                }               
+                gL_Headers.GL_Lines = gL_Headers.GL_Lines.Select(x => { x.Created_By = "Admin";x.Created_On = DateTime.Now; return x; }).ToList() ;
                 gL_Headers.Created_By = "Admin";
+                gL_Headers.Created_On = DateTime.Now;
                 db.GL_Headers.Add(gL_Headers);
                 db.SaveChanges();
             }
@@ -188,12 +190,120 @@ namespace FiveGApi.Controllers
 
                     item.H_ID = H_ID;
                     item.Created_By = "Admin";
-                    item.Updated_On = DateTime.Now;
+                    item.Created_On = DateTime.Now;                   
                     db.GL_Lines.Add(item);
                     db.SaveChanges();
                 }               
             }
             return db.GL_Lines.Where(x => x.H_ID == H_ID);
+        }
+        [Route("gLLinesByVlaues")]
+        [HttpGet]
+        public IList<FiveGApi.Models.GL_Headers> Gl_gL_HeaderByVlaues(DateTime? startDate, DateTime? endDate, string source, string referance)
+        {
+            
+            
+            if (referance!=null)
+            {
+                if (source != null)
+                {
+                    
+                    if(startDate!=null && endDate != null)
+                    {
+                        
+                        return db.GL_Headers.Where(x => x.Source == source&&x.Description==referance&& x.J_Date>=startDate&&x.J_Date<=endDate).ToList();
+                    }
+                    else if(startDate!=null && endDate==null)
+                    {
+                        return db.GL_Headers.Where(x => x.Source == source && x.Description == referance && x.J_Date >= startDate ).ToList();
+
+                    }
+                    else if (startDate == null && endDate != null)
+                    {
+                        return db.GL_Headers.Where(x => x.Source == source && x.Description == referance && x.J_Date <= endDate).ToList();
+
+                    }
+                    else
+                    {
+                        return db.GL_Headers.Where(x => x.Source == source && x.Description == referance).ToList();
+
+                    }
+
+                }
+                else
+                { // return db.GL_Headers.Where(x => x.Source == source).ToList();
+                    if (startDate != null && endDate != null)
+                    {
+                        return db.GL_Headers.Where(x=> x.Description == referance && x.J_Date >= startDate && x.J_Date <= endDate).ToList();
+                    }
+                    else if (startDate != null && endDate == null)
+                    {
+                        return db.GL_Headers.Where(x=> x.Description == referance && x.J_Date >= startDate).ToList();
+
+                    }
+                    else if (startDate == null && endDate != null)
+                    {
+                        return db.GL_Headers.Where(x=> x.Description == referance && x.J_Date <= endDate).ToList();
+
+                    }
+                    else
+                    {
+                        return db.GL_Headers.Where(x =>  x.Description == referance).ToList();
+
+                    }
+                }
+            }
+            else
+            {
+                if (source != null)
+                {
+                    // return db.GL_Headers.Where(x => x.Source == source).ToList();
+                    if (startDate != null && endDate != null)
+                    {
+                        return db.GL_Headers.Where(x => x.Source == source && x.J_Date >= startDate && x.J_Date <= endDate).ToList();
+                    }
+                    else if (startDate != null && endDate == null)
+                    {
+                        return db.GL_Headers.Where(x => x.Source == source && x.J_Date >= startDate).ToList();
+
+                    }
+                    else if (startDate == null && endDate != null)
+                    {
+                        return db.GL_Headers.Where(x => x.Source == source && x.J_Date <= endDate).ToList();
+
+                    }
+                    else
+                    {
+                        return db.GL_Headers.Where(x => x.Source == source ).ToList();
+
+                    }
+
+                }
+                else
+                { // return db.GL_Headers.Where(x => x.Source == source).ToList();
+                    if (startDate != null && endDate != null)
+                    {
+                        return db.GL_Headers.Where(x =>  x.Description == referance && x.J_Date >= startDate && x.J_Date <= endDate).ToList();
+                    }
+                    else if (startDate != null && endDate == null)
+                    {
+                        return db.GL_Headers.Where(x =>  x.Description == referance && x.J_Date >= startDate).ToList();
+
+                    }
+                    else if (startDate == null && endDate != null)
+                    {
+                        return db.GL_Headers.Where(x =>  x.Description == referance && x.J_Date <= endDate).ToList();
+
+                    }
+                    else
+                    {
+                        return db.GL_Headers.ToList();
+
+                    }
+                }
+            }
+            return null;
+            
         }
     }
 }

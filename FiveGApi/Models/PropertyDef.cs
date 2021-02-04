@@ -38,5 +38,11 @@ namespace FiveGApi.Models
         public Nullable<System.DateTime> Created_ON { get; set; }
         public string Updated_By { get; set; }
         public string Updated_On { get; set; }
+        public Nullable<decimal> AdditionalCommision { get; set; }
+        public Nullable<decimal> BookingCommision { get; set; }
+        public Nullable<decimal> ConfirmationCommision { get; set; }
+        public string Company { get; set; }
+        public string Project { get; set; }
+        public string Location { get; set; }
     }
 }

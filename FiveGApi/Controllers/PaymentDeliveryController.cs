@@ -57,7 +57,8 @@ namespace FiveGApi.Controllers
                 existPayment_Delivery.instrument_bank_Branch = Payment_Delivery.instrument_bank_Branch;
                 existPayment_Delivery.instrument_date = Payment_Delivery.instrument_date;
                 existPayment_Delivery.instrument_remarks = Payment_Delivery.instrument_remarks;              
-                try
+                
+            try
                 {
                     db.SaveChanges();
                 }
@@ -82,7 +83,8 @@ namespace FiveGApi.Controllers
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
-                }               
+                }
+            
                 db.Payment_Delivery.Add(Payment_Delivery);
                 db.SaveChanges();
                 return CreatedAtRoute("DefaultApi", new { id = Payment_Delivery.Payment_ID }, Payment_Delivery);
