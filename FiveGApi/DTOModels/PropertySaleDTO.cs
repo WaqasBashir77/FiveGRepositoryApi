@@ -35,6 +35,8 @@ namespace FiveGApi.DTOModels
         public short? Created_By { get; set; }
         public int? Update_By { get; set; }
         public int? SecurityGroupId { get; set; }
+        public decimal differentiableAmount { get; set; }
+        public string Nominee_Picture { get; set; }
         public List<TempTableForInstallmentDTO> propertySaleDetails { get; set; }
        
     }

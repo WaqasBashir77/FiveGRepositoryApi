@@ -21,6 +21,7 @@ namespace FiveGApi.DTOModels
         public string dueDate { get; set; }
         public string paymentStatus { get; set; }
         public double balance { get; set; }
+        public decimal OtherTaxAmount { get; set; }
         public PaymentDetailDTO paymentDetailDTOs { get; set; }
     }
 }

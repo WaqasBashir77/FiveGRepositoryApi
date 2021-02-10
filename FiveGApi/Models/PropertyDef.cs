@@ -44,5 +44,7 @@ namespace FiveGApi.Models
         public string Company { get; set; }
         public string Project { get; set; }
         public string Location { get; set; }
+        public string PayableToSociet { get; set; }
+        public string ReciveableToSociety { get; set; }
     }
 }

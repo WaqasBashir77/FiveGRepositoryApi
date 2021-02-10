@@ -106,7 +106,7 @@ namespace FiveGApi.Controllers
                     projectDetail.unitPrice = item.unitPrice;
                     projectDetail.unitType = item.unitType;
                     projectDetail.SqFrPrice = item.SqFrPrice;
-
+                    projectDetail.noOfBedrooms = item.NoOfBedRooms;
 
                     projectDto.ProjectDetails.Add(projectDetail);
                 }

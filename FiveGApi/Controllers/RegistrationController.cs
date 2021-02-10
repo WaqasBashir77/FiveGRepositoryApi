@@ -11,7 +11,7 @@ using System.Web.Http.Description;
 
 namespace FiveGApi.Controllers
 {
-    [Authorize]
+    //[Authorize]
 
     [RoutePrefix("api/Registration")]
     public class RegistrationController : ApiController
@@ -114,6 +114,7 @@ namespace FiveGApi.Controllers
                 {
                     ID = item.ID,
                     Name = item.StaffName,
+                    Code=item.Code,
                     isSelected = false
 
                 }).ToList(); if (Registration == null)

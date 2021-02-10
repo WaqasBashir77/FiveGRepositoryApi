@@ -143,6 +143,8 @@ namespace FiveGApi.Controllers
                     OriginalPropertySale.Created_ON = DateTime.Now;
                     OriginalPropertySale.Created_By = propertySale.Created_By;
                     OriginalPropertySale.SecurityGroupId = propertySale.SecurityGroupId;
+                    OriginalPropertySale.differentiableAmount = propertySale.differentiableAmount;
+                    OriginalPropertySale.Nominee_Picture = propertySale.Nominee_Picture;
                     if (propertySale.Purchaser_Picture != "")
                     {
                         string[] image = propertySale.Purchaser_Picture.Split(',');
@@ -173,6 +175,7 @@ namespace FiveGApi.Controllers
                             saleInstallment.Created_By = propertySale.Created_By;
                             saleInstallment.Created_ON = DateTime.Now;
                             saleInstallment.SecurityGroupId = propertySale.SecurityGroupId;
+                            saleInstallment.OtherTaxAmount = item.OtherTaxAmount;
                             if (item.balance == 0 && item.paymentStatus != "Paid")
                             {
                                 saleInstallment.ins_payment_status = "UnPaid";
@@ -309,6 +312,7 @@ namespace FiveGApi.Controllers
             var getPropertyMaster = db.PropertySales.Where(x => x.Booking_ID == general.Id).FirstOrDefault();
             if (getPropertyMaster != null && getPropertyMaster.SecurityGroupId == groupId)
             {
+                propertySale = getPropertyMaster;
                 return Ok(propertySale);
             }
             if (getPropertyMaster != null)
@@ -351,7 +355,8 @@ namespace FiveGApi.Controllers
                     MasterObj.Description = UpdatedObj.Description;
                     MasterObj.Updated_By = UpdatedObj.Updated_By;
                     MasterObj.Updated_On = DateTime.Now;
-
+                    MasterObj.differentiableAmount = UpdatedObj.differentiableAmount;
+                    MasterObj.Nominee_Picture = UpdatedObj.Nominee_Picture;
                     foreach (var saleitem in UpdatedObj.SaleInstallments.ToList())
                     {
                         SaleInstallment saleInstallment = new SaleInstallment();
@@ -363,6 +368,7 @@ namespace FiveGApi.Controllers
                             saleInstallment.ins_payment_status = saleitem.ins_payment_status;
                             saleInstallment.ins_latesurcharge_amount = saleitem.ins_latesurcharge_amount;
                             saleInstallment.ins_balance = saleitem.ins_balance;
+                            saleInstallment.OtherTaxAmount = saleitem.OtherTaxAmount;
                             saleInstallment.Updated_By = UpdatedObj.Updated_By;
                             saleInstallment.Updated_On = DateTime.Now;
                         }
@@ -378,6 +384,7 @@ namespace FiveGApi.Controllers
                             saleInstallment.ins_latesurcharge_amount = saleitem.ins_latesurcharge_amount;
                             saleInstallment.ins_due_date = saleitem.ins_due_date;
                             saleInstallment.ins_balance = saleitem.ins_balance;
+                            saleInstallment.OtherTaxAmount = saleitem.OtherTaxAmount;
                             saleInstallment.ins_payment_status = saleitem.ins_payment_status;
                             saleInstallment.Updated_By = UpdatedObj.Updated_By;
                             saleInstallment.Updated_On = DateTime.Now;

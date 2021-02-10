@@ -22,5 +22,6 @@ namespace FiveGApi.DTOModels
         public Nullable<int> featurePrice { get; set; }
         public string floorName { get; set; }
         public string buildingName { get; set; }
+        public int? noOfBedrooms { get; set; }
     }
 }

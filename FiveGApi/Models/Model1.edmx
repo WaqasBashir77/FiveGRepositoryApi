@@ -462,6 +462,7 @@
           <Property Name="Created_By" Type="int" />
           <Property Name="Update_Date" Type="date" />
           <Property Name="Update_By" Type="int" />
+          <Property Name="NoOfBedRooms" Type="int" />
         </EntityType>
         <EntityType Name="PropertyDef">
           <Key>
@@ -497,6 +498,8 @@
           <Property Name="Company" Type="varchar(max)" />
           <Property Name="Project" Type="varchar(max)" />
           <Property Name="Location" Type="varchar(max)" />
+          <Property Name="PayableToSociet" Type="varchar(max)" />
+          <Property Name="ReciveableToSociety" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="PropertySale">
           <Key>
@@ -531,6 +534,8 @@
           <Property Name="Updated_On" Type="date" />
           <Property Name="PaymentCode" Type="varchar" MaxLength="255" />
           <Property Name="SecurityGroupId" Type="int" />
+          <Property Name="differentiableAmount" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="Nominee_Picture" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="Prospect">
           <Key>
@@ -636,6 +641,7 @@
           <Property Name="Created_By" Type="int" />
           <Property Name="Updated_On" Type="date" />
           <Property Name="SecurityGroupId" Type="int" />
+          <Property Name="OtherTaxAmount" Type="decimal" Precision="18" Scale="3" />
         </EntityType>
         <EntityType Name="SecurityGroup">
           <Key>
@@ -1108,6 +1114,7 @@
           <Property Name="Created_By" Type="Int32" />
           <Property Name="Update_Date" Type="DateTime" Precision="0" />
           <Property Name="Update_By" Type="Int32" />
+          <Property Name="NoOfBedRooms" Type="Int32" />
         </EntityType>
         <EntityType Name="PropertyDef">
           <Key>
@@ -1143,6 +1150,8 @@
           <Property Name="Company" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Project" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Location" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="PayableToSociet" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ReciveableToSociety" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="PropertySale">
           <Key>
@@ -1178,6 +1187,8 @@
           <NavigationProperty Name="SaleInstallments" Relationship="Self.FK_SaleInstallments_PropertySale" FromRole="PropertySale" ToRole="SaleInstallments" />
           <Property Name="PaymentCode" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="SecurityGroupId" Type="Int32" />
+          <Property Name="differentiableAmount" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="Nominee_Picture" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Prospect">
           <Key>
@@ -1270,6 +1281,7 @@
           <NavigationProperty Name="PaymentInstallments" Relationship="Self.FK_PaymentInstallment_SaleInstallments" FromRole="SaleInstallments" ToRole="PaymentInstallment" />
           <NavigationProperty Name="PropertySale" Relationship="Self.FK_SaleInstallments_PropertySale" FromRole="SaleInstallments" ToRole="PropertySale" />
           <Property Name="SecurityGroupId" Type="Int32" />
+          <Property Name="OtherTaxAmount" Type="Decimal" Precision="18" Scale="3" />
         </EntityType>
         <EntityType Name="Society_Slip">
           <Key>
@@ -1981,6 +1993,7 @@
           <EntitySetMapping Name="ProjectDetails">
             <EntityTypeMapping TypeName="MIS_DBModel.ProjectDetail">
               <MappingFragment StoreEntitySet="ProjectDetail">
+                <ScalarProperty Name="NoOfBedRooms" ColumnName="NoOfBedRooms" />
                 <ScalarProperty Name="Update_By" ColumnName="Update_By" />
                 <ScalarProperty Name="Update_Date" ColumnName="Update_Date" />
                 <ScalarProperty Name="Created_By" ColumnName="Created_By" />
@@ -2005,6 +2018,8 @@
           <EntitySetMapping Name="PropertyDefs">
             <EntityTypeMapping TypeName="MIS_DBModel.PropertyDef">
               <MappingFragment StoreEntitySet="PropertyDef">
+                <ScalarProperty Name="ReciveableToSociety" ColumnName="ReciveableToSociety" />
+                <ScalarProperty Name="PayableToSociet" ColumnName="PayableToSociet" />
                 <ScalarProperty Name="Location" ColumnName="Location" />
                 <ScalarProperty Name="Project" ColumnName="Project" />
                 <ScalarProperty Name="Company" ColumnName="Company" />
@@ -2041,6 +2056,8 @@
           <EntitySetMapping Name="PropertySales">
             <EntityTypeMapping TypeName="MIS_DBModel.PropertySale">
               <MappingFragment StoreEntitySet="PropertySale">
+                <ScalarProperty Name="Nominee_Picture" ColumnName="Nominee_Picture" />
+                <ScalarProperty Name="differentiableAmount" ColumnName="differentiableAmount" />
                 <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="PaymentCode" ColumnName="PaymentCode" />
                 <ScalarProperty Name="Booking_ID" ColumnName="Booking_ID" />
@@ -2143,6 +2160,7 @@
           <EntitySetMapping Name="SaleInstallments">
             <EntityTypeMapping TypeName="MIS_DBModel.SaleInstallment">
               <MappingFragment StoreEntitySet="SaleInstallments">
+                <ScalarProperty Name="OtherTaxAmount" ColumnName="OtherTaxAmount" />
                 <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="Ins_ID" ColumnName="Ins_ID" />
                 <ScalarProperty Name="Booking_ID" ColumnName="Booking_ID" />
