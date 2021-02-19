@@ -11,7 +11,7 @@ using System.Web.Http.Description;
 
 namespace FiveGApi.Controllers
 {
-    //[Authorize]
+    [Authorize]
 
     [RoutePrefix("api/Registration")]
     public class RegistrationController : ApiController
@@ -94,7 +94,7 @@ namespace FiveGApi.Controllers
         [ResponseType(typeof(bool))]
         public IHttpActionResult GetPartyCodeValidation(string partyCode)
         {
-            var Reg = db.Registrations.Where(x => x.Code == partyCode).FirstOrDefault();
+            var Reg = db.Registrations.AsQueryable().Where(x => x.Code == partyCode).FirstOrDefault();
             if (Reg != null)
             {
                 var error = new { message = "Party must be unique" }; //<-- anonymous object
@@ -228,7 +228,7 @@ namespace FiveGApi.Controllers
 
             return CreatedAtRoute("DefaultApi", new { id = Registration.ID }, Registration);
         }
-
+        
         // DELETE: api/Registrations/5
         [ResponseType(typeof(FiveGApi.Models.Registration))]
         public IHttpActionResult DeleteRegistration(int id)
@@ -258,6 +258,7 @@ namespace FiveGApi.Controllers
         {
             return db.Registrations.Count(e => e.ID == id) > 0;
         }
+
         private IQueryable<FiveGApi.Models.Rebate_Details> rebate_Details(int regID, ICollection<FiveGApi.Models.Rebate_Details> rebate_Details)
         {
 
@@ -286,5 +287,6 @@ namespace FiveGApi.Controllers
             }
             return db.Rebate_Details.Where(x => x.Reg_ID == regID);
         }
+
     }
 }

@@ -14,5 +14,6 @@ namespace FiveGApi.DTOModels
         public string InsturmentBankBranch { get; set; }
         public string InsturmentDate { get; set; }
         public string paymentDescription { get; set; }
+        public string Payment_Account { get; set; }
     }
 }

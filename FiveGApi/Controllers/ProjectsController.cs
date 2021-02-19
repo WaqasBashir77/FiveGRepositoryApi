@@ -14,7 +14,7 @@ using FiveGApi.Models;
 
 namespace FiveGApi.Controllers
 {
-    [Authorize]
+   [Authorize]
     [RoutePrefix("api/Projects")]
     public class ProjectsController : ApiController
     {
@@ -30,7 +30,7 @@ namespace FiveGApi.Controllers
             {
                 groupId = Convert.ToInt32(headers.GetValues("GroupId").First());
             }
-            IQueryable<Project> projects ;
+            IQueryable<Project> projects;
 
             try
             {
@@ -73,7 +73,7 @@ namespace FiveGApi.Controllers
             }
             else
             {
-                
+
                 projectDto.address = project.address;
                 projectDto.city = project.city;
                 projectDto.description = project.description;
@@ -138,7 +138,7 @@ namespace FiveGApi.Controllers
             existProject.Update_Date = DateTime.Now;
             existProject.Update_By = project.Update_By;
 
-            
+
             if (existProject.ProjectDetails.Count > 0)
             {
                 foreach (var item in existProject.ProjectDetails.ToList())
@@ -192,7 +192,7 @@ namespace FiveGApi.Controllers
             {
                 Console.WriteLine(ex.Message);
             }
-            
+
 
             return CreatedAtRoute("DefaultApi", new { id = project.Id }, project);
         }
@@ -211,6 +211,144 @@ namespace FiveGApi.Controllers
             db.SaveChanges();
 
             return Ok(project);
+        }
+        //[ResponseType(typeof(Project))]
+        [HttpPost]
+        [Route("AuthorizePropertySalesSale")]
+        public IHttpActionResult AuthorizePropertySales(int id)
+        {
+            var propertySales = db.PropertySales.Where(x=>x.Booking_ID==id).FirstOrDefault();
+            if (propertySales == null && propertySales.AuthorizeStatus==true)
+            {
+                return NotFound();
+            }
+            else
+            {
+                propertySales.AuthorizeStatus = true;
+                db.SaveChanges();
+                var projectDetail = db.ProjectDetails.Where(x => x.projectId == propertySales.Project_ID).FirstOrDefault();
+                if (projectDetail != null)
+                {
+                    var EmployeeCommision = ((projectDetail.unitPrice / 100) * propertySales.Employee_Com);
+                    var DealerCommision = ((projectDetail.unitPrice / 100) * propertySales.Dealer_Comm);
+                    var pro = db.Projects.Where(x => x.Id == propertySales.Project_ID).FirstOrDefault();
+                    Project_Entries booking_EntriesforROS = new Project_Entries();
+                    booking_EntriesforROS.Transaction_ID = id;
+                    booking_EntriesforROS.Entry_Date = DateTime.Now;
+                    booking_EntriesforROS.Entry_Type = "Rebate";
+                    booking_EntriesforROS.Created_By = "Admin";
+                    booking_EntriesforROS.Created_On = DateTime.Now;
+                    booking_EntriesforROS.Status = "Transfered";
+                    var c_Code = pro.Company + "." + pro.ProjectSeg + "." + pro.LocationSeg;
+                    #region Project Sale Price / Dealer Commision / Employee Commision
+                    ///-------------------Receivable from members------------------------------///////////
+                    var coa_Segment = db.COA_Segments.Where(x => x.Name == "Receivable from members").FirstOrDefault();
+                    booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".0000").ToString();
+                    booking_EntriesforROS.Debit = (decimal)projectDetail.unitPrice;
+                    booking_EntriesforROS.Credit = 0;
+                    db.Project_Entries.Add(booking_EntriesforROS);
+                    db.SaveChanges();
+                    ///-------------------To Unearned revenue------------------------------///////////            
+                    coa_Segment = db.COA_Segments.Where(x => x.Name == "Unearned revenue").FirstOrDefault();
+                    booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".0000").ToString();
+                    booking_EntriesforROS.Credit = (decimal)projectDetail.unitPrice;
+                    booking_EntriesforROS.Debit = 0;
+                    db.Project_Entries.Add(booking_EntriesforROS);
+                    db.SaveChanges();
+                    ///-------------------Commission to staff------------------------------///////////
+                    coa_Segment = db.COA_Segments.Where(x => x.Name == "Commission to staff").FirstOrDefault();
+                    booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".0000").ToString();
+                    booking_EntriesforROS.Debit = (decimal)EmployeeCommision;
+                    booking_EntriesforROS.Credit = 0;
+                    db.Project_Entries.Add(booking_EntriesforROS);
+                    db.SaveChanges();
+                    ///-------------------To Commission payable to Staff------------------------------///////////            
+                    var partCode = db.Registrations.Where(x => x.ID == propertySales.Employee).FirstOrDefault();
+                    coa_Segment = db.COA_Segments.Where(x => x.Name == "Commission payable to Staff").FirstOrDefault();
+                    booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + "."+ partCode.Code).ToString();
+                    booking_EntriesforROS.Credit = (decimal)EmployeeCommision;
+                    booking_EntriesforROS.Debit = 0;
+                    db.Project_Entries.Add(booking_EntriesforROS);
+                    db.SaveChanges();
+                    ////-------------------Commission to agent------------------------------///////////
+                    coa_Segment = db.COA_Segments.Where(x => x.Name == "Commission to agent").FirstOrDefault();
+                    booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".000").ToString();
+                    booking_EntriesforROS.Debit = (decimal)DealerCommision;
+                    booking_EntriesforROS.Credit = 0;
+                    db.Project_Entries.Add(booking_EntriesforROS);
+                    db.SaveChanges();
+                    ////-------------------To Commission payable to Agent------------------------------///////////
+                    partCode = db.Registrations.Where(x => x.ID == propertySales.Dealer_ID).FirstOrDefault();
+                    coa_Segment = db.COA_Segments.Where(x => x.Name == "Commission payable to Agent").FirstOrDefault();
+                    booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + "."+partCode.Code).ToString();
+                    booking_EntriesforROS.Credit = (decimal)DealerCommision;
+                    booking_EntriesforROS.Debit = 0;
+                    db.Project_Entries.Add(booking_EntriesforROS);
+                    db.SaveChanges();
+                    #endregion Project Sale Price
+                    #region Gl Header and GL Lines
+                    var glheader = db.GL_Headers.Where(x => x.Source_Tran_Id == propertySales.Booking_ID && x.Source == "Projects").FirstOrDefault();
+                    //var bookingConfirm = db.BookingConfirms.Where(x => x.ID == existBooking_Payments.ID).FirstOrDefault();
+                    // var propertydef = db.PropertyDefs.Where(x => x.ID == bookingConfirm.Property_ID).FirstOrDefault();
+                    GL_Headers gL_Headers = new GL_Headers();
+
+                    if (glheader == null)
+                    {
+                        gL_Headers.J_Date = DateTime.Now;
+                        gL_Headers.Doc_Date = DateTime.Now;
+                        gL_Headers.Currency = "PKR";
+                        gL_Headers.Description = pro.projectCode + "-" + projectDetail.unitNumber + "-" + projectDetail.unitType + "-" + propertySales.Buyer_Name;
+                        gL_Headers.Remarks = "";
+                        gL_Headers.Source = "Projects";
+                        gL_Headers.Trans_Status = "UnPosted";
+                        gL_Headers.Source_Tran_Id = id;
+                        db.GL_Headers.Add(gL_Headers);
+                        db.SaveChanges();
+                    }
+                    int glhv = 0;
+                    if (gL_Headers.H_ID > 0)
+                    {
+                        glhv = gL_Headers.H_ID;
+                    }
+                    else
+                    {
+                        glhv = glheader.H_ID;
+                    }
+                    var EntriesProject = db.Project_Entries.Where(x => x.Transaction_ID == id && x.Entry_Type == "Rebate" && x.Status != "Transferred").ToList();
+                    if (EntriesProject != null)
+                    {
+                        foreach (var item in EntriesProject)
+                        {
+                            GL_Lines gL_Lines = new GL_Lines();
+                            gL_Lines.H_ID = glhv;
+                            gL_Lines.C_CODE = Convert.ToInt32(item.C_CODE);
+                            gL_Lines.Debit = item.Debit;
+                            gL_Lines.Credit = item.Credit;
+                            gL_Lines.Created_By = "1";
+                            gL_Lines.Created_On = DateTime.Now;
+                            // gL_Lines.Description = glhv;              
+
+                            db.GL_Lines.Add(gL_Lines);
+                            db.SaveChanges();
+                            var be = db.Project_Entries.Where(x => x.E_ID == item.E_ID).FirstOrDefault();
+                            be.Status = "Transferred";
+                            be.Updated_By = "1";
+                            be.Updated_On = DateTime.Now;
+                            db.SaveChanges();
+                        }
+
+                    }
+                    #endregion
+                }
+                else
+                {
+                    propertySales.AuthorizeStatus = false;
+                    db.SaveChanges();
+                    return NotFound();
+                }
+
+            }
+            return Ok();
         }
 
         protected override void Dispose(bool disposing)
@@ -241,8 +379,8 @@ namespace FiveGApi.Controllers
                 }
             }
 
-           
-                
+
+
             return Ok(isExist);
         }
 
@@ -280,6 +418,32 @@ namespace FiveGApi.Controllers
                 throw;
             }
             return Ok(lookup_Values);
+        }
+        [NonAction]
+        private int GenerateCOACombinations(string CCode)
+        {
+            var ExistedCOA_Combinations = db.COA_Combinations.Where(x => x.C_Code == CCode).FirstOrDefault();
+            if (ExistedCOA_Combinations != null)
+            {
+                return ExistedCOA_Combinations.C_ID;
+            }
+            else
+            {
+                string[] codeParts = CCode.Split('.');
+                COA_Combinations cOA_Combinations = new COA_Combinations();
+                cOA_Combinations.C_Code = CCode;
+                cOA_Combinations.Company = codeParts[0];
+                cOA_Combinations.Project = codeParts[1];
+                cOA_Combinations.Location = codeParts[2];
+                cOA_Combinations.Account = codeParts[3];
+                cOA_Combinations.Party = codeParts[4];
+                cOA_Combinations.Created_By = "1";
+                cOA_Combinations.Created_ON = DateTime.Now;
+                db.COA_Combinations.Add(cOA_Combinations);
+                db.SaveChanges();
+                return cOA_Combinations.C_ID;
+            }
+
         }
     }
 }

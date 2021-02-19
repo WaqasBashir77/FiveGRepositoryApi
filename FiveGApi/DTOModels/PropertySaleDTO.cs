@@ -14,8 +14,8 @@ namespace FiveGApi.DTOModels
         public int memberRegNo { get; set; }
         public int discountAmount { get; set; }
         public int employeeId { get; set; }
-        public int employeeCommission { get; set; }
-        public int dealerCommission { get; set; }
+        public decimal employeeCommission { get; set; }
+        public decimal dealerCommission { get; set; }
         public int dealerId { get; set; }
         public string buyerName { get; set; }
         public string buyerFatherName { get; set; }

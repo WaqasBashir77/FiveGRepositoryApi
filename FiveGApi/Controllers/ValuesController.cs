@@ -10,7 +10,7 @@ using System.Web.Http;
 
 namespace FiveGApi.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [RoutePrefix("api/Values")]
     public class ValuesController : ApiController
     {
@@ -126,7 +126,7 @@ namespace FiveGApi.Controllers
                     OriginalPropertySale.Mobile_1 = propertySale.mobile_1.ToString();
                     OriginalPropertySale.Mobile_2 = propertySale.mobile_2.ToString();
                     OriginalPropertySale.Member_Reg_No = propertySale.memberRegNo.ToString();
-                    OriginalPropertySale.Dealer_Comm = propertySale.dealerCommission;
+                    OriginalPropertySale.Dealer_Comm = (double?)propertySale.dealerCommission;
                     OriginalPropertySale.Dealer_ID = propertySale.dealerId;
                     OriginalPropertySale.Address = propertySale.address;
                     OriginalPropertySale.Email = propertySale.email;
@@ -139,7 +139,7 @@ namespace FiveGApi.Controllers
                     OriginalPropertySale.CNIC = propertySale.cnic;
                     OriginalPropertySale.Employee = propertySale.employeeId;
                     OriginalPropertySale.PaymentCode = propertySale.PaymentCode;
-                    OriginalPropertySale.Employee_Com = propertySale.employeeCommission;
+                    OriginalPropertySale.Employee_Com = (double?)propertySale.employeeCommission;
                     OriginalPropertySale.Created_ON = DateTime.Now;
                     OriginalPropertySale.Created_By = propertySale.Created_By;
                     OriginalPropertySale.SecurityGroupId = propertySale.SecurityGroupId;
@@ -176,6 +176,8 @@ namespace FiveGApi.Controllers
                             saleInstallment.Created_ON = DateTime.Now;
                             saleInstallment.SecurityGroupId = propertySale.SecurityGroupId;
                             saleInstallment.OtherTaxAmount = item.OtherTaxAmount;
+                            saleInstallment.Payment_Account = Convert.ToInt32(item.paymentDetailDTOs.Payment_Account);
+
                             if (item.balance == 0 && item.paymentStatus != "Paid")
                             {
                                 saleInstallment.ins_payment_status = "UnPaid";
@@ -203,6 +205,7 @@ namespace FiveGApi.Controllers
                                 paymentInstallment.Created_By = propertySale.Created_By;
                                 paymentInstallment.Created_ON = DateTime.Now;
                                 paymentInstallment.SecurityGroupId = propertySale.SecurityGroupId;
+                                paymentInstallment.Payment_Account = Convert.ToInt32(item.paymentDetailDTOs.Payment_Account);
                                 saleInstallment.PaymentInstallments.Add(paymentInstallment);
                             }
                         }
@@ -219,7 +222,136 @@ namespace FiveGApi.Controllers
             }
             return Ok(response);
         }
+        [HttpPost]
+        [Route("paymentInstallmentAuthorise")]
+        public IHttpActionResult paymentInstallmentAuthorise(int paymentID)
+        {
+            var paymentInstallment = db.PaymentInstallments.Where(x => x.Payment_ID == paymentID).FirstOrDefault();
+            if(paymentInstallment!=null)
+            {
+                var saleinstallment = db.SaleInstallments.Where(x => x.Ins_ID == paymentInstallment.Ins_ID).FirstOrDefault();
+                
+                    var pro = paymentInstallment;
+                    Project_Entries booking_EntriesforROS = new Project_Entries();
+                    booking_EntriesforROS.Transaction_ID = pro.Booking_ID;
+                    booking_EntriesforROS.Entry_Date = DateTime.Now;
+                    booking_EntriesforROS.Entry_Type = "Rebate";
+                    booking_EntriesforROS.Created_By = "Admin";
+                    booking_EntriesforROS.Created_On = DateTime.Now;
+                    booking_EntriesforROS.Status = "Draft";
+                // var c_Code = pro.Company + "." + pro.ProjectSeg + "." + pro.LocationSeg;
+                #region Project Sale Price / Dealer Commision / Employee Commision
+                var DebitCCode = "";
+                var CreditCCode = "";
+                int[] arrOfProjectEntriesID= { };
+                //if (saleinstallment.ins_milestone == "Booking")
+                //{
+                    var account = db.Bank_Accounts.Where(x => x.ID == paymentInstallment.Payment_Account).FirstOrDefault();
+                    DebitCCode = account.GL_Mapping.ToString();
+                    var project = db.Projects.Where(x => x.Id == paymentInstallment.Project_ID).FirstOrDefault();
+                    var c_Code = project.Company + "." + project.ProjectSeg + "." + project.LocationSeg;
+                    var coa_Segment = db.COA_Segments.Where(x => x.Name == "Receivable from members").FirstOrDefault();
+                    CreditCCode = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".0000").ToString();
 
+                //}
+                //else if(saleinstallment.ins_milestone == "Confirmation")
+                //{
+                //    var account = db.Bank_Accounts.Where(x => x.ID == saleinstallment.Payment_Account).FirstOrDefault();
+                //    DebitCCode = account.GL_Mapping.ToString();
+                //    var project = db.Projects.Where(x => x.Id == paymentInstallment.Project_ID).FirstOrDefault();
+                //    var c_Code = project.Company + "." + project.ProjectSeg + "." + project.LocationSeg;
+                //    var coa_Segment = db.COA_Segments.Where(x => x.Name == "Receivable from members").FirstOrDefault();
+                //    CreditCCode = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".0000").ToString();
+
+                //}
+                //else if (saleinstallment.ins_milestone == "")
+                //{
+
+                //}
+                ///-------------------Receivable from members------------------------------///////////
+                //var coa_Segment = db.COA_Segments.Where(x => x.Name == "Receivable from members").FirstOrDefault();
+                    booking_EntriesforROS.Transaction_ID = paymentID;
+                    booking_EntriesforROS.C_CODE = DebitCCode;
+                    booking_EntriesforROS.Debit = (decimal)paymentInstallment.Payment_amount;
+                    booking_EntriesforROS.Credit = 0;
+                    db.Project_Entries.Add(booking_EntriesforROS);
+                    db.SaveChanges();
+                    //arrOfProjectEntriesID[0] = booking_EntriesforROS.E_ID;
+                    booking_EntriesforROS.C_CODE = CreditCCode;
+                    booking_EntriesforROS.Credit = (decimal)paymentInstallment.Payment_amount;
+                    booking_EntriesforROS.Debit = 0;
+                    db.Project_Entries.Add(booking_EntriesforROS);
+                    db.SaveChanges();
+                //arrOfProjectEntriesID[1] = booking_EntriesforROS.E_ID;
+
+                #endregion
+                #region Gl Header and GL Lines
+                var projectSale = db.PropertySales.Where(x => x.Booking_ID == saleinstallment.Booking_ID).FirstOrDefault();
+                var glheader = db.GL_Headers.Where(x => x.Source_Tran_Id == projectSale.Booking_ID && x.Source == "Projects").FirstOrDefault();
+                //var bookingConfirm = db.BookingConfirms.Where(x => x.ID == existBooking_Payments.ID).FirstOrDefault();
+                // var propertydef = db.PropertyDefs.Where(x => x.ID == bookingConfirm.Property_ID).FirstOrDefault();
+                GL_Headers gL_Headers = new GL_Headers();
+                var projects = db.Projects.Where(x => x.Id == pro.Project_ID).FirstOrDefault();
+                var projectDetail = db.ProjectDetails.Where(x => x.projectId == pro.Project_ID).FirstOrDefault();
+
+                if (glheader == null)
+                {
+                    gL_Headers.J_Date = DateTime.Now;
+                    gL_Headers.Doc_Date = DateTime.Now;
+                    gL_Headers.Currency = "PKR";
+                    gL_Headers.Description = projects.projectCode + "-" + projectDetail.unitNumber + "-" + projectDetail.unitType ;
+                    gL_Headers.Remarks = "";
+                    gL_Headers.Source = "Projects";
+                    gL_Headers.Trans_Status = "UnPosted";
+                    gL_Headers.Source_Tran_Id = projectSale.Booking_ID;
+                    db.GL_Headers.Add(gL_Headers);
+                    db.SaveChanges();
+                }
+                int glhv = 0;
+                if (gL_Headers.H_ID > 0)
+                {
+                    glhv = gL_Headers.H_ID;
+                }
+                else
+                {
+                    glhv = glheader.H_ID;
+                }
+                var EntriesProject = db.Project_Entries.Where(x => x.Transaction_ID == paymentID && x.Entry_Type == "Rebate" && x.Status != "Transferred").ToList();
+                if (EntriesProject != null)
+                {
+                    foreach (var item in EntriesProject)
+                    {
+                        GL_Lines gL_Lines = new GL_Lines();
+                        gL_Lines.H_ID = glhv;
+                        gL_Lines.C_CODE = Convert.ToInt32(item.C_CODE);
+                        gL_Lines.Debit = item.Debit;
+                        gL_Lines.Credit = item.Credit;
+                        gL_Lines.Created_By = "1";
+                        gL_Lines.Created_On = DateTime.Now;
+                        // gL_Lines.Description = glhv;              
+
+                        db.GL_Lines.Add(gL_Lines);
+                        db.SaveChanges();
+                        var be = db.Project_Entries.Where(x => x.E_ID == item.E_ID).FirstOrDefault();
+                        be.Status = "Transferred";
+                        be.Updated_By = "1";
+                        be.Updated_On = DateTime.Now;
+                        db.SaveChanges();
+                    }
+
+                }
+                saleinstallment.AuthorizeStatus = true;
+                db.SaveChanges();
+                paymentInstallment.AuthorizeStatus = true;
+                db.SaveChanges();
+                return Ok();
+                #endregion
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
       
         [HttpGet]
         [Route("getdetail")]
@@ -477,6 +609,32 @@ namespace FiveGApi.Controllers
                 throw;
             }
             return Ok(lookup_Values);
+        }
+        [NonAction]
+        private int GenerateCOACombinations(string CCode)
+        {
+            var ExistedCOA_Combinations = db.COA_Combinations.Where(x => x.C_Code == CCode).FirstOrDefault();
+            if (ExistedCOA_Combinations != null)
+            {
+                return ExistedCOA_Combinations.C_ID;
+            }
+            else
+            {
+                string[] codeParts = CCode.Split('.');
+                COA_Combinations cOA_Combinations = new COA_Combinations();
+                cOA_Combinations.C_Code = CCode;
+                cOA_Combinations.Company = codeParts[0];
+                cOA_Combinations.Project = codeParts[1];
+                cOA_Combinations.Location = codeParts[2];
+                cOA_Combinations.Account = codeParts[3];
+                cOA_Combinations.Party = codeParts[4];
+                cOA_Combinations.Created_By = "1";
+                cOA_Combinations.Created_ON = DateTime.Now;
+                db.COA_Combinations.Add(cOA_Combinations);
+                db.SaveChanges();
+                return cOA_Combinations.C_ID;
+            }
+
         }
     }
 }

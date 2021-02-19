@@ -275,6 +275,48 @@
           <Property Name="Updated_By" Type="varchar(max)" />
           <Property Name="Updated_On" Type="datetime" />
         </EntityType>
+        <EntityType Name="Inventory_List">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PurchasingDate" Type="datetime" />
+          <Property Name="FileName" Type="varchar(max)" />
+          <Property Name="Project" Type="varchar(max)" />
+          <Property Name="Category" Type="varchar(max)" />
+          <Property Name="Size" Type="varchar(max)" />
+          <Property Name="MS_RegNo" Type="varchar(max)" />
+          <Property Name="Plot_FileNo" Type="varchar" MaxLength="50" />
+          <Property Name="FileStatus" Type="varchar" MaxLength="50" />
+          <Property Name="InventoryStatus" Type="varchar" MaxLength="50" />
+          <Property Name="TotalPlotValue" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="PaidtoSocietyProjectAmount" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="Paid" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="PaidtoSocietyProjectMSOther" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="TotalPaidtoSocietyProject" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="ProfitPaid" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="StaffPurchasing" Type="int" />
+          <Property Name="StaffCommissionPurchasing" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="AgentPurchasing" Type="int" />
+          <Property Name="AgentCommissionPurchasing" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="TotalPaid" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="PaidBy" Type="varchar" MaxLength="50" />
+          <Property Name="SellingDate" Type="datetime" />
+          <Property Name="SellingAmount" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="GrossProfit" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="StaffSelling" Type="int" />
+          <Property Name="StaffCommissionSelling" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="AgentSelling" Type="int" />
+          <Property Name="AgentCommissionSelling" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="NetProfit" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="Remarks" Type="varchar(max)" />
+          <Property Name="Flex_1" Type="varchar(max)" />
+          <Property Name="Flex_2" Type="varchar(max)" />
+          <Property Name="Created_By" Type="varchar" MaxLength="50" />
+          <Property Name="Created_On" Type="datetime" />
+          <Property Name="Updated_By" Type="varchar" MaxLength="50" />
+          <Property Name="Updated_On" Type="datetime" />
+        </EntityType>
         <EntityType Name="Lookup_List">
           <Key>
             <PropertyRef Name="REF_ID" />
@@ -348,6 +390,8 @@
           <Property Name="Created_By" Type="int" />
           <Property Name="Updated_On" Type="date" />
           <Property Name="SecurityGroupId" Type="int" />
+          <Property Name="Payment_Account" Type="int" />
+          <Property Name="AuthorizeStatus" Type="bit" />
         </EntityType>
         <EntityType Name="PaymentMilestoneDetail">
           <Key>
@@ -419,6 +463,9 @@
           <Property Name="Created_By" Type="int" />
           <Property Name="Update_Date" Type="date" />
           <Property Name="Update_By" Type="int" />
+          <Property Name="Company" Type="varchar(max)" />
+          <Property Name="LocationSeg" Type="varchar(max)" />
+          <Property Name="ProjectSeg" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="Project_Entries">
           <Key>
@@ -536,6 +583,42 @@
           <Property Name="SecurityGroupId" Type="int" />
           <Property Name="differentiableAmount" Type="decimal" Precision="18" Scale="3" />
           <Property Name="Nominee_Picture" Type="varchar(max)" />
+          <Property Name="AuthorizeStatus" Type="bit" />
+        </EntityType>
+        <EntityType Name="PropertyTransfer">
+          <Key>
+            <PropertyRef Name="Booking_ID" />
+          </Key>
+          <Property Name="Booking_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Project_ID" Type="int" />
+          <Property Name="Unit_ID" Type="int" />
+          <Property Name="Buyer_Name" Type="varchar" MaxLength="250" />
+          <Property Name="Buyer_FatherName" Type="varchar" MaxLength="250" />
+          <Property Name="BuyerAddress" Type="varchar" MaxLength="250" />
+          <Property Name="BuyerEmail" Type="varchar" MaxLength="250" />
+          <Property Name="BuyerCNIC" Type="varchar" MaxLength="250" />
+          <Property Name="BuyerMobile_1" Type="varchar" MaxLength="250" />
+          <Property Name="BuyerMobile_2" Type="varchar" MaxLength="250" />
+          <Property Name="BuyerMember_Reg_No" Type="varchar" MaxLength="250" />
+          <Property Name="Buyer_Picture" Type="varbinary(max)" />
+          <Property Name="Seller_Name" Type="varchar" MaxLength="250" />
+          <Property Name="Seller_FatherName" Type="varchar" MaxLength="250" />
+          <Property Name="SellerAddress" Type="varchar" MaxLength="250" />
+          <Property Name="SellerEmail" Type="varchar" MaxLength="250" />
+          <Property Name="SellerCNIC" Type="varchar" MaxLength="250" />
+          <Property Name="SellerMobile_1" Type="varchar" MaxLength="250" />
+          <Property Name="SellerMobile_2" Type="varchar" MaxLength="250" />
+          <Property Name="SellerMember_Reg_No" Type="varchar" MaxLength="250" />
+          <Property Name="Seller_Picture" Type="varbinary(max)" />
+          <Property Name="Description" Type="varchar(max)" />
+          <Property Name="TransferDate" Type="datetime" />
+          <Property Name="TransferStatus" Type="bit" />
+          <Property Name="Flex_1" Type="varchar(max)" />
+          <Property Name="Flex_2" Type="varchar(max)" />
+          <Property Name="Created_By" Type="varchar" MaxLength="250" />
+          <Property Name="Created_On" Type="datetime" />
+          <Property Name="Updated_By" Type="varchar" MaxLength="250" />
+          <Property Name="Updated_On" Type="datetime" />
         </EntityType>
         <EntityType Name="Prospect">
           <Key>
@@ -601,6 +684,33 @@
           <Property Name="Updated_By" Type="varchar" MaxLength="50" />
           <Property Name="Updated_On" Type="varchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="Resale_Form">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EmployeeCode" Type="varchar" MaxLength="250" />
+          <Property Name="Date" Type="datetime" />
+          <Property Name="StaffName" Type="varchar" MaxLength="250" />
+          <Property Name="Designation" Type="varchar" MaxLength="150" />
+          <Property Name="StaffOffice" Type="varchar(max)" />
+          <Property Name="DealFileDetails" Type="varchar(max)" />
+          <Property Name="BuyerName" Type="varchar" MaxLength="250" />
+          <Property Name="Sales" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="TotalDealsAmount" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="StaffShare" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="OfficeShare" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="StaffAmount" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="OfficeAmount" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="Remarks" Type="varchar(max)" />
+          <Property Name="Flex_1" Type="varchar" MaxLength="250" />
+          <Property Name="Flex_2" Type="varchar" MaxLength="250" />
+          <Property Name="Created_By" Type="varchar" MaxLength="250" />
+          <Property Name="Created_On" Type="datetime" />
+          <Property Name="Updated_By" Type="varchar" MaxLength="250" />
+          <Property Name="Updated_On" Type="datetime" />
+          <Property Name="SellerName" Type="varchar" MaxLength="250" />
+        </EntityType>
         <EntityType Name="Role">
           <Key>
             <PropertyRef Name="Id" />
@@ -642,6 +752,8 @@
           <Property Name="Updated_On" Type="date" />
           <Property Name="SecurityGroupId" Type="int" />
           <Property Name="OtherTaxAmount" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="Payment_Account" Type="int" />
+          <Property Name="AuthorizeStatus" Type="bit" />
         </EntityType>
         <EntityType Name="SecurityGroup">
           <Key>
@@ -759,18 +871,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Project_Entries_BookingConfirm">
-          <End Role="BookingConfirm" Type="Self.BookingConfirm" Multiplicity="1" />
-          <End Role="Project_Entries" Type="Self.Project_Entries" Multiplicity="0..1" />
-          <ReferentialConstraint>
-            <Principal Role="BookingConfirm">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Project_Entries">
-              <PropertyRef Name="E_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_ProjectDetail_Project">
           <End Role="Project" Type="Self.Project" Multiplicity="0..1" />
           <End Role="ProjectDetail" Type="Self.ProjectDetail" Multiplicity="*" />
@@ -820,6 +920,7 @@
           <EntitySet Name="GL_Balances" EntityType="Self.GL_Balances" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GL_Headers" EntityType="Self.GL_Headers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GL_Lines" EntityType="Self.GL_Lines" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Inventory_List" EntityType="Self.Inventory_List" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Lookup_List" EntityType="Self.Lookup_List" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Lookup_Values" EntityType="Self.Lookup_Values" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Module" EntityType="Self.Module" Schema="dbo" store:Type="Tables" />
@@ -833,9 +934,11 @@
           <EntitySet Name="ProjectDetail" EntityType="Self.ProjectDetail" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PropertyDef" EntityType="Self.PropertyDef" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PropertySale" EntityType="Self.PropertySale" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PropertyTransfer" EntityType="Self.PropertyTransfer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Prospect" EntityType="Self.Prospect" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Rebate_Details" EntityType="Self.Rebate_Details" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Registration" EntityType="Self.Registration" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Resale_Form" EntityType="Self.Resale_Form" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Role" EntityType="Self.Role" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RolesToUser" EntityType="Self.RolesToUser" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SaleInstallments" EntityType="Self.SaleInstallments" Schema="dbo" store:Type="Tables" />
@@ -858,10 +961,6 @@
           <AssociationSet Name="FK_PaymentMilestoneDetail_PaymentMilestones" Association="Self.FK_PaymentMilestoneDetail_PaymentMilestones">
             <End Role="PaymentMilestones" EntitySet="PaymentMilestones" />
             <End Role="PaymentMilestoneDetail" EntitySet="PaymentMilestoneDetail" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Project_Entries_BookingConfirm" Association="Self.FK_Project_Entries_BookingConfirm">
-            <End Role="BookingConfirm" EntitySet="BookingConfirm" />
-            <End Role="Project_Entries" EntitySet="Project_Entries" />
           </AssociationSet>
           <AssociationSet Name="FK_ProjectDetail_Project" Association="Self.FK_ProjectDetail_Project">
             <End Role="Project" EntitySet="Project" />
@@ -929,7 +1028,6 @@
           <Property Name="Updated_On" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Authorize_By" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="Authorize_Date" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="Project_Entries" Relationship="MIS_DBModel.FK_Project_Entries_BookingConfirm" FromRole="BookingConfirm" ToRole="Project_Entries" />
         </EntityType>
         <EntityType Name="BookingPayment">
           <Key>
@@ -1047,6 +1145,8 @@
           <Property Name="Created_By" Type="Int32" />
           <Property Name="Updated_On" Type="DateTime" Precision="0" />
           <Property Name="SecurityGroupId" Type="Int32" />
+          <Property Name="Payment_Account" Type="Int32" />
+          <Property Name="AuthorizeStatus" Type="Boolean" />
         </EntityType>
         <EntityType Name="PaymentMilestoneDetail">
           <Key>
@@ -1090,6 +1190,9 @@
           <Property Name="Created_By" Type="Int32" />
           <Property Name="Update_Date" Type="DateTime" Precision="0" />
           <Property Name="Update_By" Type="Int32" />
+          <Property Name="Company" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="LocationSeg" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ProjectSeg" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="ProjectDetail">
           <Key>
@@ -1189,6 +1292,7 @@
           <Property Name="SecurityGroupId" Type="Int32" />
           <Property Name="differentiableAmount" Type="Decimal" Precision="18" Scale="3" />
           <Property Name="Nominee_Picture" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="AuthorizeStatus" Type="Boolean" />
         </EntityType>
         <EntityType Name="Prospect">
           <Key>
@@ -1282,6 +1386,8 @@
           <NavigationProperty Name="PropertySale" Relationship="Self.FK_SaleInstallments_PropertySale" FromRole="SaleInstallments" ToRole="PropertySale" />
           <Property Name="SecurityGroupId" Type="Int32" />
           <Property Name="OtherTaxAmount" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="Payment_Account" Type="Int32" />
+          <Property Name="AuthorizeStatus" Type="Boolean" />
         </EntityType>
         <EntityType Name="Society_Slip">
           <Key>
@@ -1421,10 +1527,9 @@
           </AssociationSet>
           <EntitySet Name="Booking_Entries" EntityType="MIS_DBModel.Booking_Entries" />
           <EntitySet Name="Project_Entries" EntityType="MIS_DBModel.Project_Entries" />
-          <AssociationSet Name="FK_Project_Entries_BookingConfirm" Association="MIS_DBModel.FK_Project_Entries_BookingConfirm">
-            <End Role="BookingConfirm" EntitySet="BookingConfirms" />
-            <End Role="Project_Entries" EntitySet="Project_Entries" />
-          </AssociationSet>
+          <EntitySet Name="Inventory_List" EntityType="MIS_DBModel.Inventory_List" />
+          <EntitySet Name="Resale_Form" EntityType="MIS_DBModel.Resale_Form" />
+          <EntitySet Name="PropertyTransfers" EntityType="MIS_DBModel.PropertyTransfer" />
         </EntityContainer>
         <EntityType Name="User">
           <Key>
@@ -1753,20 +1858,111 @@
           <Property Name="Created_On" Type="DateTime" Precision="3" />
           <Property Name="Updated_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Updated_On" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="BookingConfirm" Relationship="MIS_DBModel.FK_Project_Entries_BookingConfirm" FromRole="Project_Entries" ToRole="BookingConfirm" />
         </EntityType>
-        <Association Name="FK_Project_Entries_BookingConfirm">
-          <End Type="MIS_DBModel.BookingConfirm" Role="BookingConfirm" Multiplicity="1" />
-          <End Type="MIS_DBModel.Project_Entries" Role="Project_Entries" Multiplicity="0..1" />
-          <ReferentialConstraint>
-            <Principal Role="BookingConfirm">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="Project_Entries">
-              <PropertyRef Name="E_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
+        <EntityType Name="Inventory_List">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PurchasingDate" Type="DateTime" Precision="3" />
+          <Property Name="FileName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Project" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Category" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Size" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="MS_RegNo" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Plot_FileNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FileStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="InventoryStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TotalPlotValue" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="PaidtoSocietyProjectAmount" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="Paid" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="PaidtoSocietyProjectMSOther" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="TotalPaidtoSocietyProject" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="ProfitPaid" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="StaffPurchasing" Type="Int32" />
+          <Property Name="StaffCommissionPurchasing" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="AgentPurchasing" Type="Int32" />
+          <Property Name="AgentCommissionPurchasing" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="TotalPaid" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="PaidBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SellingDate" Type="DateTime" Precision="3" />
+          <Property Name="SellingAmount" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="GrossProfit" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="StaffSelling" Type="Int32" />
+          <Property Name="StaffCommissionSelling" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="AgentSelling" Type="Int32" />
+          <Property Name="AgentCommissionSelling" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="NetProfit" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Flex_1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Flex_2" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Created_By" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Created_On" Type="DateTime" Precision="3" />
+          <Property Name="Updated_By" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Updated_On" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Resale_Form">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EmployeeCode" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Date" Type="DateTime" Precision="3" />
+          <Property Name="StaffName" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Designation" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="StaffOffice" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="DealFileDetails" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="BuyerName" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Sales" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="TotalDealsAmount" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="StaffShare" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="OfficeShare" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="StaffAmount" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="OfficeAmount" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Flex_1" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Flex_2" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Created_By" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Created_On" Type="DateTime" Precision="3" />
+          <Property Name="Updated_By" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Updated_On" Type="DateTime" Precision="3" />
+          <Property Name="SellerName" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="PropertyTransfer">
+          <Key>
+            <PropertyRef Name="Booking_ID" />
+          </Key>
+          <Property Name="Booking_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Project_ID" Type="Int32" />
+          <Property Name="Unit_ID" Type="Int32" />
+          <Property Name="Buyer_Name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Buyer_FatherName" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="BuyerAddress" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="BuyerEmail" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="BuyerCNIC" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="BuyerMobile_1" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="BuyerMobile_2" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="BuyerMember_Reg_No" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Buyer_Picture" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="Seller_Name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Seller_FatherName" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="SellerAddress" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="SellerEmail" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="SellerCNIC" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="SellerMobile_1" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="SellerMobile_2" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="SellerMember_Reg_No" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Seller_Picture" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="TransferDate" Type="DateTime" Precision="3" />
+          <Property Name="TransferStatus" Type="Boolean" />
+          <Property Name="Flex_1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Flex_2" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Created_By" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Created_On" Type="DateTime" Precision="3" />
+          <Property Name="Updated_By" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Updated_On" Type="DateTime" Precision="3" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1927,6 +2123,8 @@
           <EntitySetMapping Name="PaymentInstallments">
             <EntityTypeMapping TypeName="MIS_DBModel.PaymentInstallment">
               <MappingFragment StoreEntitySet="PaymentInstallment">
+                <ScalarProperty Name="AuthorizeStatus" ColumnName="AuthorizeStatus" />
+                <ScalarProperty Name="Payment_Account" ColumnName="Payment_Account" />
                 <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
                 <ScalarProperty Name="Created_By" ColumnName="Created_By" />
@@ -1968,6 +2166,9 @@
           <EntitySetMapping Name="Projects">
             <EntityTypeMapping TypeName="MIS_DBModel.Project">
               <MappingFragment StoreEntitySet="Project">
+                <ScalarProperty Name="ProjectSeg" ColumnName="ProjectSeg" />
+                <ScalarProperty Name="LocationSeg" ColumnName="LocationSeg" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
                 <ScalarProperty Name="Update_By" ColumnName="Update_By" />
                 <ScalarProperty Name="Update_Date" ColumnName="Update_Date" />
                 <ScalarProperty Name="Created_By" ColumnName="Created_By" />
@@ -2056,6 +2257,7 @@
           <EntitySetMapping Name="PropertySales">
             <EntityTypeMapping TypeName="MIS_DBModel.PropertySale">
               <MappingFragment StoreEntitySet="PropertySale">
+                <ScalarProperty Name="AuthorizeStatus" ColumnName="AuthorizeStatus" />
                 <ScalarProperty Name="Nominee_Picture" ColumnName="Nominee_Picture" />
                 <ScalarProperty Name="differentiableAmount" ColumnName="differentiableAmount" />
                 <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
@@ -2160,6 +2362,8 @@
           <EntitySetMapping Name="SaleInstallments">
             <EntityTypeMapping TypeName="MIS_DBModel.SaleInstallment">
               <MappingFragment StoreEntitySet="SaleInstallments">
+                <ScalarProperty Name="AuthorizeStatus" ColumnName="AuthorizeStatus" />
+                <ScalarProperty Name="Payment_Account" ColumnName="Payment_Account" />
                 <ScalarProperty Name="OtherTaxAmount" ColumnName="OtherTaxAmount" />
                 <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="Ins_ID" ColumnName="Ins_ID" />
@@ -2511,6 +2715,113 @@
                 <ScalarProperty Name="Entry_Date" ColumnName="Entry_Date" />
                 <ScalarProperty Name="Transaction_ID" ColumnName="Transaction_ID" />
                 <ScalarProperty Name="E_ID" ColumnName="E_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Inventory_List">
+            <EntityTypeMapping TypeName="MIS_DBModel.Inventory_List">
+              <MappingFragment StoreEntitySet="Inventory_List">
+                <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
+                <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
+                <ScalarProperty Name="Created_On" ColumnName="Created_On" />
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="Flex_2" ColumnName="Flex_2" />
+                <ScalarProperty Name="Flex_1" ColumnName="Flex_1" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="NetProfit" ColumnName="NetProfit" />
+                <ScalarProperty Name="AgentCommissionSelling" ColumnName="AgentCommissionSelling" />
+                <ScalarProperty Name="AgentSelling" ColumnName="AgentSelling" />
+                <ScalarProperty Name="StaffCommissionSelling" ColumnName="StaffCommissionSelling" />
+                <ScalarProperty Name="StaffSelling" ColumnName="StaffSelling" />
+                <ScalarProperty Name="GrossProfit" ColumnName="GrossProfit" />
+                <ScalarProperty Name="SellingAmount" ColumnName="SellingAmount" />
+                <ScalarProperty Name="SellingDate" ColumnName="SellingDate" />
+                <ScalarProperty Name="PaidBy" ColumnName="PaidBy" />
+                <ScalarProperty Name="TotalPaid" ColumnName="TotalPaid" />
+                <ScalarProperty Name="AgentCommissionPurchasing" ColumnName="AgentCommissionPurchasing" />
+                <ScalarProperty Name="AgentPurchasing" ColumnName="AgentPurchasing" />
+                <ScalarProperty Name="StaffCommissionPurchasing" ColumnName="StaffCommissionPurchasing" />
+                <ScalarProperty Name="StaffPurchasing" ColumnName="StaffPurchasing" />
+                <ScalarProperty Name="ProfitPaid" ColumnName="ProfitPaid" />
+                <ScalarProperty Name="TotalPaidtoSocietyProject" ColumnName="TotalPaidtoSocietyProject" />
+                <ScalarProperty Name="PaidtoSocietyProjectMSOther" ColumnName="PaidtoSocietyProjectMSOther" />
+                <ScalarProperty Name="Paid" ColumnName="Paid" />
+                <ScalarProperty Name="PaidtoSocietyProjectAmount" ColumnName="PaidtoSocietyProjectAmount" />
+                <ScalarProperty Name="TotalPlotValue" ColumnName="TotalPlotValue" />
+                <ScalarProperty Name="InventoryStatus" ColumnName="InventoryStatus" />
+                <ScalarProperty Name="FileStatus" ColumnName="FileStatus" />
+                <ScalarProperty Name="Plot_FileNo" ColumnName="Plot_FileNo" />
+                <ScalarProperty Name="MS_RegNo" ColumnName="MS_RegNo" />
+                <ScalarProperty Name="Size" ColumnName="Size" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="Project" ColumnName="Project" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="PurchasingDate" ColumnName="PurchasingDate" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Resale_Form">
+            <EntityTypeMapping TypeName="MIS_DBModel.Resale_Form">
+              <MappingFragment StoreEntitySet="Resale_Form">
+                <ScalarProperty Name="SellerName" ColumnName="SellerName" />
+                <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
+                <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
+                <ScalarProperty Name="Created_On" ColumnName="Created_On" />
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="Flex_2" ColumnName="Flex_2" />
+                <ScalarProperty Name="Flex_1" ColumnName="Flex_1" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="OfficeAmount" ColumnName="OfficeAmount" />
+                <ScalarProperty Name="StaffAmount" ColumnName="StaffAmount" />
+                <ScalarProperty Name="OfficeShare" ColumnName="OfficeShare" />
+                <ScalarProperty Name="StaffShare" ColumnName="StaffShare" />
+                <ScalarProperty Name="TotalDealsAmount" ColumnName="TotalDealsAmount" />
+                <ScalarProperty Name="Sales" ColumnName="Sales" />
+                <ScalarProperty Name="BuyerName" ColumnName="BuyerName" />
+                <ScalarProperty Name="DealFileDetails" ColumnName="DealFileDetails" />
+                <ScalarProperty Name="StaffOffice" ColumnName="StaffOffice" />
+                <ScalarProperty Name="Designation" ColumnName="Designation" />
+                <ScalarProperty Name="StaffName" ColumnName="StaffName" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="EmployeeCode" ColumnName="EmployeeCode" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PropertyTransfers">
+            <EntityTypeMapping TypeName="MIS_DBModel.PropertyTransfer">
+              <MappingFragment StoreEntitySet="PropertyTransfer">
+                <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
+                <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
+                <ScalarProperty Name="Created_On" ColumnName="Created_On" />
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="Flex_2" ColumnName="Flex_2" />
+                <ScalarProperty Name="Flex_1" ColumnName="Flex_1" />
+                <ScalarProperty Name="TransferStatus" ColumnName="TransferStatus" />
+                <ScalarProperty Name="TransferDate" ColumnName="TransferDate" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Seller_Picture" ColumnName="Seller_Picture" />
+                <ScalarProperty Name="SellerMember_Reg_No" ColumnName="SellerMember_Reg_No" />
+                <ScalarProperty Name="SellerMobile_2" ColumnName="SellerMobile_2" />
+                <ScalarProperty Name="SellerMobile_1" ColumnName="SellerMobile_1" />
+                <ScalarProperty Name="SellerCNIC" ColumnName="SellerCNIC" />
+                <ScalarProperty Name="SellerEmail" ColumnName="SellerEmail" />
+                <ScalarProperty Name="SellerAddress" ColumnName="SellerAddress" />
+                <ScalarProperty Name="Seller_FatherName" ColumnName="Seller_FatherName" />
+                <ScalarProperty Name="Seller_Name" ColumnName="Seller_Name" />
+                <ScalarProperty Name="Buyer_Picture" ColumnName="Buyer_Picture" />
+                <ScalarProperty Name="BuyerMember_Reg_No" ColumnName="BuyerMember_Reg_No" />
+                <ScalarProperty Name="BuyerMobile_2" ColumnName="BuyerMobile_2" />
+                <ScalarProperty Name="BuyerMobile_1" ColumnName="BuyerMobile_1" />
+                <ScalarProperty Name="BuyerCNIC" ColumnName="BuyerCNIC" />
+                <ScalarProperty Name="BuyerEmail" ColumnName="BuyerEmail" />
+                <ScalarProperty Name="BuyerAddress" ColumnName="BuyerAddress" />
+                <ScalarProperty Name="Buyer_FatherName" ColumnName="Buyer_FatherName" />
+                <ScalarProperty Name="Buyer_Name" ColumnName="Buyer_Name" />
+                <ScalarProperty Name="Unit_ID" ColumnName="Unit_ID" />
+                <ScalarProperty Name="Project_ID" ColumnName="Project_ID" />
+                <ScalarProperty Name="Booking_ID" ColumnName="Booking_ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

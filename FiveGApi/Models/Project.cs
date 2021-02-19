@@ -39,6 +39,9 @@ namespace FiveGApi.Models
         public Nullable<int> Created_By { get; set; }
         public Nullable<System.DateTime> Update_Date { get; set; }
         public Nullable<int> Update_By { get; set; }
+        public string Company { get; set; }
+        public string LocationSeg { get; set; }
+        public string ProjectSeg { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProjectDetail> ProjectDetails { get; set; }

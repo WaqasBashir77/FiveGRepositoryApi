@@ -60,5 +60,8 @@ namespace FiveGApi.Models
         public virtual DbSet<SecurityGroup> SecurityGroups { get; set; }
         public virtual DbSet<Booking_Entries> Booking_Entries { get; set; }
         public virtual DbSet<Project_Entries> Project_Entries { get; set; }
+        public virtual DbSet<Inventory_List> Inventory_List { get; set; }
+        public virtual DbSet<Resale_Form> Resale_Form { get; set; }
+        public virtual DbSet<PropertyTransfer> PropertyTransfers { get; set; }
     }
 }

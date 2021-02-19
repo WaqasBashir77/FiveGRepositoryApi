@@ -40,6 +40,8 @@ namespace FiveGApi.Models
         public Nullable<System.DateTime> Updated_On { get; set; }
         public Nullable<int> SecurityGroupId { get; set; }
         public Nullable<decimal> OtherTaxAmount { get; set; }
+        public Nullable<int> Payment_Account { get; set; }
+        public Nullable<bool> AuthorizeStatus { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PaymentInstallment> PaymentInstallments { get; set; }

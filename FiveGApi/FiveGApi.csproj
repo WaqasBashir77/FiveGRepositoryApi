@@ -208,17 +208,20 @@
     <Compile Include="Controllers\DeliverySheetController.cs" />
     <Compile Include="Controllers\GLBalancesController.cs" />
     <Compile Include="Controllers\GlHeaderController.cs" />
+    <Compile Include="Controllers\InventoryListController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\PaymentDeliveryController.cs" />
     <Compile Include="Controllers\PropertyDefController.cs" />
     <Compile Include="Controllers\Lookup_ListController.cs" />
     <Compile Include="Controllers\Lookup_ValuesController.cs" />
+    <Compile Include="Controllers\PropertyTransferController.cs" />
     <Compile Include="Controllers\RebateDetailsController.cs" />
     <Compile Include="Controllers\RegistrationController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PaymentMilestonesController.cs" />
     <Compile Include="Controllers\ProjectsController.cs" />
     <Compile Include="Controllers\ProspectsController.cs" />
+    <Compile Include="Controllers\ResaleFormController.cs" />
     <Compile Include="Controllers\SocietySlipController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Custom\CustomExceptionFilter.cs" />
@@ -278,6 +281,9 @@
     <Compile Include="Models\GL_Lines.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Inventory_List.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Lookup_List.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -332,6 +338,9 @@
     <Compile Include="Models\PropertySale.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\PropertyTransfer.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Prospect.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -339,6 +348,9 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Registration.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Resale_Form.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Role.cs">

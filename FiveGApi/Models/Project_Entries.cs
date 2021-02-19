@@ -29,7 +29,5 @@ namespace FiveGApi.Models
         public Nullable<System.DateTime> Created_On { get; set; }
         public string Updated_By { get; set; }
         public Nullable<System.DateTime> Updated_On { get; set; }
-    
-        public virtual BookingConfirm BookingConfirm { get; set; }
     }
 }

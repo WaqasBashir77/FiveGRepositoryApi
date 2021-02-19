@@ -20,34 +20,43 @@ namespace FiveGApi.Controllers
         [Route("getmenu")]
         public IHttpActionResult GetMenu(GeneralDTO general)
         {
-            RolesToUser getUserRole = db.RolesToUsers.Where(x => x.UserId == general.UserId).FirstOrDefault();
+            RolesToUser getUserRole = db.RolesToUsers.Where(x => x.UserId == general.UserId).AsQueryable().FirstOrDefault();
             List<FormDTO> forms = new List<FormDTO>();
             if (getUserRole != null)
             {
-                var getAllActiveForm = db.PrivilegesToRoles.Where(x => x.RoleId == getUserRole.RoleId && x.Status == true).OrderBy(x=> x.FormOrder).ToList();
-
-                foreach (var item in getAllActiveForm.ToList())
+                var pra = (from f in db.Forms
+                          join p in db.PrivilegesToRoles on f.Id equals p.FormId
+                          where p.RoleId == getUserRole.RoleId
+                          select f).OrderBy(x=>x.OrderBy).GroupBy(x=>x.ModuleId).AsQueryable().ToList();
+                if (pra.Count() < 0)
                 {
-                    var getMenuItem = db.Forms.Where(x => x.Id == item.FormId).SingleOrDefault();
-                    var getModuleItem = db.Modules.Where(x => x.Id == getMenuItem.ModuleId).SingleOrDefault();
-                  
-                   
-                    if (!forms.Any(x=> x.name == getModuleItem.Name))
+                    return NotFound();
+                }
+                else
+                {
+                    var modulesList=db.Modules.AsQueryable().ToList();
+                    foreach (var item in pra)
                     {
-                        FormDTO moduleDTO = new FormDTO();
-                        moduleDTO.name = getModuleItem.Name;
-                        moduleDTO.title = true;
-                        forms.Add(moduleDTO);
+                        foreach (var Formvalues in item)
+                        {
+                            var getMenuItem = Formvalues;
+                            var getModuleItem = modulesList.Where(x => x.Id == getMenuItem.ModuleId).FirstOrDefault();
+                            if (!forms.Any(x => x.name == getModuleItem.Name))
+                            {
+                                FormDTO moduleDTO = new FormDTO();
+                                moduleDTO.name = getModuleItem.Name;
+                                moduleDTO.title = true;
+                                forms.Add(moduleDTO);
+                            }
+                            FormDTO formDTO = new FormDTO();
+                            formDTO.name = getMenuItem.Alias;
+                            formDTO.icon = getMenuItem.Icon;
+                            formDTO.url = getMenuItem.FormUrl;
+                            forms.Add(formDTO);
+                        }
                     }
-                    FormDTO formDTO = new FormDTO();
-                    formDTO.name = getMenuItem.Alias;
-                    formDTO.icon = getMenuItem.Icon;
-                    formDTO.url = getMenuItem.FormUrl;
-
-                    forms.Add(formDTO);
                 }
             }
-
             return Ok(forms);
         }
     }

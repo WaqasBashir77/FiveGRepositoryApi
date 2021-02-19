@@ -31,6 +31,8 @@ namespace FiveGApi.Models
         public Nullable<int> Created_By { get; set; }
         public Nullable<System.DateTime> Updated_On { get; set; }
         public Nullable<int> SecurityGroupId { get; set; }
+        public Nullable<int> Payment_Account { get; set; }
+        public Nullable<bool> AuthorizeStatus { get; set; }
     
         public virtual SaleInstallment SaleInstallment { get; set; }
     }

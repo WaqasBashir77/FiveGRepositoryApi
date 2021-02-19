@@ -51,6 +51,7 @@ namespace FiveGApi.Models
         public Nullable<int> SecurityGroupId { get; set; }
         public Nullable<decimal> differentiableAmount { get; set; }
         public string Nominee_Picture { get; set; }
+        public Nullable<bool> AuthorizeStatus { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SaleInstallment> SaleInstallments { get; set; }

@@ -59,7 +59,5 @@ namespace FiveGApi.Models
         public string Updated_On { get; set; }
         public string Authorize_By { get; set; }
         public Nullable<System.DateTime> Authorize_Date { get; set; }
-    
-        public virtual Project_Entries Project_Entries { get; set; }
     }
 }
