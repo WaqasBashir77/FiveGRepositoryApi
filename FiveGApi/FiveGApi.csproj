@@ -237,6 +237,7 @@
     <Compile Include="DTOModels\ProjectDto.cs" />
     <Compile Include="DTOModels\PropertySaleDetailDTO.cs" />
     <Compile Include="DTOModels\PropertySaleDTO.cs" />
+    <Compile Include="DTOModels\PropertyTransferDTO.cs" />
     <Compile Include="DTOModels\RegistrationModel.cs" />
     <Compile Include="DTOModels\ResponseModel.cs" />
     <Compile Include="DTOModels\ResultViewModel.cs" />

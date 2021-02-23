@@ -130,6 +130,7 @@ namespace FiveGApi.Controllers
                 {
                     ID = item.ID,
                     Name = item.Name,
+                    Code = item.Code,
                     isSelected = false
 
                 }).ToList(); if (Registration == null)

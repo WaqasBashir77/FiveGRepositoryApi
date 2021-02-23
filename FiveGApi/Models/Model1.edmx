@@ -587,9 +587,10 @@
         </EntityType>
         <EntityType Name="PropertyTransfer">
           <Key>
-            <PropertyRef Name="Booking_ID" />
+            <PropertyRef Name="ID" />
           </Key>
-          <Property Name="Booking_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Booking_ID" Type="int" Nullable="false" />
           <Property Name="Project_ID" Type="int" />
           <Property Name="Unit_ID" Type="int" />
           <Property Name="Buyer_Name" Type="varchar" MaxLength="250" />
@@ -600,7 +601,7 @@
           <Property Name="BuyerMobile_1" Type="varchar" MaxLength="250" />
           <Property Name="BuyerMobile_2" Type="varchar" MaxLength="250" />
           <Property Name="BuyerMember_Reg_No" Type="varchar" MaxLength="250" />
-          <Property Name="Buyer_Picture" Type="varbinary(max)" />
+          <Property Name="Buyer_Picture" Type="image" />
           <Property Name="Seller_Name" Type="varchar" MaxLength="250" />
           <Property Name="Seller_FatherName" Type="varchar" MaxLength="250" />
           <Property Name="SellerAddress" Type="varchar" MaxLength="250" />
@@ -1930,9 +1931,10 @@
         </EntityType>
         <EntityType Name="PropertyTransfer">
           <Key>
-            <PropertyRef Name="Booking_ID" />
+            <PropertyRef Name="ID" />
           </Key>
-          <Property Name="Booking_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Booking_ID" Type="Int32" Nullable="false" />
           <Property Name="Project_ID" Type="Int32" />
           <Property Name="Unit_ID" Type="Int32" />
           <Property Name="Buyer_Name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
@@ -2822,6 +2824,7 @@
                 <ScalarProperty Name="Unit_ID" ColumnName="Unit_ID" />
                 <ScalarProperty Name="Project_ID" ColumnName="Project_ID" />
                 <ScalarProperty Name="Booking_ID" ColumnName="Booking_ID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
