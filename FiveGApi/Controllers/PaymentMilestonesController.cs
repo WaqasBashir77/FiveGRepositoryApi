@@ -246,7 +246,7 @@ namespace FiveGApi.Controllers
                 Console.WriteLine(ex.ToString());
                 response.Code = 0;
             }
-            return Ok(response);
+            return Ok(paymentMilestone);
         }
 
         // DELETE: api/PaymentMilestones/5

@@ -5,6 +5,37 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="MIS_DBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Attachments">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FileName" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="FileType" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="FileParentRootFolder" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="FilePath" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="FileSize" Type="bigint" Nullable="false" />
+          <Property Name="FileExtension" Type="nvarchar" MaxLength="6" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="1000" />
+          <Property Name="ValidTill" Type="datetime" />
+          <Property Name="CreatedBy" Type="bigint" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="UpdatedBy" Type="bigint" />
+          <Property Name="UpdatedDate" Type="datetime" />
+          <Property Name="IsCompleted" Type="bit" Nullable="false" />
+          <Property Name="CompletedDate" Type="datetime" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Attatchment_Relation">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TableRowId" Type="int" />
+          <Property Name="FormId" Type="int" />
+          <Property Name="FileID" Type="int" />
+        </EntityType>
         <EntityType Name="Bank_Accounts">
           <Key>
             <PropertyRef Name="ID" />
@@ -230,7 +261,7 @@
             <PropertyRef Name="H_ID" />
           </Key>
           <Property Name="H_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="J_Date" Type="datetime" />
+          <Property Name="J_Date" Type="datetime" Nullable="false" />
           <Property Name="Doc_Date" Type="datetime" />
           <Property Name="Currency" Type="varchar(max)" />
           <Property Name="Description" Type="varchar(max)" />
@@ -257,6 +288,7 @@
           <Property Name="Created_On" Type="datetime" />
           <Property Name="Updated_By" Type="varchar(max)" />
           <Property Name="Updated_On" Type="datetime" />
+          <Property Name="Ref_Field" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="GL_Lines">
           <Key>
@@ -466,6 +498,7 @@
           <Property Name="Company" Type="varchar(max)" />
           <Property Name="LocationSeg" Type="varchar(max)" />
           <Property Name="ProjectSeg" Type="varchar(max)" />
+          <Property Name="PlotAres" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="Project_Entries">
           <Key>
@@ -909,6 +942,8 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="MIS_DBModelStoreContainer">
+          <EntitySet Name="Attachments" EntityType="Self.Attachments" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Attatchment_Relation" EntityType="Self.Attatchment_Relation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Bank_Accounts" EntityType="Self.Bank_Accounts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Booking_Entries" EntityType="Self.Booking_Entries" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BookingConfirm" EntityType="Self.BookingConfirm" Schema="dbo" store:Type="Tables" />
@@ -1194,6 +1229,7 @@
           <Property Name="Company" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="LocationSeg" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="ProjectSeg" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="PlotAres" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="ProjectDetail">
           <Key>
@@ -1531,6 +1567,8 @@
           <EntitySet Name="Inventory_List" EntityType="MIS_DBModel.Inventory_List" />
           <EntitySet Name="Resale_Form" EntityType="MIS_DBModel.Resale_Form" />
           <EntitySet Name="PropertyTransfers" EntityType="MIS_DBModel.PropertyTransfer" />
+          <EntitySet Name="Attachments" EntityType="MIS_DBModel.Attachment" />
+          <EntitySet Name="Attatchment_Relation" EntityType="MIS_DBModel.Attatchment_Relation" />
         </EntityContainer>
         <EntityType Name="User">
           <Key>
@@ -1678,7 +1716,7 @@
             <PropertyRef Name="H_ID" />
           </Key>
           <Property Name="H_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="J_Date" Type="DateTime" Precision="3" />
+          <Property Name="J_Date" Type="DateTime" Precision="3" Nullable="false" />
           <Property Name="Doc_Date" Type="DateTime" Precision="3" />
           <Property Name="Currency" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
@@ -1706,6 +1744,7 @@
           <Property Name="Updated_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Updated_On" Type="DateTime" Precision="3" />
           <NavigationProperty Name="GL_Lines" Relationship="MIS_DBModel.FK_GL_Lines_GL_Headers" FromRole="GL_Headers" ToRole="GL_Lines" />
+          <Property Name="Ref_Field" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="GL_Lines">
           <Key>
@@ -1965,6 +2004,37 @@
           <Property Name="Updated_By" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="Updated_On" Type="DateTime" Precision="3" />
         </EntityType>
+        <EntityType Name="Attachment">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FileName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="FileType" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="FileParentRootFolder" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FilePath" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FileSize" Type="Int64" Nullable="false" />
+          <Property Name="FileExtension" Type="String" Nullable="false" MaxLength="6" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="ValidTill" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="Int64" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UpdatedBy" Type="Int64" />
+          <Property Name="UpdatedDate" Type="DateTime" Precision="3" />
+          <Property Name="IsCompleted" Type="Boolean" Nullable="false" />
+          <Property Name="CompletedDate" Type="DateTime" Precision="3" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Attatchment_Relation">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TableRowId" Type="Int32" />
+          <Property Name="FormId" Type="Int32" />
+          <Property Name="FileID" Type="Int32" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2168,6 +2238,7 @@
           <EntitySetMapping Name="Projects">
             <EntityTypeMapping TypeName="MIS_DBModel.Project">
               <MappingFragment StoreEntitySet="Project">
+                <ScalarProperty Name="PlotAres" ColumnName="PlotAres" />
                 <ScalarProperty Name="ProjectSeg" ColumnName="ProjectSeg" />
                 <ScalarProperty Name="LocationSeg" ColumnName="LocationSeg" />
                 <ScalarProperty Name="Company" ColumnName="Company" />
@@ -2554,6 +2625,7 @@
           <EntitySetMapping Name="GL_Headers">
             <EntityTypeMapping TypeName="MIS_DBModel.GL_Headers">
               <MappingFragment StoreEntitySet="GL_Headers">
+                <ScalarProperty Name="Ref_Field" ColumnName="Ref_Field" />
                 <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
                 <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
                 <ScalarProperty Name="Created_On" ColumnName="Created_On" />
@@ -2824,6 +2896,39 @@
                 <ScalarProperty Name="Unit_ID" ColumnName="Unit_ID" />
                 <ScalarProperty Name="Project_ID" ColumnName="Project_ID" />
                 <ScalarProperty Name="Booking_ID" ColumnName="Booking_ID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Attachments">
+            <EntityTypeMapping TypeName="MIS_DBModel.Attachment">
+              <MappingFragment StoreEntitySet="Attachments">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="CompletedDate" ColumnName="CompletedDate" />
+                <ScalarProperty Name="IsCompleted" ColumnName="IsCompleted" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="ValidTill" ColumnName="ValidTill" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="FileExtension" ColumnName="FileExtension" />
+                <ScalarProperty Name="FileSize" ColumnName="FileSize" />
+                <ScalarProperty Name="FilePath" ColumnName="FilePath" />
+                <ScalarProperty Name="FileParentRootFolder" ColumnName="FileParentRootFolder" />
+                <ScalarProperty Name="FileType" ColumnName="FileType" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Attatchment_Relation">
+            <EntityTypeMapping TypeName="MIS_DBModel.Attatchment_Relation">
+              <MappingFragment StoreEntitySet="Attatchment_Relation">
+                <ScalarProperty Name="FileID" ColumnName="FileID" />
+                <ScalarProperty Name="FormId" ColumnName="FormId" />
+                <ScalarProperty Name="TableRowId" ColumnName="TableRowId" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

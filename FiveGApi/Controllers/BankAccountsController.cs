@@ -90,6 +90,7 @@ namespace FiveGApi.Controllers
                 return BadRequest(ModelState);
             }
             Bank_Accounts.Created_By = "Admin";
+            Bank_Accounts.Created_On = DateTime.Now;
             var bankDublicate = db.Bank_Accounts.Where(s => s.Acc_Name == Bank_Accounts.Acc_Name||s.Acc_Number==Bank_Accounts.Acc_Number).FirstOrDefault();
             if (bankDublicate != null)
             {

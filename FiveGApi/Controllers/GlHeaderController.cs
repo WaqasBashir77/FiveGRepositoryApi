@@ -115,14 +115,96 @@ namespace FiveGApi.Controllers
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
-                }               
+                }
+                DateTime jdate = (DateTime)gL_Headers.J_Date;
+                var Month = jdate.ToString("MM");
+                var year = jdate.ToString("yyyy");
+                if (gL_Headers.Source== "Manual")
+                {
+                    var getLastRefFieldEntry = db.GL_Headers.Where(x => x.J_Date.Month == jdate.Month && x.J_Date.Year ==jdate.Year && x.Source == "Manual").AsQueryable().OrderByDescending(x => x.H_ID).Select(x => x.Ref_Field).FirstOrDefault();
+                    if(getLastRefFieldEntry != null)
+                    {
+                        var result = getLastRefFieldEntry.Substring(getLastRefFieldEntry.Length - 4);
+                        int value = Convert.ToInt32(result);
+                        value = value + 1;
+                        var val=value.ToString();
+                        var len = val.Length;
+                        if (len == 1)
+                            val = "000" + val;
+                        else if (len == 2)
+                            val = "00" + val;
+                        else if (len == 3)
+                            val = "0" + val;
+                        gL_Headers.Ref_Field = "JV" + Month + val;
+                    }
+                    else
+                    {
+                        gL_Headers.Ref_Field = "JV" + Month + "0001";
+                    }
+                }
+                else if (gL_Headers.Source == "Deposit")
+                {
+                    var mode = "BRV";
+                    var getLastRefFieldEntry = db.GL_Headers.Where(x => x.J_Date.Month == jdate.Month && x.J_Date.Year == jdate.Year && x.Source == "Deposit").AsQueryable().OrderByDescending(x => x.H_ID).Select(x=>x.Ref_Field).FirstOrDefault();
+                    if(gL_Headers.Dep_Mode== "CASH")
+                    {
+                        mode = "CRV";
+                    }
+                    if (getLastRefFieldEntry != null)
+                    {
+                        var result = getLastRefFieldEntry.Substring(getLastRefFieldEntry.Length - 4);
+                        int value = Convert.ToInt32(result);
+                        value = value + 1;
+                        var val = value.ToString();
+                        var len = val.Length;
+                        if (len == 1)
+                            val = "000" + val;
+                        else if (len == 2)
+                            val = "00" + val;
+                        else if (len == 3)
+                            val = "0" + val;
+                        gL_Headers.Ref_Field = mode + Month + val;
+                    }
+                    else
+                    {
+                        gL_Headers.Ref_Field = mode + Month + "0001";
+                    }
+                }
+                else if (gL_Headers.Source == "Payments")
+                {
+                    var mode = "BPV";
+                    var getLastRefFieldEntry = db.GL_Headers.Where(x => x.J_Date.Month == jdate.Month && x.J_Date.Year == jdate.Year && x.Source == "Payments").AsQueryable().OrderByDescending(x => x.H_ID).Select(x => x.Ref_Field).FirstOrDefault();
+                    if (gL_Headers.Pay_Mode == "CASH")
+                    {
+                        mode = "CPV";
+                    }
+                    if (getLastRefFieldEntry != null)
+                    {
+                        var result = getLastRefFieldEntry.Substring(getLastRefFieldEntry.Length - 4);
+                        int value = Convert.ToInt32(result);
+                        value = value + 1;
+                        var val = value.ToString();
+                        var len = val.Length;
+                        if (len == 1)
+                            val = "000" + val;
+                        else if (len == 2)
+                            val = "00" + val;
+                        else if (len == 3)
+                            val = "0" + val;
+                        gL_Headers.Ref_Field = mode + Month + val;
+                    }
+                    else
+                    {
+                        gL_Headers.Ref_Field = mode + Month + "0001";
+                    }
+                }                
                 gL_Headers.GL_Lines = gL_Headers.GL_Lines.Select(x => { x.Created_By = "Admin";x.Created_On = DateTime.Now; return x; }).ToList() ;
                 gL_Headers.Created_By = "Admin";
                 gL_Headers.Created_On = DateTime.Now;
                 db.GL_Headers.Add(gL_Headers);
                 db.SaveChanges();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 
             }

@@ -15,7 +15,7 @@ using FiveGApi.DTOModels;
 
 namespace FiveGApi.Controllers
 {
-   // [Authorize]
+    [Authorize]
     [RoutePrefix("api/PropertyTransfer")]
     public class PropertyTransferController : ApiController
     {

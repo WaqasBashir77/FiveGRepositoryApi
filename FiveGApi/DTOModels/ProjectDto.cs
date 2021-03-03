@@ -26,6 +26,10 @@ namespace FiveGApi.DTOModels
         public int? Created_By { get; set; }
         public int? Update_By { get; set; }
         public int? Sec_GroupId { get; set; }
+        public string Company { get; set; }
+        public string LocationSeg { get; set; }
+        public string ProjectSeg { get; set; }
+        public string PlotAres { get; set; }
         public List<ProjectDetailDto> ProjectDetails { get; set; } = new List<ProjectDetailDto>();
     }
 }

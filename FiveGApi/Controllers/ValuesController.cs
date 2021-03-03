@@ -3,14 +3,19 @@ using FiveGApi.Helper;
 using FiveGApi.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
+using System.Web.Http.Description;
+using System.Net.Http.Headers;
+
 
 namespace FiveGApi.Controllers
 {
-    //[Authorize]
+   //[Authorize]
     [RoutePrefix("api/Values")]
     public class ValuesController : ApiController
     {
@@ -113,12 +118,13 @@ namespace FiveGApi.Controllers
         public IHttpActionResult addPropertySale(PropertySaleDTO propertySale)
         {
             ResponseModel response = new ResponseModel();
+            PropertySale OriginalPropertySale = new PropertySale();
             try
             {
                 if (propertySale != null)
                 {
 
-                    PropertySale OriginalPropertySale = new PropertySale();
+                    
                     OriginalPropertySale.Project_ID = propertySale.projectId;
                     OriginalPropertySale.Unit_ID = propertySale.unitId;
                     OriginalPropertySale.Buyer_Name = propertySale.buyerName;
@@ -210,8 +216,9 @@ namespace FiveGApi.Controllers
                             }
                         }
                         OriginalPropertySale.SaleInstallments = saleInstallmentList;
-                        db.PropertySales.Add(OriginalPropertySale);
+                        
                     }
+                    db.PropertySales.Add(OriginalPropertySale);
                     db.SaveChanges();
                     response.Code = 1;
                 }
@@ -220,7 +227,7 @@ namespace FiveGApi.Controllers
             {
                 response.Code = 0;
             }
-            return Ok(response);
+            return Ok(OriginalPropertySale);
         }
         [HttpPost]
         [Route("paymentInstallmentAuthorise")]
@@ -299,7 +306,7 @@ namespace FiveGApi.Controllers
                     gL_Headers.J_Date = DateTime.Now;
                     gL_Headers.Doc_Date = DateTime.Now;
                     gL_Headers.Currency = "PKR";
-                    gL_Headers.Description = projects.projectCode + "-" + projectDetail.unitNumber + "-" + projectDetail.unitType ;
+                    gL_Headers.Description = projects.projectCode + "-" + projectDetail.unitNumber + "-" + projectDetail.unitType +"-"+projectSale.Buyer_Name;
                     gL_Headers.Remarks = "";
                     gL_Headers.Source = "Projects";
                     gL_Headers.Trans_Status = "UnPosted";
@@ -342,6 +349,7 @@ namespace FiveGApi.Controllers
                 }
                 saleinstallment.AuthorizeStatus = true;
                 db.SaveChanges();
+                paymentInstallment.Payment_amount = paymentInstallment.Payment_amount;
                 paymentInstallment.AuthorizeStatus = true;
                 db.SaveChanges();
                 return Ok();
@@ -503,6 +511,7 @@ namespace FiveGApi.Controllers
                             saleInstallment.OtherTaxAmount = saleitem.OtherTaxAmount;
                             saleInstallment.Updated_By = UpdatedObj.Updated_By;
                             saleInstallment.Updated_On = DateTime.Now;
+                            saleInstallment.Payment_Account = saleitem.Payment_Account;
                         }
                         else
                         {
@@ -520,6 +529,7 @@ namespace FiveGApi.Controllers
                             saleInstallment.ins_payment_status = saleitem.ins_payment_status;
                             saleInstallment.Updated_By = UpdatedObj.Updated_By;
                             saleInstallment.Updated_On = DateTime.Now;
+                            saleInstallment.Payment_Account = saleitem.Payment_Account;
                             db.SaleInstallments.Add(saleInstallment);
 
                         }
@@ -543,7 +553,7 @@ namespace FiveGApi.Controllers
                                 paymentInstallment.instrument_remarks = item.instrument_remarks;
                                 paymentInstallment.Created_By = UpdatedObj.Updated_By;
                                 paymentInstallment.Created_ON = DateTime.Now; 
-
+                                paymentInstallment.Payment_Account = item.Payment_Account;
                                 db.PaymentInstallments.Add(paymentInstallment);
                             }
                             
@@ -609,6 +619,171 @@ namespace FiveGApi.Controllers
                 throw;
             }
             return Ok(lookup_Values);
+        }
+        [Route("UploadAttachments")]
+        [HttpPost]
+        public IHttpActionResult UploadAttachments()
+        {
+            //Create the Directory.
+            string path = HttpContext.Current.Server.MapPath("~/Attachments/");
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            List<string> stringList=new List<string>();
+            var url = HttpContext.Current.Request.Form["url"];
+            var tableID = HttpContext.Current.Request.Form["tableID"];
+            var form = db.Forms.Where(x => x.FormUrl == url).FirstOrDefault();
+            if(url==null|| tableID==null|| form==null)
+            {
+                string value = "Url=" + url + "-TableId=" + tableID + "-form=" + form;
+                return Ok(value);
+            }
+            
+            //Fetch the File.
+            var postedFile = HttpContext.Current.Request.Files;
+            if (postedFile.Count > 0)
+            {
+                for (int i = 0; i < postedFile.Count; i++)
+                {
+                    HttpPostedFile upload = postedFile[i];
+                    if (upload.ContentLength == 0) continue;
+                    //Fetch the File Name.
+                    var key = postedFile.AllKeys[i];
+                    string fileName = upload.FileName + DateTime.Now.ToFileTime() + Path.GetExtension(upload.FileName);
+                    //Save the File.
+                    upload.SaveAs(path + fileName);
+                    stringList.Add(fileName);
+                    Attachment attachment = new Attachment();
+                    attachment.FileName = fileName;
+                    attachment.Description = key;
+                    attachment.FileExtension = Path.GetExtension(upload.FileName);
+                    attachment.FileType = Path.GetExtension(upload.FileName);
+                    attachment.FilePath = "~/Attachments/";
+                    attachment.FileParentRootFolder = "Attachments";
+                    attachment.FileParentRootFolder = "Attachments";
+                    attachment.FileSize = upload.ContentLength;
+                    attachment.IsCompleted = true;
+                    attachment.CreatedBy = 1;
+                    attachment.CreatedDate = DateTime.Now;
+                    db.Attachments.Add(attachment);
+                    db.SaveChanges();
+                    Attatchment_Relation attatchment_Relation = new Attatchment_Relation();
+                    attatchment_Relation.FormId = form.Id;
+                    attatchment_Relation.FileID = Convert.ToInt32(attachment.ID);
+                    attatchment_Relation.TableRowId = Convert.ToInt32(tableID);
+                    db.Attatchment_Relation.Add(attatchment_Relation);
+                    db.SaveChanges();
+                }
+                //Send OK Response to Client.
+                return Ok(stringList);
+            }
+            else
+            {
+
+                return Ok("File Not found");
+            }
+            
+        }
+        [HttpDelete]     
+        [Route("DeleteAttachment")]
+        [ResponseType(typeof(Attachment))]
+        public IHttpActionResult DeleteAttachment(int attachmentID)
+        {
+            //get Attachment
+            Attachment attachment = db.Attachments.Where(x=>x.ID==attachmentID).FirstOrDefault();
+            if (attachment == null)
+            {
+                return NotFound();
+            }
+            //Remove Attachment
+            db.Attachments.Remove(attachment);
+            db.SaveChanges();
+            //get attatchment_Relation
+            Attatchment_Relation attatchment_Relation = db.Attatchment_Relation.Where(x => x.FileID == attachmentID).FirstOrDefault();
+            //Remove Attachment
+            if (attatchment_Relation != null)
+            {
+                db.Attatchment_Relation.Remove(attatchment_Relation);
+                db.SaveChanges();
+            }           
+            //return attachment with ok message
+            return Ok(attachment);
+        }
+        [HttpGet]
+        [Route("GetAttachmetsByFormIDAndTableID")]
+        public IHttpActionResult GetAttachmetsByFormIDAndTableID(string FormURl, int tableID)
+        {
+            var formsUrl = db.Forms.Where(x => x.FormUrl == FormURl).FirstOrDefault();
+            if (formsUrl == null)
+            {
+                return NotFound();
+            }
+            var attachments = (from a in db.Attachments
+                               join ar in db.Attatchment_Relation on a.ID equals ar.FileID
+                               where ar.FormId == formsUrl.Id && ar.TableRowId == tableID
+                               select a).AsQueryable().ToList();
+            if(attachments==null)
+            {
+                return NotFound();
+            }else
+            {
+                return Ok(attachments);
+            }
+        }
+        [HttpGet]
+        [Route("DownloadPdfFile")]
+        public HttpResponseMessage DownloadPdfFile(int id)
+        {
+            HttpResponseMessage response = null;
+            
+            try
+            {
+                var  file = db.Attachments.Where(b => b.ID == id).SingleOrDefault();
+
+                if (file == null)
+                {
+                    return response;
+                }
+                //Create HTTP Response.
+                 response = Request.CreateResponse(HttpStatusCode.OK);
+
+                //Set the File Path.
+                string filePath = HttpContext.Current.Server.MapPath("~/Attachments/") + file.FileName;
+
+                //Check whether File exists.
+                if (!File.Exists(filePath))
+                {
+                    //Throw 404 (Not Found) exception if File not found.
+                    response.StatusCode = HttpStatusCode.NotFound;
+                    response.ReasonPhrase = string.Format("File not found: {0} .", file.FileName);
+                    throw new HttpResponseException(response);
+                }
+
+                //Read the File into a Byte Array.
+                byte[] bytes = File.ReadAllBytes(filePath);
+
+                //Set the Response Content.
+                response.Content = new ByteArrayContent(bytes);
+
+                //Set the Response Content Length.
+                response.Content.Headers.ContentLength = bytes.LongLength;
+
+                //Set the Content Disposition Header Value and FileName.
+                response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
+                response.Content.Headers.ContentDisposition.FileName = file.FileName;
+
+                //Set the File Content Type.
+                response.Content.Headers.ContentType = new MediaTypeHeaderValue(MimeMapping.GetMimeMapping(file.FileName));
+
+                return response;
+               // return response;
+            
+            }
+            catch (Exception ex)
+            {
+                return response;
+            }
         }
         [NonAction]
         private int GenerateCOACombinations(string CCode)

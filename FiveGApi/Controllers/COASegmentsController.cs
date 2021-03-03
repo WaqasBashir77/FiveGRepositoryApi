@@ -109,10 +109,10 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+            COA_Segments.Created_By = "Admin";
+            COA_Segments.Created_ON = DateTime.Now;
             db.COA_Segments.Add(COA_Segments);
             db.SaveChanges();
-
             return CreatedAtRoute("DefaultApi", new { id = COA_Segments.ID }, COA_Segments);
         }
 

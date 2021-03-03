@@ -197,7 +197,8 @@ namespace FiveGApi.Controllers
             BookingConfirm.Emp_C_RAmt = ((((property.Price / 100) * BookingConfirm.Emp_Rebate) ) * confirmpercentage);
             BookingConfirm.Dealer_C_RAmt = ((((property.Price / 100) * BookingConfirm.Dealer_Rebate) ) * confirmpercentage);
             BookingConfirm.Com_C_RAmt = (((property.Price / 100) * BookingConfirm.Rebate_Percent) ) * confirmpercentage;
-
+            BookingConfirm.Created_By = "Admin";
+            BookingConfirm.Created_ON = DateTime.Now;
             //BookingConfirm.Emp_B_RAmt = (((property.Price / 100) * employeRebate) / 2);
             //BookingConfirm.Emp_C_RAmt = (((property.Price / 100) * employeRebate) / 2);
             //BookingConfirm.Dealer_B_RAmt = (((property.Price / 100) * dealerRebate) / 2);

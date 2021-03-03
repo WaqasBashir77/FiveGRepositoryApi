@@ -87,7 +87,10 @@ namespace FiveGApi.Controllers
                 projectDto.status = project.status;
                 projectDto.totalArea = project.totalArea;
                 projectDto.unit = project.unit;
-
+                projectDto.PlotAres= project.PlotAres;
+                projectDto.Company= project.Company;
+                projectDto.LocationSeg= project.LocationSeg;
+                projectDto.ProjectSeg= project.ProjectSeg;
                 foreach (var item in project.ProjectDetails)
                 {
                     ProjectDetailDto projectDetail = new ProjectDetailDto();
@@ -107,7 +110,6 @@ namespace FiveGApi.Controllers
                     projectDetail.unitType = item.unitType;
                     projectDetail.SqFrPrice = item.SqFrPrice;
                     projectDetail.noOfBedrooms = item.NoOfBedRooms;
-
                     projectDto.ProjectDetails.Add(projectDetail);
                 }
             }
@@ -137,7 +139,7 @@ namespace FiveGApi.Controllers
             existProject.unit = project.unit;
             existProject.Update_Date = DateTime.Now;
             existProject.Update_By = project.Update_By;
-
+            existProject.PlotAres = project.PlotAres;
 
             if (existProject.ProjectDetails.Count > 0)
             {
@@ -185,6 +187,8 @@ namespace FiveGApi.Controllers
                     return BadRequest(ModelState);
                 }
                 project.PaymentPlanStatus = false;
+                project.Created_By = 1;
+                project.Created_Date = DateTime.Now;
                 db.Projects.Add(project);
                 db.SaveChanges();
             }

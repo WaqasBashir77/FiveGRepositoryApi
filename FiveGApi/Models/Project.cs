@@ -42,6 +42,7 @@ namespace FiveGApi.Models
         public string Company { get; set; }
         public string LocationSeg { get; set; }
         public string ProjectSeg { get; set; }
+        public string PlotAres { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProjectDetail> ProjectDetails { get; set; }
