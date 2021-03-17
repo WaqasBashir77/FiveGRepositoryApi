@@ -1,4 +1,5 @@
-﻿using FiveGApi.Models;
+﻿using FiveGApi.Helper;
+using FiveGApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -6,20 +7,48 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Web.Http;
 using System.Web.Http.Description;
 
 namespace FiveGApi.Controllers
 {
     [Authorize]
+    [RoutePrefix("api/Lookup_List")]
 
     public class Lookup_ListController : ApiController
     {
+        //private string UserId;
+        //public Lookup_ListController()
+        //{
+        //    UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+
+        //}
         private MIS_DBEntities1 db = new MIS_DBEntities1();
         // GET: api/Lookup_List
         public IQueryable<Lookup_List> GetLookup_ListALL()
         {
-            return db.Lookup_List;
+            //if (UserId != null)
+            //{
+            //    var userSecurityGroup = db.Users.Where(x => x.UserName == UserId).AsQueryable().Select(x => x.SecurityGroupId).FirstOrDefault();
+            //    if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup))
+            //    {
+            //        return db.Lookup_List;//.Where(x => x.Security_Group_ID == userSecurityGroup.ToString()).AsQueryable();
+            //    }
+            //    else
+            //    {
+                    return db.Lookup_List;
+
+            //    }
+
+
+            //}
+            //else
+            //{
+            //    return null;
+            //}
+
+            
         }
 
         // GET: api/Lookup_List/5

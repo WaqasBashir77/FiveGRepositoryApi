@@ -39,13 +39,102 @@ namespace FiveGApi.Controllers
             }
             List<PropertySale> propertySale = new List<PropertySale>();
             if (!SecurityGroupDTO.CheckSuperAdmin(groupId))
-                propertySale = db.PropertySales.Where(x => x.SecurityGroupId == groupId).ToList();
+                propertySale = db.PropertySales.Where(x => x.SecurityGroupId == groupId).AsQueryable().ToList();
             else
                 propertySale = db.PropertySales.ToList(); 
           
             //if (propertySale == null)
             //{
                 //return NotFound();
+            //}
+            return Ok(propertySale);
+        }
+        [HttpGet]
+        [Route("GetPropertySaleListDTO")]
+        public IHttpActionResult GetPropertySaleListDTO()
+        {
+            var re = Request;
+            var headers = re.Headers;
+            int groupId = 0;
+            if (headers.Contains("GroupId"))
+            {
+                groupId = Convert.ToInt32(headers.GetValues("GroupId").First());
+            }
+            List<PropertySaleListDTO> propertySale = new List<PropertySaleListDTO>();
+            if (!SecurityGroupDTO.CheckSuperAdmin(groupId))
+                propertySale = db.PropertySales.Where(x => x.SecurityGroupId == groupId).Select(x => new PropertySaleListDTO
+                {
+                    Booking_ID = x.Booking_ID,
+                    Unit_ID = x.Unit_ID,
+                    Project_ID = x.Project_ID,
+                    Mobile_1 = x.Mobile_1,
+                    Mobile_2 = x.Mobile_2,
+                    Member_Reg_No = x.Member_Reg_No,
+                    Discount_Amount = x.Discount_Amount,
+                    Employee = x.Employee,
+                    Employee_Com = x.Employee_Com,
+                    Dealer_Comm = x.Dealer_Comm,
+                    Dealer_ID = x.Dealer_ID,
+                    Buyer_Name = x.Buyer_Name,
+                    Buyer_Father_Name = x.Buyer_Father_Name,
+                    //Purchaser_Picture = x.Booking_ID,
+                    Address = x.Address,
+                    Relationship_With_Nominee = x.Relationship_With_Nominee,
+                    Email = x.Email,
+                    Sale_Status = x.Sale_Status,
+                    Nominee_Name = x.Nominee_Name,
+                    Nominee_CNIC = x.Nominee_CNIC,
+                    CNIC = x.CNIC,
+                    Nominee_G_Number = x.Nominee_G_Number,
+                    Description = x.Description,
+                    Created_By = x.Created_By,
+                    Created_ON = x.Created_ON,
+                    Updated_By = x.Updated_By,
+                    Updated_On = x.Updated_On,
+                    PaymentCode = x.PaymentCode,
+                    SecurityGroupId = x.SecurityGroupId,
+                    differentiableAmount = x.differentiableAmount,
+                    AuthorizeStatus = x.AuthorizeStatus,
+                }).OrderByDescending(x => x.Created_ON).AsQueryable().ToList();
+            else
+                propertySale = db.PropertySales.Select(x => new PropertySaleListDTO
+                {
+                    Booking_ID = x.Booking_ID,
+                    Unit_ID = x.Unit_ID,
+                    Project_ID = x.Project_ID,
+                    Mobile_1 = x.Mobile_1,
+                    Mobile_2 = x.Mobile_2,
+                    Member_Reg_No = x.Member_Reg_No,
+                    Discount_Amount = x.Discount_Amount,
+                    Employee = x.Employee,
+                    Employee_Com = x.Employee_Com,
+                    Dealer_Comm = x.Dealer_Comm,
+                    Dealer_ID = x.Dealer_ID,
+                    Buyer_Name = x.Buyer_Name,
+                    Buyer_Father_Name = x.Buyer_Father_Name,
+                    //Purchaser_Picture = x.Booking_ID,
+                    Address = x.Address,
+                    Relationship_With_Nominee = x.Relationship_With_Nominee,
+                    Email = x.Email,
+                    Sale_Status = x.Sale_Status,
+                    Nominee_Name = x.Nominee_Name,
+                    Nominee_CNIC = x.Nominee_CNIC,
+                    CNIC = x.CNIC,
+                    Nominee_G_Number = x.Nominee_G_Number,
+                    Description = x.Description,
+                    Created_By = x.Created_By,
+                    Created_ON = x.Created_ON,
+                    Updated_By = x.Updated_By,
+                    Updated_On = x.Updated_On,
+                    PaymentCode = x.PaymentCode,
+                    SecurityGroupId = x.SecurityGroupId,
+                    differentiableAmount = x.differentiableAmount,
+                    AuthorizeStatus = x.AuthorizeStatus,
+                }).OrderByDescending(x => x.Created_ON).AsQueryable().ToList();
+
+            //if (propertySale == null)
+            //{
+            //return NotFound();
             //}
             return Ok(propertySale);
         }

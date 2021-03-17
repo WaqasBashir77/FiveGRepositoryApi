@@ -5,26 +5,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Web.Http;
 
 namespace FiveGApi.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [RoutePrefix("api/UserManage")]
     public class UserManageController : ApiController
     {
+        private string UserId;
+        public UserManageController()
+        {
+            UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+
+        }
         private MIS_DBEntities1 db = new MIS_DBEntities1();
 
         [Route("CreateUser")]
         [HttpPost]
         public IHttpActionResult CreateUser(UserDTO _userDTO)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
             var UserExisted = db.Users.Where(x => x.UserName == _userDTO.UserName).FirstOrDefault();
-            if(UserExisted!=null)
+            if (UserExisted != null)
             {
                 return Conflict();
             }
@@ -55,7 +62,7 @@ namespace FiveGApi.Controllers
                     db.SaveChanges();
                     return Ok(_userDTO.UserName);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     return Ok(ex);
                 }
@@ -64,20 +71,20 @@ namespace FiveGApi.Controllers
         }
         [Route("UpdateUser")]
         [HttpPut]
-        public IHttpActionResult UpdateUser(int id,UserDTO _userDTO)
+        public IHttpActionResult UpdateUser(int id, UserDTO _userDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var UserExisted = db.Users.Where(x => x.UserId == id && x.IsDeleted==false).FirstOrDefault();
+            var UserExisted = db.Users.Where(x => x.UserId == id && x.IsDeleted == false).FirstOrDefault();
             if (UserExisted == null)
             {
                 return NotFound();
             }
             else
             {
-                
+
                 UserExisted.UserName = _userDTO.UserName;
                 UserExisted.Password = _userDTO.Password;
                 UserExisted.NewPassword = _userDTO.Password;
@@ -94,7 +101,7 @@ namespace FiveGApi.Controllers
                 db.SaveChanges();
 
                 var usertoroles = db.RolesToUsers.Where(x => x.UserId == UserExisted.UserId).FirstOrDefault();
-                
+
                 //usertoroles.UserId = newUser.UserId;
                 usertoroles.RoleId = _userDTO.RoleID;
                 usertoroles.CreatedBy = "1";
@@ -114,7 +121,8 @@ namespace FiveGApi.Controllers
                             join r in db.Roles on ru.RoleId equals r.Id
                             //where u.UserId == RoleId
                             //&& f.IsMenuItem == true
-                            select  new UserDTO{
+                            select new UserDTO
+                            {
                                 UserID = u.UserId,
                                 UserName = u.UserName,
                                 Password = null,
@@ -127,7 +135,7 @@ namespace FiveGApi.Controllers
                                 RoleID = ru.RoleId,
                                 RoleName = r.Name,
                                 SecurityGroupId = u.SecurityGroupId,
-                            })               
+                            })
                 .AsQueryable()
                .ToList();
             return Ok(userList);
@@ -137,7 +145,7 @@ namespace FiveGApi.Controllers
         public IHttpActionResult GetUsersByID(int userID)
         {
             var user = db.Users.Where(x => x.UserId == userID && x.IsDeleted == false).AsQueryable().FirstOrDefault();
-            if(user!=null)
+            if (user != null)
             {
                 UserDTO userDTO = new UserDTO();
                 userDTO.UserID = user.UserId;
@@ -150,7 +158,7 @@ namespace FiveGApi.Controllers
                 userDTO.FirstName = user.FirstName;
                 userDTO.LastName = user.LastName;
                 userDTO.SecurityGroupId = user.SecurityGroupId;
-                userDTO.RoleID = db.RolesToUsers.Where(x=>x.UserId==user.UserId).Select(x=>x.RoleId).AsQueryable().FirstOrDefault();
+                userDTO.RoleID = db.RolesToUsers.Where(x => x.UserId == user.UserId).Select(x => x.RoleId).AsQueryable().FirstOrDefault();
                 userDTO.RoleName = db.Roles.Where(x => x.Id == userDTO.RoleID).Select(x => x.Name).AsQueryable().FirstOrDefault();
                 userDTO.IsActive = (bool)user.IsActive;
                 userDTO.IsDeleted = (bool)user.IsDeleted;
@@ -160,7 +168,7 @@ namespace FiveGApi.Controllers
             {
                 return NotFound();
             }
-           
+
         }
         [HttpGet]
         [Route("GetRolePermissionsByRoleID")]
@@ -209,14 +217,14 @@ namespace FiveGApi.Controllers
 
                     i = i + 1;
                 }
-                 return Ok(role);
+                return Ok(role);
             }
             else
             {
                 roles.Name = roleAndPermissions.Role;
                 db.SaveChanges();
                 var removeList = db.PrivilegesToRoles.Where(x => x.RoleId == roles.Id).ToList();
-               if(removeList!=null)
+                if (removeList != null)
                 {
                     foreach (var removeL in removeList)
                     {
@@ -225,22 +233,22 @@ namespace FiveGApi.Controllers
                     }
 
                 }
-                
-                    int i = 1;
-                    foreach (var rolesPermissions in roleAndPermissions.RolePermisions)
-                    {
-                        PrivilegesToRole privilegesToRole = new PrivilegesToRole();
-                        privilegesToRole.FormId = rolesPermissions;
-                        privilegesToRole.RoleId = roles.Id;
-                        privilegesToRole.Status = true;
-                        privilegesToRole.FormOrder = i;
-                        privilegesToRole.Created_By = 1;
-                        privilegesToRole.Created_ON = DateTime.Now;
-                        db.PrivilegesToRoles.Add(privilegesToRole);
-                        db.SaveChanges();
 
-                        i = i + 1;
-                    }
+                int i = 1;
+                foreach (var rolesPermissions in roleAndPermissions.RolePermisions)
+                {
+                    PrivilegesToRole privilegesToRole = new PrivilegesToRole();
+                    privilegesToRole.FormId = rolesPermissions;
+                    privilegesToRole.RoleId = roles.Id;
+                    privilegesToRole.Status = true;
+                    privilegesToRole.FormOrder = i;
+                    privilegesToRole.Created_By = 1;
+                    privilegesToRole.Created_ON = DateTime.Now;
+                    db.PrivilegesToRoles.Add(privilegesToRole);
+                    db.SaveChanges();
+
+                    i = i + 1;
+                }
                 return Ok(roles);
             }
 
@@ -249,7 +257,7 @@ namespace FiveGApi.Controllers
         [Route("CreateSecutityGroup")]
         public IHttpActionResult CreateSecutityGroup(SecurityGroup _securityGroup)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
@@ -278,9 +286,9 @@ namespace FiveGApi.Controllers
                     dbSGroups.Parent_Id = _securityGroup.Parent_Id;
                     dbSGroups.Group_Name = _securityGroup.Group_Name;
                     dbSGroups.Update_By = 1;
-                    dbSGroups.Update_Date = DateTime.Now;                    
+                    dbSGroups.Update_Date = DateTime.Now;
                     db.SaveChanges();
-                    
+
                 }
                 return Ok(_securityGroup);
             }
@@ -348,95 +356,129 @@ namespace FiveGApi.Controllers
             List<PermissionFormDTO> forms = new List<PermissionFormDTO>();
             //if (getUserRole != null)
             //{
-                var pra = (from m in db.Modules
-                           join f in db.Forms on m.Id equals f.ModuleId
-                           //where p.RoleId == getUserRole.RoleId
-                           //&& f.IsMenuItem == true
-                           select f).OrderBy(x => x.OrderBy).GroupBy(x => x.ModuleId).AsQueryable().ToList();
-                if (pra.Count() < 0)
+            var pra = (from m in db.Modules
+                       join f in db.Forms on m.Id equals f.ModuleId
+                       //where p.RoleId == getUserRole.RoleId
+                       //&& f.IsMenuItem == true
+                       select f).OrderBy(x => x.OrderBy).GroupBy(x => x.ModuleId).AsQueryable().ToList();
+            if (pra.Count() < 0)
+            {
+                return NotFound();
+            }
+            else
+            {
+                var modulesList = db.Modules.AsQueryable().ToList();
+                foreach (var item in pra)
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    var modulesList = db.Modules.AsQueryable().ToList();
-                    foreach (var item in pra)
+                    List<FormPermission> _formPermission = new List<FormPermission>();
+                    PermissionFormDTO moduleDTO = new PermissionFormDTO();
+                    foreach (var Formvalues in item)
                     {
-                        List<FormPermission> _formPermission = new List<FormPermission>();
-                        PermissionFormDTO moduleDTO = new PermissionFormDTO();
-                        foreach (var Formvalues in item)
+                        var getMenuItem = Formvalues;
+                        var getModuleItem = modulesList.Where(x => x.Id == getMenuItem.ModuleId).FirstOrDefault();
+                        if (!forms.Any(x => x.name == getModuleItem.Name))
                         {
-                            var getMenuItem = Formvalues;
-                            var getModuleItem = modulesList.Where(x => x.Id == getMenuItem.ModuleId).FirstOrDefault();
-                            if (!forms.Any(x => x.name == getModuleItem.Name))
-                            {
 
-                                moduleDTO = new PermissionFormDTO();
-                                _formPermission = new List<FormPermission>();
-                                moduleDTO.name = getModuleItem.Name;
-                                moduleDTO.ModuleID = getModuleItem.Id;
-                                forms.Add(moduleDTO);
-                            }
-                            FormPermission formDTO = new FormPermission();
-                            formDTO.FormID = getMenuItem.Id;
-                            formDTO.FormName = getMenuItem.Alias;
-                            // formDTO.url = getMenuItem.FormUrl;
-                            _formPermission.Add(formDTO);
-                            moduleDTO.ModuleFormsList = _formPermission;
+                            moduleDTO = new PermissionFormDTO();
+                            _formPermission = new List<FormPermission>();
+                            moduleDTO.name = getModuleItem.Name;
+                            moduleDTO.ModuleID = getModuleItem.Id;
+                            forms.Add(moduleDTO);
                         }
+                        FormPermission formDTO = new FormPermission();
+                        formDTO.FormID = getMenuItem.Id;
+                        formDTO.FormName = getMenuItem.Alias;
+                        // formDTO.url = getMenuItem.FormUrl;
+                        _formPermission.Add(formDTO);
+                        moduleDTO.ModuleFormsList = _formPermission;
                     }
                 }
+            }
             //}
             return Ok(forms);
         }
         [HttpPost]
         [Route("GetFormsPermissionsOnRoleList")]
-        public IHttpActionResult GetFormsPermissionsOnRoleList(int userID,int RoleId)
+        public IHttpActionResult GetFormsPermissionsOnRoleList(int userID, int RoleId)
         {
-           // RolesToUser getUserRole = db.RolesToUsers.Where(x => x.UserId == userID).AsQueryable().FirstOrDefault();
+            // RolesToUser getUserRole = db.RolesToUsers.Where(x => x.UserId == userID).AsQueryable().FirstOrDefault();
             List<PermissionFormDTO> forms = new List<PermissionFormDTO>();
             //if (getUserRole != null)
             //{
-                var pra = (from f in db.Forms
-                           join p in db.PrivilegesToRoles on f.Id equals p.FormId
-                           where p.RoleId == RoleId
-                           //&& f.IsMenuItem == true
-                           select f).OrderBy(x => x.OrderBy).GroupBy(x => x.ModuleId).AsQueryable().ToList();
-                if (pra.Count() < 0)
+            var pra = (from f in db.Forms
+                       join p in db.PrivilegesToRoles on f.Id equals p.FormId
+                       where p.RoleId == RoleId
+                       //&& f.IsMenuItem == true
+                       select f).OrderBy(x => x.OrderBy).GroupBy(x => x.ModuleId).AsQueryable().ToList();
+            if (pra.Count() < 0)
+            {
+                return NotFound();
+            }
+            else
+            {
+                var modulesList = db.Modules.AsQueryable().ToList();
+                foreach (var item in pra)
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    var modulesList = db.Modules.AsQueryable().ToList();
-                    foreach (var item in pra)
+                    List<FormPermission> _formPermission = new List<FormPermission>();
+                    PermissionFormDTO moduleDTO = new PermissionFormDTO();
+                    foreach (var Formvalues in item)
                     {
-                        List<FormPermission> _formPermission = new List<FormPermission>();
-                        PermissionFormDTO moduleDTO = new PermissionFormDTO();
-                        foreach (var Formvalues in item)
+                        var getMenuItem = Formvalues;
+                        var getModuleItem = modulesList.Where(x => x.Id == getMenuItem.ModuleId).FirstOrDefault();
+                        if (!forms.Any(x => x.name == getModuleItem.Name))
                         {
-                            var getMenuItem = Formvalues;
-                            var getModuleItem = modulesList.Where(x => x.Id == getMenuItem.ModuleId).FirstOrDefault();
-                            if (!forms.Any(x => x.name == getModuleItem.Name))
-                            {
 
-                                moduleDTO = new PermissionFormDTO();
-                                _formPermission = new List<FormPermission>();
-                                moduleDTO.name = getModuleItem.Name;
-                                moduleDTO.ModuleID = getModuleItem.Id;
-                                forms.Add(moduleDTO);
-                            }
-                            FormPermission formDTO = new FormPermission();
-                            formDTO.FormID = getMenuItem.Id;
-                            formDTO.FormName = getMenuItem.Alias;
-                            // formDTO.url = getMenuItem.FormUrl;
-                            _formPermission.Add(formDTO);
-                            moduleDTO.ModuleFormsList = _formPermission;
+                            moduleDTO = new PermissionFormDTO();
+                            _formPermission = new List<FormPermission>();
+                            moduleDTO.name = getModuleItem.Name;
+                            moduleDTO.ModuleID = getModuleItem.Id;
+                            forms.Add(moduleDTO);
                         }
+                        FormPermission formDTO = new FormPermission();
+                        formDTO.FormID = getMenuItem.Id;
+                        formDTO.FormName = getMenuItem.Alias;
+                        // formDTO.url = getMenuItem.FormUrl;
+                        _formPermission.Add(formDTO);
+                        moduleDTO.ModuleFormsList = _formPermission;
                     }
                 }
+            }
             //}
             return Ok(forms);
+        }
+        [HttpPost]
+        [Route("GetPermissionVerify")]
+        public IHttpActionResult GetPermissionVerify(string url)
+        {
+           
+            if (UserId != null)
+            {
+                try
+                { var user = db.Users.Where(x => x.UserName.Equals(UserId.ToString())).AsQueryable().FirstOrDefault();
+                  var FormList = (from u in db.Users
+                                    join ru in db.RolesToUsers on u.UserId equals ru.UserId
+                                    join pr in db.PrivilegesToRoles on ru.RoleId equals pr.RoleId
+                                    join f in db.Forms on pr.FormId equals f.Id
+                                    where u.UserId == user.UserId && f.FormUrl == url
+                                    select f).OrderBy(x => x.OrderBy).GroupBy(x => x.ModuleId).AsQueryable().ToList();
+                    if (FormList.Count>0)
+                    {
+                        return Ok();
+                    }
+                    else
+                    {
+                        return Unauthorized();
+                    }
+                }
+                catch(Exception ex)
+                {
+                    return this.Unauthorized();
+                }
+            }
+            else
+            {
+                return this.Unauthorized();
+            }
         }
     }
 }

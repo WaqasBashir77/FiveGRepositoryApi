@@ -150,6 +150,33 @@
           <Property Name="Authorize_Date" Type="datetime" />
           <Property Name="Payment_Account" Type="int" />
         </EntityType>
+        <EntityType Name="CashreceivedForm">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Receipt_Number" Type="varchar(max)" />
+          <Property Name="Recived_Date" Type="datetime" />
+          <Property Name="Description" Type="varchar(max)" />
+          <Property Name="Recived_Form" Type="varchar(max)" />
+          <Property Name="Paid_By" Type="varchar(max)" />
+          <Property Name="Profession" Type="varchar(max)" />
+          <Property Name="Recived_By" Type="varchar(max)" />
+          <Property Name="Amount" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="Created_By" Type="varchar(max)" />
+          <Property Name="Created_On" Type="datetime" />
+          <Property Name="Updated_By" Type="varchar(max)" />
+          <Property Name="Updated_On" Type="datetime" />
+          <Property Name="Security_Group_ID" Type="varchar(max)" />
+          <Property Name="Flex_1" Type="varchar(max)" />
+          <Property Name="Flex_2" Type="varchar(max)" />
+          <Property Name="Atrib_1" Type="varchar(max)" />
+          <Property Name="Atrib_2" Type="varchar(max)" />
+          <Property Name="Atrib_3" Type="varchar(max)" />
+          <Property Name="Atrib_4" Type="varchar(max)" />
+          <Property Name="Atrib_5" Type="varchar(max)" />
+          <Property Name="Atrib_6" Type="varchar(max)" />
+        </EntityType>
         <EntityType Name="COA_Combinations">
           <Key>
             <PropertyRef Name="C_ID" />
@@ -887,6 +914,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Lookup_Values_Lookup_List">
+          <End Role="Lookup_List" Type="Self.Lookup_List" Multiplicity="1" />
+          <End Role="Lookup_Values" Type="Self.Lookup_Values" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Lookup_List">
+              <PropertyRef Name="REF_ID" />
+            </Principal>
+            <Dependent Role="Lookup_Values">
+              <PropertyRef Name="Ref_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_PaymentInstallment_SaleInstallments">
           <End Role="SaleInstallments" Type="Self.SaleInstallments" Multiplicity="0..1" />
           <End Role="PaymentInstallment" Type="Self.PaymentInstallment" Multiplicity="*" />
@@ -954,6 +993,7 @@
           <EntitySet Name="Booking_Entries" EntityType="Self.Booking_Entries" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BookingConfirm" EntityType="Self.BookingConfirm" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BookingPayments" EntityType="Self.BookingPayments" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CashreceivedForm" EntityType="Self.CashreceivedForm" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="COA_Combinations" EntityType="Self.COA_Combinations" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="COA_Segments" EntityType="Self.COA_Segments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Delivery_Sheet" EntityType="Self.Delivery_Sheet" Schema="dbo" store:Type="Tables" />
@@ -995,6 +1035,10 @@
           <AssociationSet Name="FK_GL_Lines_GL_Headers" Association="Self.FK_GL_Lines_GL_Headers">
             <End Role="GL_Headers" EntitySet="GL_Headers" />
             <End Role="GL_Lines" EntitySet="GL_Lines" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Lookup_Values_Lookup_List" Association="Self.FK_Lookup_Values_Lookup_List">
+            <End Role="Lookup_List" EntitySet="Lookup_List" />
+            <End Role="Lookup_Values" EntitySet="Lookup_Values" />
           </AssociationSet>
           <AssociationSet Name="FK_PaymentInstallment_SaleInstallments" Association="Self.FK_PaymentInstallment_SaleInstallments">
             <End Role="SaleInstallments" EntitySet="SaleInstallments" />
@@ -1135,6 +1179,7 @@
           <Property Name="Created_By" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="Modified_On" Type="DateTime" Precision="3" />
           <Property Name="Modified_By" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Lookup_Values" Relationship="MIS_DBModel.FK_Lookup_Values_Lookup_List" FromRole="Lookup_List" ToRole="Lookup_Values" />
         </EntityType>
         <EntityType Name="Lookup_Values">
           <Key>
@@ -1149,6 +1194,7 @@
           <Property Name="Created_By" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="Updated_ON" Type="DateTime" Precision="3" />
           <Property Name="Updated_By" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Lookup_List" Relationship="MIS_DBModel.FK_Lookup_Values_Lookup_List" FromRole="Lookup_Values" ToRole="Lookup_List" />
         </EntityType>
         <EntityType Name="Payment_Delivery">
           <Key>
@@ -1576,6 +1622,11 @@
           <EntitySet Name="PropertyTransfers" EntityType="MIS_DBModel.PropertyTransfer" />
           <EntitySet Name="Attachments" EntityType="MIS_DBModel.Attachment" />
           <EntitySet Name="Attatchment_Relation" EntityType="MIS_DBModel.Attatchment_Relation" />
+          <EntitySet Name="CashreceivedForms" EntityType="MIS_DBModel.CashreceivedForm" />
+          <AssociationSet Name="FK_Lookup_Values_Lookup_List" Association="MIS_DBModel.FK_Lookup_Values_Lookup_List">
+            <End Role="Lookup_List" EntitySet="Lookup_List" />
+            <End Role="Lookup_Values" EntitySet="Lookup_Values" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="User">
           <Key>
@@ -2047,6 +2098,45 @@
           <Property Name="FormId" Type="Int32" />
           <Property Name="FileID" Type="Int32" />
         </EntityType>
+        <EntityType Name="CashreceivedForm">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Receipt_Number" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Recived_Date" Type="DateTime" Precision="3" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Recived_Form" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Paid_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Profession" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Recived_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Amount" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="Created_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Created_On" Type="DateTime" Precision="3" />
+          <Property Name="Updated_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Updated_On" Type="DateTime" Precision="3" />
+          <Property Name="Security_Group_ID" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Flex_1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Flex_2" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Atrib_1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Atrib_2" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Atrib_3" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Atrib_4" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Atrib_5" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Atrib_6" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="FK_Lookup_Values_Lookup_List">
+          <End Type="MIS_DBModel.Lookup_List" Role="Lookup_List" Multiplicity="1" />
+          <End Type="MIS_DBModel.Lookup_Values" Role="Lookup_Values" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Lookup_List">
+              <PropertyRef Name="REF_ID" />
+            </Principal>
+            <Dependent Role="Lookup_Values">
+              <PropertyRef Name="Ref_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2947,6 +3037,34 @@
                 <ScalarProperty Name="FileID" ColumnName="FileID" />
                 <ScalarProperty Name="FormId" ColumnName="FormId" />
                 <ScalarProperty Name="TableRowId" ColumnName="TableRowId" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CashreceivedForms">
+            <EntityTypeMapping TypeName="MIS_DBModel.CashreceivedForm">
+              <MappingFragment StoreEntitySet="CashreceivedForm">
+                <ScalarProperty Name="Atrib_6" ColumnName="Atrib_6" />
+                <ScalarProperty Name="Atrib_5" ColumnName="Atrib_5" />
+                <ScalarProperty Name="Atrib_4" ColumnName="Atrib_4" />
+                <ScalarProperty Name="Atrib_3" ColumnName="Atrib_3" />
+                <ScalarProperty Name="Atrib_2" ColumnName="Atrib_2" />
+                <ScalarProperty Name="Atrib_1" ColumnName="Atrib_1" />
+                <ScalarProperty Name="Flex_2" ColumnName="Flex_2" />
+                <ScalarProperty Name="Flex_1" ColumnName="Flex_1" />
+                <ScalarProperty Name="Security_Group_ID" ColumnName="Security_Group_ID" />
+                <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
+                <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
+                <ScalarProperty Name="Created_On" ColumnName="Created_On" />
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Recived_By" ColumnName="Recived_By" />
+                <ScalarProperty Name="Profession" ColumnName="Profession" />
+                <ScalarProperty Name="Paid_By" ColumnName="Paid_By" />
+                <ScalarProperty Name="Recived_Form" ColumnName="Recived_Form" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Recived_Date" ColumnName="Recived_Date" />
+                <ScalarProperty Name="Receipt_Number" ColumnName="Receipt_Number" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

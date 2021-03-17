@@ -14,6 +14,12 @@ namespace FiveGApi.Models
     
     public partial class Lookup_List
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Lookup_List()
+        {
+            this.Lookup_Values = new HashSet<Lookup_Values>();
+        }
+    
         public int REF_ID { get; set; }
         public string Lookup_Name { get; set; }
         public Nullable<bool> Lookup_Type { get; set; }
@@ -21,5 +27,8 @@ namespace FiveGApi.Models
         public string Created_By { get; set; }
         public Nullable<System.DateTime> Modified_On { get; set; }
         public string Modified_By { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Lookup_Values> Lookup_Values { get; set; }
     }
 }

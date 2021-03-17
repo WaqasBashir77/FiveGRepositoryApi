@@ -33,9 +33,9 @@ namespace FiveGApi.Controllers
             try
             {
                 if (!SecurityGroupDTO.CheckSuperAdmin(groupId))
-                    prospects = db.Prospects.Where(x => x.SecurityGroupId == groupId);
+                    prospects = db.Prospects.Where(x => x.SecurityGroupId == groupId).AsQueryable();
                 else
-                    prospects = db.Prospects;
+                    prospects = db.Prospects.AsQueryable();
             }
             catch (Exception ex)
             {
@@ -44,6 +44,7 @@ namespace FiveGApi.Controllers
             }
             return prospects;
         }
+
 
         // GET: api/Prospects/5
         [ResponseType(typeof(Prospect))]

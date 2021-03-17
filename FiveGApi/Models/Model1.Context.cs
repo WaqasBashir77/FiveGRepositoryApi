@@ -65,5 +65,6 @@ namespace FiveGApi.Models
         public virtual DbSet<PropertyTransfer> PropertyTransfers { get; set; }
         public virtual DbSet<Attachment> Attachments { get; set; }
         public virtual DbSet<Attatchment_Relation> Attatchment_Relation { get; set; }
+        public virtual DbSet<CashreceivedForm> CashreceivedForms { get; set; }
     }
 }

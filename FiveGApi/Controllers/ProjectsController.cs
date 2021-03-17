@@ -35,7 +35,7 @@ namespace FiveGApi.Controllers
             try
             {
                 if (!SecurityGroupDTO.CheckSuperAdmin(groupId))
-                    projects = db.Projects.Where(x => x.SecurityGroupId == groupId);
+                    projects = db.Projects.Where(x => x.SecurityGroupId == groupId).AsQueryable();
                 else
                     projects = db.Projects;
             }
@@ -46,7 +46,85 @@ namespace FiveGApi.Controllers
             }
             return projects;
         }
+        [HttpGet]
+        [Route("GetProjectsListDTO")]
+        public IHttpActionResult GetProjectsListDTO()
+        {
+            var re = Request;
+            var headers = re.Headers;
+            int groupId = 0;
+            if (headers.Contains("GroupId"))
+            {
+                groupId = Convert.ToInt32(headers.GetValues("GroupId").First());
+            }
+            IQueryable<ProjectListDTO> projects;
 
+            try
+            {
+                if (!SecurityGroupDTO.CheckSuperAdmin(groupId))
+                    projects = db.Projects.Where(x => x.SecurityGroupId == groupId).Select(x=> new ProjectListDTO
+                    {
+                        Id=x.Id,
+                        projectCode = x.projectCode,
+                        location=x.location,
+                        projectName=x.projectName,
+                        projectType = x.projectType,
+                        totalArea = x.totalArea,
+                        address = x.address,
+                        city = x.city,
+                        status = x.status,
+                        description = x.description,
+                        unit = x.unit,
+                        noc = x.noc,
+                        projectCurrency = x.projectCurrency,
+                        PaymentPlanStatus = x.PaymentPlanStatus,
+                        SecurityGroupId = x.SecurityGroupId,
+                        Created_By = x.Created_By,
+                        Created_Date = x.Created_Date,
+                        Update_By = x.Update_By,
+                        Update_Date = x.Update_Date,
+                        LocationSeg = x.location,
+                        Company = x.Company,
+                        ProjectSeg = x.ProjectSeg,
+                        PlotAres = x.PlotAres
+                       
+                    }).OrderByDescending(x=>x.Created_By).AsQueryable();
+                else
+                    projects = db.Projects.Select(x => new ProjectListDTO
+                    {
+                        Id = x.Id,
+                        projectCode = x.projectCode,
+                        location = x.location,
+                        projectName = x.projectName,
+                        projectType = x.projectType,
+                        totalArea = x.totalArea,
+                        address = x.address,
+                        city = x.city,
+                        status = x.status,
+                        description = x.description,
+                        unit = x.unit,
+                        noc = x.noc,
+                        projectCurrency = x.projectCurrency,
+                        PaymentPlanStatus = x.PaymentPlanStatus,
+                        SecurityGroupId = x.SecurityGroupId,
+                        Created_By = x.Created_By,
+                        Created_Date = x.Created_Date,
+                        Update_By = x.Update_By,
+                        Update_Date = x.Update_Date,
+                        LocationSeg = x.location,
+                        Company = x.Company,
+                        ProjectSeg = x.ProjectSeg,
+                        PlotAres = x.PlotAres
+
+                    }).OrderByDescending(x => x.Created_By).AsQueryable();
+            }
+            catch (Exception ex)
+            {
+                //Console.WriteLine(ex.Message);
+                throw;
+            }
+            return Ok(projects);
+        }
         // GET: api/Projects/5
         [ResponseType(typeof(ProjectDto))]
         public IHttpActionResult GetProject(int id)

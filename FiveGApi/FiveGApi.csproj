@@ -214,6 +214,7 @@
     <Compile Include="Controllers\BankAccountsController.cs" />
     <Compile Include="Controllers\BookingconfirmController.cs" />
     <Compile Include="Controllers\BookingPaymentController.cs" />
+    <Compile Include="Controllers\CashReceivedFormController.cs" />
     <Compile Include="Controllers\COACombinationsController.cs" />
     <Compile Include="Controllers\COASegmentsController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
@@ -250,9 +251,11 @@
     <Compile Include="DTOModels\PaymentDetailDTO.cs" />
     <Compile Include="DTOModels\ProjectDetailDto.cs" />
     <Compile Include="DTOModels\ProjectDto.cs" />
+    <Compile Include="DTOModels\ProjectListDTO.cs" />
     <Compile Include="DTOModels\PropertyDashboardModel.cs" />
     <Compile Include="DTOModels\PropertySaleDetailDTO.cs" />
     <Compile Include="DTOModels\PropertySaleDTO.cs" />
+    <Compile Include="DTOModels\PropertySaleListDTO.cs" />
     <Compile Include="DTOModels\PropertyTransferDTO.cs" />
     <Compile Include="DTOModels\RegistrationModel.cs" />
     <Compile Include="DTOModels\ResponseModel.cs" />
@@ -310,6 +313,9 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Booking_Entries.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CashreceivedForm.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\COA_Combinations.cs">
