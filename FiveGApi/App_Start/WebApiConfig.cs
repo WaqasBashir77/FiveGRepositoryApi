@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using FiveGApi.Custom;
+using System.Web.Http;
 using System.Web.Http.Cors;
 
 namespace FiveGApi
@@ -34,6 +35,7 @@ namespace FiveGApi
       defaults: null,
       constraints: new { name = @"^[0-9]+$" }
   );
+            config.Filters.Add(new CustomExceptionFilter());
         }
     }
 }

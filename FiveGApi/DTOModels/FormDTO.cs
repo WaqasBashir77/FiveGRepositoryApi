@@ -12,4 +12,15 @@ namespace FiveGApi.DTOModels
         public string icon { get; set; }
         public bool title { get; set; }
     }
+    public class PermissionFormDTO
+    {
+        public string name { get; set; }
+        public int ModuleID { get; set; }
+        public List<FormPermission> ModuleFormsList { get; set; }
+    }
+    public class FormPermission
+    {
+        public int FormID { get; set; }
+        public string  FormName { get; set; }
+    }
 }

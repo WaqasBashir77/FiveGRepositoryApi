@@ -50,7 +50,7 @@ namespace FiveGApi.Models
         public string PaymentCode { get; set; }
         public Nullable<int> SecurityGroupId { get; set; }
         public Nullable<decimal> differentiableAmount { get; set; }
-        public string Nominee_Picture { get; set; }
+        public byte[] Nominee_Picture { get; set; }
         public Nullable<bool> AuthorizeStatus { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

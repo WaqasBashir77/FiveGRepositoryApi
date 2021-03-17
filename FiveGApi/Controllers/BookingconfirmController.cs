@@ -1,4 +1,5 @@
-﻿using FiveGApi.Models;
+﻿using FiveGApi.DTOModels;
+using FiveGApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
@@ -20,20 +21,83 @@ namespace FiveGApi.Controllers
         [Route("GetALLBookingConfirmed")]
         [HttpGet]       
         // GET: api/BookingConfirm
-        [ResponseType(typeof(IQueryable<BookingConfirm>))]
-        public IQueryable<BookingConfirm> GetALLBookingConfirmed()
+       // [ResponseType(typeof(IQueryable<BookingConfirm>))]
+        public IHttpActionResult GetALLBookingConfirmed()
         {
-            IQueryable<BookingConfirm> bookingConfirm;
+           // IQueryable<BookingConfirmDTO> bookingConfirm;
 
             try
             {
-                bookingConfirm = db.BookingConfirms;
+               var bookingConfirmtt = (from f in db.BookingConfirms
+                                       from p in db.PropertyDefs
+                                       where f.Property_ID == p.ID
+                                       from r in db.Registrations
+                                       where f.Book_Emp == r.ID.ToString()
+                                      
+                                       //join p in db.PropertyDefs on f.Property_ID equals p.ID
+                                       //join r in db.Registrations on f.Book_Emp equals r.ID
+
+                                       select new
+                                          {
+                                              ID = f.ID,
+                                              Ref_num = f.Ref_num,
+                                             Authorize_Status = f.Authorize_Status,
+                                             Form_num=f.Form_num,
+                                             File_Status = f.File_Status,
+                                             Replaced_Form = f.Replaced_Form,
+                                             Applicant_name = f.Applicant_name,
+                                             CNIC = f.CNIC,
+                                             Form_Rec_Date = f.Form_Rec_Date,
+                                             Contact_Num = f.Contact_Num,
+                                             Property_ID = f.Property_ID,
+                                             Member_Num = f.Member_Num,
+                                             Book_Emp = f.Book_Emp,
+                                             Book_Dealer = f.Book_Dealer,
+                                             Booking_Percent = f.Booking_Percent,
+                                             Booking_amount = f.Booking_amount,
+                                             Confirm_Percent = f.Confirm_Percent,
+                                             Confirm_amount = f.Confirm_amount,
+                                             MS_amount = f.MS_amount,
+                                             Total_amount = f.Total_amount,
+                                             Tax_Percent = f.Tax_Percent,
+                                             Rebate_Percent = f.Rebate_Percent,
+                                             Emp_Rebate = f.Emp_Rebate,
+                                             Dealer_Rebate = f.Dealer_Rebate,
+                                             Emp_B_RAmt = f.Emp_B_RAmt,
+                                             Emp_C_RAmt = f.Emp_C_RAmt,
+                                             Dealer_B_RAmt = f.Dealer_B_RAmt,
+                                             Dealer_C_RAmt = f.Dealer_C_RAmt,
+                                             Com_B_RAmt = f.Com_B_RAmt,
+                                             Com_C_RAmt = f.Com_C_RAmt,
+                                             Payment_B_Status = f.Payment_B_Status,
+                                             Payment_C_Status = f.Payment_C_Status,
+                                             Payment_MSFee_Status = f.Payment_MSFee_Status,
+                                             Booking_Date = f.Booking_Date,
+                                             Confirmation_Date = f.Confirmation_Date,
+                                             MSFee_Date = f.MSFee_Date,
+                                             Remarks = f.Remarks,
+                                             Flex_1 = f.Flex_1,
+                                             Flex_2 = f.Flex_2,
+                                             Created_By = f.Created_By,
+                                             Created_ON = f.Created_ON,
+                                             Updated_By = f.Updated_By,
+                                             Updated_On = f.Updated_On,
+                                             Authorize_By = f.Authorize_By,
+                                             Authorize_Date = f.Authorize_Date,
+                                             ProjectName = p.Name,
+                                              EmployeeName = r.StaffName,
+
+
+                                       }
+                                         ).AsQueryable().ToList();
+                return Ok(bookingConfirmtt);
+                //bookingConfirm = db.BookingConfirms;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw;
             }
-            return bookingConfirm;
+          //  return Ok();
            
         }
         [Route("GetALLBookingConfirmedByFormNumberOrFormID")]
@@ -100,6 +164,8 @@ namespace FiveGApi.Controllers
                 existBookingConfirm.Ref_num = BookingConfirm.Ref_num;
                 existBookingConfirm.Form_num = BookingConfirm.Form_num;
                 existBookingConfirm.Authorize_Status = BookingConfirm.Authorize_Status;
+                existBookingConfirm.Authorize_By = BookingConfirm.Authorize_By;
+                existBookingConfirm.Authorize_Date = DateTime.Now;
                 existBookingConfirm.File_Status = BookingConfirm.File_Status;
                 existBookingConfirm.Replaced_Form = BookingConfirm.Replaced_Form;
                 existBookingConfirm.Applicant_name = BookingConfirm.Applicant_name;
@@ -143,7 +209,51 @@ namespace FiveGApi.Controllers
                         throw;
                     }
                 }
-                return StatusCode(HttpStatusCode.OK);
+                if (BookingConfirm.Authorize_Status == "Authorized")
+                {
+                if (BookingConfirm.File_Status== "Cancelled"  || BookingConfirm.File_Status == "Replaced")
+                {
+                    
+                        var glheader = db.GL_Headers.Where(x => x.Source_Tran_Id == BookingConfirm.ID).AsQueryable().FirstOrDefault();
+                        if (glheader != null)
+                        {
+                            try
+                            {
+
+                                foreach (var gllines in glheader.GL_Lines.ToList())
+                                {
+                                    GL_Lines _gL_Lines = new GL_Lines();
+                                    _gL_Lines.H_ID = gllines.H_ID;
+                                    _gL_Lines.C_CODE = gllines.C_CODE;
+                                    if (gllines.Credit > 0)
+                                    {
+                                        _gL_Lines.Debit = gllines.Credit;
+                                        _gL_Lines.Credit = gllines.Debit;
+                                    }
+                                    else
+                                    {
+                                        _gL_Lines.Credit = gllines.Debit;
+                                        _gL_Lines.Debit = gllines.Credit;
+
+                                    }
+                                    _gL_Lines.Description = gllines.Description;
+                                    _gL_Lines.Created_By = gllines.Created_By;
+                                    _gL_Lines.Created_On = DateTime.Now;
+                                    db.GL_Lines.Add(_gL_Lines);
+                                   
+
+                                }
+                                db.SaveChanges();
+                            }
+                            catch(Exception ex)
+                            {
+                                return StatusCode(HttpStatusCode.ExpectationFailed);
+                            }
+                        }
+                    }
+
+                }
+                    return StatusCode(HttpStatusCode.OK);
             }else
             {
                 var error = new { message = "Not Exist Entity against this" }; //<-- anonymous object
@@ -396,7 +506,7 @@ namespace FiveGApi.Controllers
             //////----------------Receivable from society--------------------///////////
             ///-------------------Booking Rebate Debit------------------------------///////////
             var coa_Segment = db.COA_Segments.Where(x => x.Name == "Receivable from society").FirstOrDefault();
-            booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".000").ToString();
+            booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".0000").ToString();
             booking_EntriesforROS.Debit = bookingConfirm.Com_B_RAmt;
             booking_EntriesforROS.Credit = 0;
             db.Booking_Entries.Add(booking_EntriesforROS);
@@ -405,14 +515,14 @@ namespace FiveGApi.Controllers
             //////----------------Commission income--------------------///////////
             ///-------------------Booking Rebate Credit------------------------------///////////            
             coa_Segment = db.COA_Segments.Where(x => x.Name == "Commission income").FirstOrDefault();
-            booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".000").ToString();
+            booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".0000").ToString();
             booking_EntriesforROS.Credit = bookingConfirm.Com_B_RAmt;
             booking_EntriesforROS.Debit = 0;
             db.Booking_Entries.Add(booking_EntriesforROS);
             db.SaveChanges();
             ///-------------------Confirmation Rebate Debit------------------------------///////////
             coa_Segment = db.COA_Segments.Where(x => x.Name == "Receivable from society").FirstOrDefault();
-            booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".000").ToString();
+            booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".0000").ToString();
             booking_EntriesforROS.Debit = bookingConfirm.Com_C_RAmt;
             booking_EntriesforROS.Credit = 0;
             db.Booking_Entries.Add(booking_EntriesforROS);
@@ -420,7 +530,7 @@ namespace FiveGApi.Controllers
             ///-------------------Confirmation Rebate Credit------------------------------///////////            
             coa_Segment = db.COA_Segments.Where(x => x.Name == "Commission income").FirstOrDefault();
 
-            booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".000").ToString();
+            booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".0000").ToString();
             booking_EntriesforROS.Credit = bookingConfirm.Com_C_RAmt;
             booking_EntriesforROS.Debit = 0;
             db.Booking_Entries.Add(booking_EntriesforROS);
@@ -431,7 +541,7 @@ namespace FiveGApi.Controllers
             //////----------------Receivable from society--------------------///////////
             ///-------------------Booking Rebate Debit------------------------------///////////
              coa_Segment = db.COA_Segments.Where(x => x.Name == "Commission to staff").FirstOrDefault();
-            booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".000").ToString();
+            booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".0000").ToString();
             booking_EntriesforROS.Debit = bookingConfirm.Emp_B_RAmt;
             booking_EntriesforROS.Credit = 0;
             db.Booking_Entries.Add(booking_EntriesforROS);
@@ -448,7 +558,7 @@ namespace FiveGApi.Controllers
             //////----------------Commission payable to staff--------------------///////////
             ///-------------------Booking Rebate Credit------------------------------///////////            
             coa_Segment = db.COA_Segments.Where(x => x.Name == "Commission to staff").FirstOrDefault();
-            booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".000").ToString();
+            booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".0000").ToString();
             booking_EntriesforROS.Debit = bookingConfirm.Emp_C_RAmt;
             booking_EntriesforROS.Credit = 0;
             db.Booking_Entries.Add(booking_EntriesforROS);
@@ -469,7 +579,7 @@ namespace FiveGApi.Controllers
                 //////----------------Commission to agent--------------------///////////
                 ///-------------------Booking Rebate Debit------------------------------///////////
                 coa_Segment = db.COA_Segments.Where(x => x.Name == "Commission to agent").FirstOrDefault();
-                booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".000").ToString();
+                booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".0000").ToString();
                 booking_EntriesforROS.Debit = bookingConfirm.Dealer_B_RAmt;
                 booking_EntriesforROS.Credit = 0;
                 db.Booking_Entries.Add(booking_EntriesforROS);
@@ -485,7 +595,7 @@ namespace FiveGApi.Controllers
                 //////----------------Commission payable to staff--------------------///////////
                 ///-------------------Booking Rebate Credit------------------------------///////////            
                 coa_Segment = db.COA_Segments.Where(x => x.Name == "Commission to agent").FirstOrDefault();
-                booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".000").ToString();
+                booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".0000").ToString();
                 booking_EntriesforROS.Debit = bookingConfirm.Dealer_B_RAmt;
                 booking_EntriesforROS.Credit = 0;
                 db.Booking_Entries.Add(booking_EntriesforROS);

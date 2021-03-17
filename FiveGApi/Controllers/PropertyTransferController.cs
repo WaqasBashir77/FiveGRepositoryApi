@@ -78,56 +78,56 @@ namespace FiveGApi.Controllers
 
         // POST: api/PropertyTransfer
         [ResponseType(typeof(PropertyTransfer))]
-        public IHttpActionResult PostPropertyTransfer(PropertyTransfer PropertyTransfer)
+        public IHttpActionResult PostPropertyTransfer(PropertyTransferDTO PropertyTransfer)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            //PropertyTransfer propertyTransferDM = new PropertyTransfer();
-            //propertyTransferDM.Booking_ID = PropertyTransfer.Booking_ID;
-            //propertyTransferDM.Project_ID= PropertyTransfer.Project_ID;
-            //propertyTransferDM.Unit_ID = PropertyTransfer.Unit_ID;
-            //propertyTransferDM.Buyer_Name= PropertyTransfer.Buyer_Name;
-            //propertyTransferDM.Buyer_FatherName= PropertyTransfer.Buyer_FatherName;
-            //propertyTransferDM.BuyerAddress = PropertyTransfer.BuyerAddress;
-            //propertyTransferDM.BuyerEmail= PropertyTransfer.BuyerEmail;
-            //propertyTransferDM.BuyerCNIC = PropertyTransfer.BuyerCNIC;
-            //propertyTransferDM.BuyerMobile_1 = PropertyTransfer.BuyerMobile_1;
-            //propertyTransferDM.BuyerMobile_2= PropertyTransfer.BuyerMobile_2;
-            //propertyTransferDM.BuyerMember_Reg_No = PropertyTransfer.BuyerMember_Reg_No;
-            ////propertyTransferDM.Buyer_Picture = PropertyTransfer.Buyer_Picture;
-            //propertyTransferDM.Seller_Name = PropertyTransfer.Seller_Name;
-            //propertyTransferDM.Seller_FatherName = PropertyTransfer.Seller_FatherName;
-            //propertyTransferDM.SellerAddress = PropertyTransfer.SellerAddress;
-            //propertyTransferDM.SellerEmail = PropertyTransfer.SellerEmail;
-            //propertyTransferDM.SellerCNIC= PropertyTransfer.SellerCNIC;
-            //propertyTransferDM.SellerMobile_1 = PropertyTransfer.SellerMobile_1;
-            //propertyTransferDM.SellerMobile_2= PropertyTransfer.SellerMobile_2;
-            //propertyTransferDM.SellerMember_Reg_No = PropertyTransfer.SellerMember_Reg_No;
-            //propertyTransferDM.Description = PropertyTransfer.Description;
-            //propertyTransferDM.TransferDate = PropertyTransfer.TransferDate;
-            //propertyTransferDM.TransferStatus = PropertyTransfer.TransferStatus;
-            //propertyTransferDM.Flex_1 = PropertyTransfer.Flex_1;
-            //propertyTransferDM.Flex_2 = PropertyTransfer.Flex_2;
-            PropertyTransfer.Created_By = "Admin";
-            PropertyTransfer.Created_On = DateTime.Now;
-            //if (PropertyTransfer.Buyer_Picture != "")
-            //{
-            //    string[] image = PropertyTransfer.Buyer_Picture.Split(',');
-            //    propertyTransferDM.Buyer_Picture = Convert.FromBase64String(image[1]);
+            PropertyTransfer propertyTransferDM = new PropertyTransfer();
+            propertyTransferDM.Booking_ID = PropertyTransfer.Booking_ID;
+            propertyTransferDM.Project_ID = PropertyTransfer.Project_ID;
+            propertyTransferDM.Unit_ID = PropertyTransfer.Unit_ID;
+            propertyTransferDM.Buyer_Name = PropertyTransfer.Buyer_Name;
+            propertyTransferDM.Buyer_FatherName = PropertyTransfer.Buyer_FatherName;
+            propertyTransferDM.BuyerAddress = PropertyTransfer.BuyerAddress;
+            propertyTransferDM.BuyerEmail = PropertyTransfer.BuyerEmail;
+            propertyTransferDM.BuyerCNIC = PropertyTransfer.BuyerCNIC;
+            propertyTransferDM.BuyerMobile_1 = PropertyTransfer.BuyerMobile_1;
+            propertyTransferDM.BuyerMobile_2 = PropertyTransfer.BuyerMobile_2;
+            propertyTransferDM.BuyerMember_Reg_No = PropertyTransfer.BuyerMember_Reg_No;
+            //propertyTransferDM.Buyer_Picture = PropertyTransfer.Buyer_Picture;
+            propertyTransferDM.Seller_Name = PropertyTransfer.Seller_Name;
+            propertyTransferDM.Seller_FatherName = PropertyTransfer.Seller_FatherName;
+            propertyTransferDM.SellerAddress = PropertyTransfer.SellerAddress;
+            propertyTransferDM.SellerEmail = PropertyTransfer.SellerEmail;
+            propertyTransferDM.SellerCNIC = PropertyTransfer.SellerCNIC;
+            propertyTransferDM.SellerMobile_1 = PropertyTransfer.SellerMobile_1;
+            propertyTransferDM.SellerMobile_2 = PropertyTransfer.SellerMobile_2;
+            propertyTransferDM.SellerMember_Reg_No = PropertyTransfer.SellerMember_Reg_No;
+            propertyTransferDM.Description = PropertyTransfer.Description;
+            propertyTransferDM.TransferDate = PropertyTransfer.TransferDate;
+            propertyTransferDM.TransferStatus = PropertyTransfer.TransferStatus;
+            propertyTransferDM.Flex_1 = PropertyTransfer.Flex_1;
+            propertyTransferDM.Flex_2 = PropertyTransfer.Flex_2;
+            propertyTransferDM.Created_By = "Admin";
+            propertyTransferDM.Created_On = DateTime.Now;
+            if (PropertyTransfer.Buyer_Picture != "")
+            {
+                string[] image = PropertyTransfer.Buyer_Picture.Split(',');
+                propertyTransferDM.Buyer_Picture = Convert.FromBase64String(image[1]);
 
-            //}
-            //if (PropertyTransfer.Seller_Picture != "")
-            //{
-            //    string[] image = PropertyTransfer.Seller_Picture.Split(',');
-            //    propertyTransferDM.Seller_Picture = Convert.FromBase64String(image[1]);
+            }
+            if (PropertyTransfer.Seller_Picture != "")
+            {
+                string[] image = PropertyTransfer.Seller_Picture.Split(',');
+                propertyTransferDM.Seller_Picture = Convert.FromBase64String(image[1]);
 
-            //}
-            db.PropertyTransfers.Add(PropertyTransfer);
+            }
+            db.PropertyTransfers.Add(propertyTransferDM);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = PropertyTransfer.ID }, PropertyTransfer);
+            return CreatedAtRoute("DefaultApi", new { id = propertyTransferDM.ID }, propertyTransferDM);
         }
 
         // DELETE: api/PropertyTransfer/5

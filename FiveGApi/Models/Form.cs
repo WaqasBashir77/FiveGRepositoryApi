@@ -25,6 +25,7 @@ namespace FiveGApi.Models
         public Nullable<int> Created_By { get; set; }
         public Nullable<System.DateTime> Update_Date { get; set; }
         public Nullable<int> Update_By { get; set; }
+        public Nullable<bool> IsMenuItem { get; set; }
     
         public virtual Module Module { get; set; }
     }

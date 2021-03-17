@@ -11,7 +11,6 @@ using System.Web.Http.Description;
 namespace FiveGApi.Controllers
 {
     [Authorize]
-
     [RoutePrefix("api/DeliverySheet")]
     public class DeliverySheetController : ApiController
     {
@@ -86,6 +85,7 @@ namespace FiveGApi.Controllers
             existDelivery_Sheet.Delivery_To = Delivery_Sheet.Delivery_To;
             existDelivery_Sheet.Handover_Staff = Delivery_Sheet.Handover_Staff;
             existDelivery_Sheet.Handover_Date = Delivery_Sheet.Handover_Date;
+            existDelivery_Sheet.Delivery_Status = Delivery_Sheet.Delivery_Status;
             existDelivery_Sheet.Payment_ID = Delivery_Sheet.Payment_ID;
             existDelivery_Sheet.Remarks = Delivery_Sheet.Remarks;
             existDelivery_Sheet.Updated_By = "1";

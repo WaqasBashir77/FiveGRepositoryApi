@@ -31,5 +31,6 @@ namespace FiveGApi.Models
         public Nullable<System.DateTime> CompletedDate { get; set; }
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
+        public Nullable<int> SecurityGroup { get; set; }
     }
 }

@@ -226,6 +226,21 @@ namespace FiveGApi.Controllers
 
             }
             db.SaveChanges();
+            COA_Segments _cOA_Segments = new COA_Segments();
+            if(Registration.Type== "Dealer")
+            {
+                _cOA_Segments.Name = Registration.Name;
+            }
+            if(Registration.Type == "Staff")
+            {
+                _cOA_Segments.Name = Registration.StaffName;
+
+            }
+            _cOA_Segments.Segment = "Party";
+            _cOA_Segments.Segment_Value = Registration.Code;
+            _cOA_Segments.Status = "Active";
+            db.COA_Segments.Add(_cOA_Segments);
+            db.SaveChanges();
 
             return CreatedAtRoute("DefaultApi", new { id = Registration.ID }, Registration);
         }

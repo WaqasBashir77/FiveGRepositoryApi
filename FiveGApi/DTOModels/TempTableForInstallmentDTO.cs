@@ -8,6 +8,7 @@ namespace FiveGApi.DTOModels
     public class TempTableForInstallmentDTO
     {
         public int Id { get; set; }
+        public int BookingId { get; set; }
         public string InstallmentType { get; set; }
         public string Installment { get; set; }
         public int ProjectId { get; set; }
@@ -23,6 +24,7 @@ namespace FiveGApi.DTOModels
         public double balance { get; set; }
         public decimal OtherTaxAmount { get; set; }
         public int Payment_Account { get; set; }
+        //public int Updated_By { get; set; }
         public PaymentDetailDTO paymentDetailDTOs { get; set; }
     }
 }

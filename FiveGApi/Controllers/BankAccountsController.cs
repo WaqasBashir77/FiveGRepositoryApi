@@ -11,11 +11,10 @@ using System.Web.Http.Description;
 namespace FiveGApi.Controllers
 {
    
-        [RoutePrefix("api/BankAccounts")]
+    [RoutePrefix("api/BankAccounts")]
     [Authorize]
-
     public class BankAccountsController : ApiController
-        {
+    {
         private MIS_DBEntities1 db = new MIS_DBEntities1();
             // GET: api/Bank_Accounts
             [ResponseType(typeof(IQueryable<Bank_Accounts>))]

@@ -51,7 +51,8 @@ namespace FiveGApi.Controllers
             var existGL_Balances = db.GL_Balances.Where(x => x.ID == id).FirstOrDefault();
             existGL_Balances.C_CODE = GL_Balances.C_CODE;
             existGL_Balances.Bal_Date = GL_Balances.Bal_Date;
-            existGL_Balances.Amount = GL_Balances.Amount;
+            existGL_Balances.Credit = GL_Balances.Credit;
+            existGL_Balances.Debit = GL_Balances.Debit;
             existGL_Balances.Description = GL_Balances.Description;
             existGL_Balances.Effect_Trans_ID = GL_Balances.Effect_Trans_ID;
             existGL_Balances.Updated_By = "Admin";

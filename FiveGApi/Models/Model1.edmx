@@ -26,6 +26,7 @@
           <Property Name="CompletedDate" Type="datetime" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="SecurityGroup" Type="int" />
         </EntityType>
         <EntityType Name="Attatchment_Relation">
           <Key>
@@ -197,7 +198,7 @@
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Ref_num" Type="varchar" MaxLength="50" />
-          <Property Name="Form_num" Type="nchar" MaxLength="10" />
+          <Property Name="Form_num" Type="varchar" MaxLength="100" />
           <Property Name="Delivery_Type" Type="varchar" MaxLength="50" />
           <Property Name="Delivery_Date" Type="datetime" />
           <Property Name="Delivery_To" Type="varchar" MaxLength="50" />
@@ -212,6 +213,7 @@
           <Property Name="Created_On" Type="datetime" />
           <Property Name="Updated_By" Type="varchar" MaxLength="50" />
           <Property Name="Updated_On" Type="datetime" />
+          <Property Name="Delivery_Status" Type="varchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="Employee">
           <Key>
@@ -238,6 +240,7 @@
           <Property Name="Created_By" Type="int" />
           <Property Name="Update_Date" Type="date" />
           <Property Name="Update_By" Type="int" />
+          <Property Name="IsMenuItem" Type="bit" />
         </EntityType>
         <EntityType Name="GL_Balances">
           <Key>
@@ -246,15 +249,16 @@
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="C_CODE" Type="int" />
           <Property Name="Bal_Date" Type="datetime" />
-          <Property Name="Amount" Type="decimal" Precision="18" Scale="3" />
           <Property Name="Description" Type="varchar(max)" />
-          <Property Name="Effect_Trans_ID" Type="datetime" />
+          <Property Name="Effect_Trans_ID" Type="varchar" MaxLength="50" />
           <Property Name="Flex_1" Type="varchar(max)" />
           <Property Name="Flex_2" Type="varchar(max)" />
           <Property Name="Created_By" Type="varchar(max)" />
           <Property Name="Created_On" Type="datetime" />
           <Property Name="Updated_By" Type="varchar(max)" />
           <Property Name="Updated_On" Type="datetime" />
+          <Property Name="Debit" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="Credit" Type="decimal" Precision="18" Scale="3" />
         </EntityType>
         <EntityType Name="GL_Headers">
           <Key>
@@ -615,7 +619,7 @@
           <Property Name="PaymentCode" Type="varchar" MaxLength="255" />
           <Property Name="SecurityGroupId" Type="int" />
           <Property Name="differentiableAmount" Type="decimal" Precision="18" Scale="3" />
-          <Property Name="Nominee_Picture" Type="varchar(max)" />
+          <Property Name="Nominee_Picture" Type="image" />
           <Property Name="AuthorizeStatus" Type="bit" />
         </EntityType>
         <EntityType Name="PropertyTransfer">
@@ -643,7 +647,7 @@
           <Property Name="SellerMobile_1" Type="varchar" MaxLength="250" />
           <Property Name="SellerMobile_2" Type="varchar" MaxLength="250" />
           <Property Name="SellerMember_Reg_No" Type="varchar" MaxLength="250" />
-          <Property Name="Seller_Picture" Type="varbinary(max)" />
+          <Property Name="Seller_Picture" Type="image" />
           <Property Name="Description" Type="varchar(max)" />
           <Property Name="TransferDate" Type="datetime" />
           <Property Name="TransferStatus" Type="bit" />
@@ -856,6 +860,8 @@
           <Property Name="CreatedOn" Type="datetime" />
           <Property Name="CreatedBy" Type="int" />
           <Property Name="LastModifiedDate" Type="datetime" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="IsDeleted" Type="bit" />
         </EntityType>
         <Association Name="FK_Forms_Module">
           <End Role="Module" Type="Self.Module" Multiplicity="0..1" />
@@ -1091,7 +1097,7 @@
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Ref_num" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Form_num" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="Form_num" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Delivery_Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Delivery_Date" Type="DateTime" Precision="3" />
           <Property Name="Delivery_To" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
@@ -1106,6 +1112,7 @@
           <Property Name="Created_On" Type="DateTime" Precision="3" />
           <Property Name="Updated_By" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Updated_On" Type="DateTime" Precision="3" />
+          <Property Name="Delivery_Status" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Employee">
           <Key>
@@ -1328,7 +1335,7 @@
           <Property Name="PaymentCode" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="SecurityGroupId" Type="Int32" />
           <Property Name="differentiableAmount" Type="Decimal" Precision="18" Scale="3" />
-          <Property Name="Nominee_Picture" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Nominee_Picture" Type="Binary" MaxLength="Max" FixedLength="false" />
           <Property Name="AuthorizeStatus" Type="Boolean" />
         </EntityType>
         <EntityType Name="Prospect">
@@ -1588,6 +1595,8 @@
           <Property Name="CreatedBy" Type="Int32" />
           <Property Name="LastModifiedDate" Type="DateTime" Precision="3" />
           <Property Name="SecurityGroupId" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="IsDeleted" Type="Boolean" />
         </EntityType>
         <EntityType Name="COA_Combinations">
           <Key>
@@ -1701,15 +1710,16 @@
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="C_CODE" Type="Int32" />
           <Property Name="Bal_Date" Type="DateTime" Precision="3" />
-          <Property Name="Amount" Type="Decimal" Precision="18" Scale="3" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="Effect_Trans_ID" Type="DateTime" Precision="3" />
+          <Property Name="Effect_Trans_ID" Type="String" Nullable="true" MaxLength="50" Unicode="false" FixedLength="false" />
           <Property Name="Flex_1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Flex_2" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Created_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Created_On" Type="DateTime" Precision="3" />
           <Property Name="Updated_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Updated_On" Type="DateTime" Precision="3" />
+          <Property Name="Debit" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="Credit" Type="Decimal" Precision="18" Scale="3" />
         </EntityType>
         <EntityType Name="GL_Headers">
           <Key>
@@ -1792,6 +1802,7 @@
           <Property Name="Update_Date" Type="DateTime" Precision="0" />
           <Property Name="Update_By" Type="Int32" />
           <NavigationProperty Name="Module" Relationship="MIS_DBModel.FK_Forms_Module" FromRole="Form" ToRole="Module" />
+          <Property Name="IsMenuItem" Type="Boolean" />
         </EntityType>
         <EntityType Name="Module">
           <Key>
@@ -2025,6 +2036,7 @@
           <Property Name="CompletedDate" Type="DateTime" Precision="3" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="SecurityGroup" Type="Int32" />
         </EntityType>
         <EntityType Name="Attatchment_Relation">
           <Key>
@@ -2116,6 +2128,7 @@
           <EntitySetMapping Name="Delivery_Sheet">
             <EntityTypeMapping TypeName="MIS_DBModel.Delivery_Sheet">
               <MappingFragment StoreEntitySet="Delivery_Sheet">
+                <ScalarProperty Name="Delivery_Status" ColumnName="Delivery_Status" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Ref_num" ColumnName="Ref_num" />
                 <ScalarProperty Name="Form_num" ColumnName="Form_num" />
@@ -2490,6 +2503,8 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="MIS_DBModel.User">
               <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
@@ -2607,6 +2622,8 @@
           <EntitySetMapping Name="GL_Balances">
             <EntityTypeMapping TypeName="MIS_DBModel.GL_Balances">
               <MappingFragment StoreEntitySet="GL_Balances">
+                <ScalarProperty Name="Credit" ColumnName="Credit" />
+                <ScalarProperty Name="Debit" ColumnName="Debit" />
                 <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
                 <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
                 <ScalarProperty Name="Created_On" ColumnName="Created_On" />
@@ -2615,7 +2632,6 @@
                 <ScalarProperty Name="Flex_1" ColumnName="Flex_1" />
                 <ScalarProperty Name="Effect_Trans_ID" ColumnName="Effect_Trans_ID" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
                 <ScalarProperty Name="Bal_Date" ColumnName="Bal_Date" />
                 <ScalarProperty Name="C_CODE" ColumnName="C_CODE" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
@@ -2678,6 +2694,7 @@
           <EntitySetMapping Name="Forms">
             <EntityTypeMapping TypeName="MIS_DBModel.Form">
               <MappingFragment StoreEntitySet="Forms">
+                <ScalarProperty Name="IsMenuItem" ColumnName="IsMenuItem" />
                 <ScalarProperty Name="Update_By" ColumnName="Update_By" />
                 <ScalarProperty Name="Update_Date" ColumnName="Update_Date" />
                 <ScalarProperty Name="Created_By" ColumnName="Created_By" />
@@ -2903,6 +2920,7 @@
           <EntitySetMapping Name="Attachments">
             <EntityTypeMapping TypeName="MIS_DBModel.Attachment">
               <MappingFragment StoreEntitySet="Attachments">
+                <ScalarProperty Name="SecurityGroup" ColumnName="SecurityGroup" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="CompletedDate" ColumnName="CompletedDate" />

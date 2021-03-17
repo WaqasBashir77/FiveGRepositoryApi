@@ -17,14 +17,15 @@ namespace FiveGApi.Models
         public int ID { get; set; }
         public Nullable<int> C_CODE { get; set; }
         public Nullable<System.DateTime> Bal_Date { get; set; }
-        public Nullable<decimal> Amount { get; set; }
         public string Description { get; set; }
-        public Nullable<System.DateTime> Effect_Trans_ID { get; set; }
+        public string Effect_Trans_ID { get; set; }
         public string Flex_1 { get; set; }
         public string Flex_2 { get; set; }
         public string Created_By { get; set; }
         public Nullable<System.DateTime> Created_On { get; set; }
         public string Updated_By { get; set; }
         public Nullable<System.DateTime> Updated_On { get; set; }
+        public Nullable<decimal> Debit { get; set; }
+        public Nullable<decimal> Credit { get; set; }
     }
 }

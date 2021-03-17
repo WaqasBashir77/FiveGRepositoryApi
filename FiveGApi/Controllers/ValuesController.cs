@@ -11,14 +11,20 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Net.Http.Headers;
-
+using System.Security.Claims;
 
 namespace FiveGApi.Controllers
 {
-   //[Authorize]
+  [Authorize]
     [RoutePrefix("api/Values")]
     public class ValuesController : ApiController
     {
+        private string UserId;
+        public ValuesController()
+        {
+            UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+
+        }
         //private FiveG_DBEntities db = new FiveG_DBEntities();
         private MIS_DBEntities1 db = new MIS_DBEntities1();
         [HttpGet]
@@ -150,11 +156,17 @@ namespace FiveGApi.Controllers
                     OriginalPropertySale.Created_By = propertySale.Created_By;
                     OriginalPropertySale.SecurityGroupId = propertySale.SecurityGroupId;
                     OriginalPropertySale.differentiableAmount = propertySale.differentiableAmount;
-                    OriginalPropertySale.Nominee_Picture = propertySale.Nominee_Picture;
+                    //OriginalPropertySale.Nominee_Picture = propertySale.Nominee_Picture;
                     if (propertySale.Purchaser_Picture != "")
                     {
                         string[] image = propertySale.Purchaser_Picture.Split(',');
                         OriginalPropertySale.Purchaser_Picture = Convert.FromBase64String(image[1]);
+
+                    }
+                    if (propertySale.Nominee_Picture != "")
+                    {
+                        string[] image = propertySale.Nominee_Picture.Split(',');
+                        OriginalPropertySale.Nominee_Picture = Convert.FromBase64String(image[1]);
 
                     }
 
@@ -465,99 +477,139 @@ namespace FiveGApi.Controllers
 
         [HttpPost]
         [Route("updatePropertySale")]
-        public IHttpActionResult updatePropertySale(PropertySale UpdatedObj)
+        public IHttpActionResult updatePropertySale(PropertySaleDTO propertySale)
         {
 
             try
             {
-                var MasterObj = db.PropertySales.Where(x => x.Booking_ID == UpdatedObj.Booking_ID).FirstOrDefault();
+                var MasterObj = db.PropertySales.Where(x => x.Booking_ID == propertySale.ID).FirstOrDefault();
                 if (MasterObj != null)
                 {
-                    MasterObj.Buyer_Name = UpdatedObj.Buyer_Name;
-                    MasterObj.Buyer_Father_Name = UpdatedObj.Buyer_Father_Name;
-                    MasterObj.CNIC = UpdatedObj.CNIC;
-                    MasterObj.Dealer_Comm = UpdatedObj.Dealer_Comm;
-                    MasterObj.Dealer_ID = UpdatedObj.Dealer_ID;
-                    MasterObj.Discount_Amount = UpdatedObj.Discount_Amount;
-                    MasterObj.Email = UpdatedObj.Email;
-                    MasterObj.Employee = UpdatedObj.Employee;
-                    MasterObj.Employee_Com = UpdatedObj.Employee_Com;
-                    MasterObj.Member_Reg_No = UpdatedObj.Member_Reg_No;
-                    MasterObj.Mobile_1 = UpdatedObj.Mobile_1;
-                    MasterObj.Mobile_2 = UpdatedObj.Mobile_2;
-                    MasterObj.Nominee_CNIC = UpdatedObj.Nominee_CNIC;
-                    MasterObj.Nominee_G_Number = UpdatedObj.Nominee_G_Number;
-                    MasterObj.Nominee_Name = UpdatedObj.Nominee_Name;
-                    MasterObj.Purchaser_Picture = UpdatedObj.Purchaser_Picture;
-                    MasterObj.Relationship_With_Nominee = UpdatedObj.Relationship_With_Nominee;
-                    MasterObj.Address = UpdatedObj.Address;
-                    MasterObj.Sale_Status = UpdatedObj.Sale_Status;
-                    MasterObj.Description = UpdatedObj.Description;
-                    MasterObj.Updated_By = UpdatedObj.Updated_By;
-                    MasterObj.Updated_On = DateTime.Now;
-                    MasterObj.differentiableAmount = UpdatedObj.differentiableAmount;
-                    MasterObj.Nominee_Picture = UpdatedObj.Nominee_Picture;
-                    foreach (var saleitem in UpdatedObj.SaleInstallments.ToList())
+
+                    MasterObj.Project_ID = propertySale.projectId;
+                    MasterObj.Unit_ID = propertySale.unitId;
+                    MasterObj.Buyer_Name = propertySale.buyerName;
+                    MasterObj.Buyer_Father_Name = propertySale.buyerFatherName;
+                    MasterObj.Mobile_1 = propertySale.mobile_1.ToString();
+                    MasterObj.Mobile_2 = propertySale.mobile_2.ToString();
+                    MasterObj.Member_Reg_No = propertySale.memberRegNo.ToString();
+                    MasterObj.Dealer_Comm = (double?)propertySale.dealerCommission;
+                    MasterObj.Dealer_ID = propertySale.dealerId;
+                    MasterObj.Address = propertySale.address;
+                    MasterObj.Email = propertySale.email;
+                    MasterObj.Relationship_With_Nominee = propertySale.relationWithNomine;
+                    MasterObj.Sale_Status = propertySale.saleStatus;
+                    MasterObj.Nominee_Name = propertySale.nomineeName;
+                    MasterObj.Nominee_CNIC = propertySale.nomineeCnic;
+                    MasterObj.Discount_Amount = propertySale.discountAmount;
+                    MasterObj.Nominee_G_Number = propertySale.nomineeGNumber;
+                    MasterObj.CNIC = propertySale.cnic;
+                    MasterObj.Employee = propertySale.employeeId;
+                    MasterObj.PaymentCode = propertySale.PaymentCode;
+                    MasterObj.Employee_Com = (double?)propertySale.employeeCommission;
+                    MasterObj.Created_ON = DateTime.Now;
+                    MasterObj.Created_By = propertySale.Created_By;
+                    MasterObj.SecurityGroupId = propertySale.SecurityGroupId;
+                    MasterObj.differentiableAmount = propertySale.differentiableAmount;
+                    //OriginalPropertySale.Nominee_Picture = propertySale.Nominee_Picture;
+                    if (propertySale.Purchaser_Picture != "")
+                    {
+                        string[] image = propertySale.Purchaser_Picture.Split(',');
+                        MasterObj.Purchaser_Picture = Convert.FromBase64String(image[1]);
+
+                    }
+                    if (propertySale.Nominee_Picture != "")
+                    {
+                        string[] image = propertySale.Nominee_Picture.Split(',');
+                        MasterObj.Nominee_Picture = Convert.FromBase64String(image[1]);
+
+                    }
+                    foreach (var saleitem in propertySale.propertySaleDetails.ToList())
                     {
                         SaleInstallment saleInstallment = new SaleInstallment();
-                        if (saleitem.Booking_ID > 0)
+                        if (saleitem.Id > 0)
                         {
-                            saleInstallment = db.SaleInstallments.Where(x => x.Booking_ID == saleitem.Booking_ID && x.Ins_ID == saleitem.Ins_ID && x.Project_ID == saleitem.Project_ID).FirstOrDefault();
+                            saleInstallment = db.SaleInstallments.Where(x => x.Booking_ID == saleitem.BookingId && x.Ins_ID == saleitem.Id && x.Project_ID == saleitem.ProjectId).FirstOrDefault();
 
-                            saleInstallment.ins_due_date = saleitem.ins_due_date;
-                            saleInstallment.ins_payment_status = saleitem.ins_payment_status;
-                            saleInstallment.ins_latesurcharge_amount = saleitem.ins_latesurcharge_amount;
-                            saleInstallment.ins_balance = saleitem.ins_balance;
+                            saleInstallment.ins_due_date = saleitem.dueDate;
+                            saleInstallment.ins_payment_status = saleitem.paymentStatus;
+                            saleInstallment.ins_latesurcharge_amount = saleitem.latesurchargeAmount;
+                            saleInstallment.ins_balance = saleitem.balance;
                             saleInstallment.OtherTaxAmount = saleitem.OtherTaxAmount;
-                            saleInstallment.Updated_By = UpdatedObj.Updated_By;
+                            saleInstallment.Updated_By = propertySale.Update_By;
                             saleInstallment.Updated_On = DateTime.Now;
                             saleInstallment.Payment_Account = saleitem.Payment_Account;
                         }
                         else
                         {
                             
-                            saleInstallment.Booking_ID = UpdatedObj.Booking_ID;
-                            saleInstallment.Unit_ID = UpdatedObj.Unit_ID;
-                            saleInstallment.Project_ID = UpdatedObj.Project_ID;
-                            saleInstallment.ins_total_amount = saleitem.ins_total_amount;
-                            saleInstallment.ins_remaining = saleitem.ins_remaining;
-                            saleInstallment.ins_milestone_percentage = saleitem.ins_milestone_percentage;
-                            saleInstallment.ins_latesurcharge_amount = saleitem.ins_latesurcharge_amount;
-                            saleInstallment.ins_due_date = saleitem.ins_due_date;
-                            saleInstallment.ins_balance = saleitem.ins_balance;
+                            saleInstallment.Booking_ID = saleInstallment.Booking_ID;
+                            saleInstallment.Unit_ID = saleInstallment.Unit_ID;
+                            saleInstallment.Project_ID = saleInstallment.Project_ID;
+                            saleInstallment.ins_total_amount = saleitem.totalAmount;
+                            saleInstallment.ins_remaining = saleitem.balance;
+                            saleInstallment.ins_milestone_percentage = saleitem.Percentage;
+                            saleInstallment.ins_latesurcharge_amount = saleitem.latesurchargeAmount;
+                            saleInstallment.ins_due_date = saleitem.dueDate;
+                            saleInstallment.ins_balance = saleitem.balance;
                             saleInstallment.OtherTaxAmount = saleitem.OtherTaxAmount;
-                            saleInstallment.ins_payment_status = saleitem.ins_payment_status;
-                            saleInstallment.Updated_By = UpdatedObj.Updated_By;
+                            saleInstallment.ins_payment_status = saleitem.paymentStatus;
+                            saleInstallment.Updated_By = propertySale.Update_By;
                             saleInstallment.Updated_On = DateTime.Now;
                             saleInstallment.Payment_Account = saleitem.Payment_Account;
                             db.SaleInstallments.Add(saleInstallment);
 
                         }
-                        
 
-                        foreach (var item in saleitem.PaymentInstallments.ToList())
+
+                        if (saleitem.paymentDetailDTOs != null)
                         {
-                            if (item.Payment_ID == 0)
+                            if (saleitem.paymentDetailDTOs.Payment_ID == 0)
                             {
                                 PaymentInstallment paymentInstallment = new PaymentInstallment();
-                                paymentInstallment.Project_ID = UpdatedObj.Project_ID;
-                                paymentInstallment.Unit_ID = UpdatedObj.Unit_ID;
-                                paymentInstallment.Payment_amount = item.Payment_amount;
-                                paymentInstallment.Instrument_Type = item.Instrument_Type;
+                                paymentInstallment.Project_ID = saleitem.ProjectId;
+                                paymentInstallment.Unit_ID = propertySale.unitId;
+                                paymentInstallment.Payment_amount = saleitem.amount;
+                                paymentInstallment.Instrument_Type = saleitem.InstallmentType;
                                 paymentInstallment.Ins_ID = saleInstallment.Ins_ID;
-                                paymentInstallment.Booking_ID = UpdatedObj.Booking_ID;
-                                paymentInstallment.instrument_bank = item.instrument_bank;
-                                paymentInstallment.instrument_bank_Branch = item.instrument_bank_Branch;
-                                paymentInstallment.instrument_date = Convert.ToDateTime(item.instrument_date);
-                                paymentInstallment.instrument_number = item.instrument_number;
-                                paymentInstallment.instrument_remarks = item.instrument_remarks;
-                                paymentInstallment.Created_By = UpdatedObj.Updated_By;
-                                paymentInstallment.Created_ON = DateTime.Now; 
-                                paymentInstallment.Payment_Account = item.Payment_Account;
+                                paymentInstallment.Booking_ID = saleitem.BookingId;
+                                paymentInstallment.instrument_bank =saleitem.paymentDetailDTOs.InstrumentBank;
+                                paymentInstallment.instrument_bank_Branch = saleitem.paymentDetailDTOs.InsturmentBankBranch;
+                                paymentInstallment.instrument_date = Convert.ToDateTime(saleitem.paymentDetailDTOs.InsturmentDate);
+                                paymentInstallment.instrument_number = saleitem.paymentDetailDTOs.InstrumentNumber;
+                                paymentInstallment.instrument_remarks = saleitem.paymentDetailDTOs.paymentDescription;
+                                paymentInstallment.Created_By = 1;
+                                paymentInstallment.Created_ON = DateTime.Now;
+                                paymentInstallment.Payment_Account = Convert.ToInt32(saleitem.paymentDetailDTOs.Payment_Account);
                                 db.PaymentInstallments.Add(paymentInstallment);
                             }
-                            
+                            else
+                            {
+
+                                // PaymentInstallment paymentInstallment = new PaymentInstallment();
+                                var paymentInstallment = db.PaymentInstallments.Where(x => x.Payment_ID == saleitem.paymentDetailDTOs.Payment_ID).FirstOrDefault();
+                                if (paymentInstallment != null)
+                                {
+                                    paymentInstallment.Project_ID = saleitem.ProjectId;
+                                    paymentInstallment.Unit_ID = propertySale.unitId;
+                                    paymentInstallment.Payment_amount = saleitem.amount;
+                                    paymentInstallment.Instrument_Type = saleitem.InstallmentType;
+                                    paymentInstallment.Ins_ID = saleInstallment.Ins_ID;
+                                    paymentInstallment.Booking_ID = saleitem.BookingId;
+                                    paymentInstallment.instrument_bank = saleitem.paymentDetailDTOs.InstrumentBank;
+                                    paymentInstallment.instrument_bank_Branch = saleitem.paymentDetailDTOs.InsturmentBankBranch;
+                                    paymentInstallment.instrument_date = Convert.ToDateTime(saleitem.paymentDetailDTOs.InsturmentDate);
+                                    paymentInstallment.instrument_number = saleitem.paymentDetailDTOs.InstrumentNumber;
+                                    paymentInstallment.instrument_remarks = saleitem.paymentDetailDTOs.paymentDescription;
+                                    paymentInstallment.Created_By = 1;
+                                    paymentInstallment.Created_ON = DateTime.Now;
+                                    paymentInstallment.Payment_Account = Convert.ToInt32(saleitem.paymentDetailDTOs.Payment_Account);
+                                    db.SaveChanges();
+                                }
+                            }
                         }
+                            
+                        
                     }
                     db.SaveChanges();
                 }
@@ -624,64 +676,74 @@ namespace FiveGApi.Controllers
         [HttpPost]
         public IHttpActionResult UploadAttachments()
         {
-            //Create the Directory.
-            string path = HttpContext.Current.Server.MapPath("~/Attachments/");
-            if (!Directory.Exists(path))
+            if (UserId != null)
             {
-                Directory.CreateDirectory(path);
-            }
-            List<string> stringList=new List<string>();
-            var url = HttpContext.Current.Request.Form["url"];
-            var tableID = HttpContext.Current.Request.Form["tableID"];
-            var form = db.Forms.Where(x => x.FormUrl == url).FirstOrDefault();
-            if(url==null|| tableID==null|| form==null)
-            {
-                string value = "Url=" + url + "-TableId=" + tableID + "-form=" + form;
-                return Ok(value);
-            }
-            
-            //Fetch the File.
-            var postedFile = HttpContext.Current.Request.Files;
-            if (postedFile.Count > 0)
-            {
-                for (int i = 0; i < postedFile.Count; i++)
+                var userSecurityGroup = db.Users.Where(x => x.UserName == UserId).AsQueryable().Select(x => x.SecurityGroupId).FirstOrDefault();
+
+                //Create the Directory.
+                string path = HttpContext.Current.Server.MapPath("~/Attachments/");
+                if (!Directory.Exists(path))
                 {
-                    HttpPostedFile upload = postedFile[i];
-                    if (upload.ContentLength == 0) continue;
-                    //Fetch the File Name.
-                    var key = postedFile.AllKeys[i];
-                    string fileName = upload.FileName + DateTime.Now.ToFileTime() + Path.GetExtension(upload.FileName);
-                    //Save the File.
-                    upload.SaveAs(path + fileName);
-                    stringList.Add(fileName);
-                    Attachment attachment = new Attachment();
-                    attachment.FileName = fileName;
-                    attachment.Description = key;
-                    attachment.FileExtension = Path.GetExtension(upload.FileName);
-                    attachment.FileType = Path.GetExtension(upload.FileName);
-                    attachment.FilePath = "~/Attachments/";
-                    attachment.FileParentRootFolder = "Attachments";
-                    attachment.FileParentRootFolder = "Attachments";
-                    attachment.FileSize = upload.ContentLength;
-                    attachment.IsCompleted = true;
-                    attachment.CreatedBy = 1;
-                    attachment.CreatedDate = DateTime.Now;
-                    db.Attachments.Add(attachment);
-                    db.SaveChanges();
-                    Attatchment_Relation attatchment_Relation = new Attatchment_Relation();
-                    attatchment_Relation.FormId = form.Id;
-                    attatchment_Relation.FileID = Convert.ToInt32(attachment.ID);
-                    attatchment_Relation.TableRowId = Convert.ToInt32(tableID);
-                    db.Attatchment_Relation.Add(attatchment_Relation);
-                    db.SaveChanges();
+                    Directory.CreateDirectory(path);
                 }
-                //Send OK Response to Client.
-                return Ok(stringList);
+                List<string> stringList = new List<string>();
+                var url = HttpContext.Current.Request.Form["url"];
+                var tableID = HttpContext.Current.Request.Form["tableID"];
+                var form = db.Forms.Where(x => x.FormUrl == url).FirstOrDefault();
+                if (url == null || tableID == null || form == null)
+                {
+                    string value = "Url=" + url + "-TableId=" + tableID + "-form=" + form;
+                    return Ok(value);
+                }
+
+                //Fetch the File.
+                var postedFile = HttpContext.Current.Request.Files;
+                if (postedFile.Count > 0)
+                {
+                    for (int i = 0; i < postedFile.Count; i++)
+                    {
+                        HttpPostedFile upload = postedFile[i];
+                        if (upload.ContentLength == 0) continue;
+                        //Fetch the File Name.
+                        var key = postedFile.AllKeys[i];
+                        string fileName = upload.FileName + DateTime.Now.ToFileTime() + Path.GetExtension(upload.FileName);
+                        //Save the File.
+                        upload.SaveAs(path + fileName);
+                        stringList.Add(fileName);
+                        Attachment attachment = new Attachment();
+                        attachment.FileName = fileName;
+                        attachment.Description = key;
+                        attachment.FileExtension = Path.GetExtension(upload.FileName);
+                        attachment.FileType = Path.GetExtension(upload.FileName);
+                        attachment.FilePath = "~/Attachments/";
+                        attachment.FileParentRootFolder = "Attachments";
+                        attachment.FileParentRootFolder = "Attachments";
+                        attachment.FileSize = upload.ContentLength;
+                        attachment.IsCompleted = true;
+                        attachment.CreatedBy = 1;
+                        attachment.CreatedDate = DateTime.Now;
+                        attachment.SecurityGroup = userSecurityGroup;
+                        db.Attachments.Add(attachment);
+                        db.SaveChanges();
+                        Attatchment_Relation attatchment_Relation = new Attatchment_Relation();
+                        attatchment_Relation.FormId = form.Id;
+                        attatchment_Relation.FileID = Convert.ToInt32(attachment.ID);
+                        attatchment_Relation.TableRowId = Convert.ToInt32(tableID);
+                        db.Attatchment_Relation.Add(attatchment_Relation);
+                        db.SaveChanges();
+                    }
+                    //Send OK Response to Client.
+                    return Ok(stringList);
+                }
+                else
+                {
+
+                    return Ok("File Not found");
+                }
             }
             else
             {
-
-                return Ok("File Not found");
+                return NotFound();
             }
             
         }
@@ -714,75 +776,110 @@ namespace FiveGApi.Controllers
         [Route("GetAttachmetsByFormIDAndTableID")]
         public IHttpActionResult GetAttachmetsByFormIDAndTableID(string FormURl, int tableID)
         {
-            var formsUrl = db.Forms.Where(x => x.FormUrl == FormURl).FirstOrDefault();
-            if (formsUrl == null)
+            if (UserId != null)
             {
-                return NotFound();
+                var userSecurityGroup = db.Users.Where(x => x.UserName == UserId).AsQueryable().Select(x => x.SecurityGroupId).FirstOrDefault();
+
+                var formsUrl = db.Forms.Where(x => x.FormUrl == FormURl).FirstOrDefault();
+                if (formsUrl == null)
+                {
+                    return NotFound();
+                }
+                var attachments = new List<Attachment>();
+                if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup))
+                     attachments = (from a in db.Attachments
+                                       join ar in db.Attatchment_Relation on a.ID equals ar.FileID
+                                       where ar.FormId == formsUrl.Id && ar.TableRowId == tableID &&a.SecurityGroup==userSecurityGroup
+                                       select a).AsQueryable().ToList();
+
+                else
+                     attachments = (from a in db.Attachments
+                                       join ar in db.Attatchment_Relation on a.ID equals ar.FileID
+                                       where ar.FormId == formsUrl.Id && ar.TableRowId == tableID
+                                       select a).AsQueryable().ToList();
+
+                if (attachments == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(attachments);
+                }
             }
-            var attachments = (from a in db.Attachments
-                               join ar in db.Attatchment_Relation on a.ID equals ar.FileID
-                               where ar.FormId == formsUrl.Id && ar.TableRowId == tableID
-                               select a).AsQueryable().ToList();
-            if(attachments==null)
+            else
             {
                 return NotFound();
-            }else
-            {
-                return Ok(attachments);
             }
         }
         [HttpGet]
         [Route("DownloadPdfFile")]
         public HttpResponseMessage DownloadPdfFile(int id)
         {
-            HttpResponseMessage response = null;
-            
-            try
+            //var UserName = User.Identity.Name;
+            if (UserId != null)
             {
-                var  file = db.Attachments.Where(b => b.ID == id).SingleOrDefault();
+                var userSecurityGroup = db.Users.Where(x => x.UserName == UserId).AsQueryable().Select(x => x.SecurityGroupId).FirstOrDefault();
 
-                if (file == null)
+                HttpResponseMessage response = null;
+
+                try
+                {
+                    var file = new Attachment();
+                    if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup))
+                          file = db.Attachments.Where(b => b.ID == id && b.SecurityGroup==userSecurityGroup).SingleOrDefault();
+
+                    else
+                        file = db.Attachments.Where(b => b.ID == id ).SingleOrDefault();
+
+
+                    if (file == null)
+                    {
+                        return response;
+                    }
+                    //Create HTTP Response.
+                    response = Request.CreateResponse(HttpStatusCode.OK);
+
+                    //Set the File Path.
+                    string filePath = HttpContext.Current.Server.MapPath("~/Attachments/") + file.FileName;
+
+                    //Check whether File exists.
+                    if (!File.Exists(filePath))
+                    {
+                        //Throw 404 (Not Found) exception if File not found.
+                        response.StatusCode = HttpStatusCode.NotFound;
+                        response.ReasonPhrase = string.Format("File not found: {0} .", file.FileName);
+                        throw new HttpResponseException(response);
+                    }
+
+                    //Read the File into a Byte Array.
+                    byte[] bytes = File.ReadAllBytes(filePath);
+
+                    //Set the Response Content.
+                    response.Content = new ByteArrayContent(bytes);
+
+                    //Set the Response Content Length.
+                    response.Content.Headers.ContentLength = bytes.LongLength;
+
+                    //Set the Content Disposition Header Value and FileName.
+                    response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
+                    response.Content.Headers.ContentDisposition.FileName = file.FileName;
+
+                    //Set the File Content Type.
+                    response.Content.Headers.ContentType = new MediaTypeHeaderValue(MimeMapping.GetMimeMapping(file.FileName));
+
+                    return response;
+                    // return response;
+
+                }
+                catch (Exception ex)
                 {
                     return response;
                 }
-                //Create HTTP Response.
-                 response = Request.CreateResponse(HttpStatusCode.OK);
-
-                //Set the File Path.
-                string filePath = HttpContext.Current.Server.MapPath("~/Attachments/") + file.FileName;
-
-                //Check whether File exists.
-                if (!File.Exists(filePath))
-                {
-                    //Throw 404 (Not Found) exception if File not found.
-                    response.StatusCode = HttpStatusCode.NotFound;
-                    response.ReasonPhrase = string.Format("File not found: {0} .", file.FileName);
-                    throw new HttpResponseException(response);
-                }
-
-                //Read the File into a Byte Array.
-                byte[] bytes = File.ReadAllBytes(filePath);
-
-                //Set the Response Content.
-                response.Content = new ByteArrayContent(bytes);
-
-                //Set the Response Content Length.
-                response.Content.Headers.ContentLength = bytes.LongLength;
-
-                //Set the Content Disposition Header Value and FileName.
-                response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
-                response.Content.Headers.ContentDisposition.FileName = file.FileName;
-
-                //Set the File Content Type.
-                response.Content.Headers.ContentType = new MediaTypeHeaderValue(MimeMapping.GetMimeMapping(file.FileName));
-
-                return response;
-               // return response;
-            
             }
-            catch (Exception ex)
+            else
             {
-                return response;
+                return null;
             }
         }
         [NonAction]

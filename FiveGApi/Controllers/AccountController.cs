@@ -16,7 +16,7 @@ using System.Linq;
 
 namespace FiveGApi.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class AccountController : ApiController
     {
         //private FiveG_DBEntities db = new FiveG_DBEntities();
@@ -35,7 +35,29 @@ namespace FiveGApi.Controllers
             bool isUsernamePasswordValid = false;
 
             //isUsernamePasswordValid=loginrequest.Password=="admin" ? true:false;
-            var dbUser = db.Users.Where(x => x.UserName == login.Username && x.Password == login.Password).SingleOrDefault(); //_userRepo.GetUser(loginrequest.Username, loginrequest.Password);
+            var dbUser = db.Users.Where(x => x.UserName == login.Username && x.Password == login.Password && x.IsDeleted==false && x.IsActive==true)
+            //    .Select(x=> new User
+            //{
+            //    UserId=x.UserId,
+            //    UserName = x.UserName,
+            //    Email = x.Email,
+            //    Password = null,
+            //    OldPassword = null,
+            //    NewPassword = null,
+            //    ConfirmPassword = null,
+            //    FirstName = x.FirstName,
+            //    LastName = x.LastName,
+            //    LastModifiedBy = null,
+            //    CreatedOn = null,
+            //    CreatedBy = null,
+            //    LastModifiedDate = null,
+            //    SecurityGroupId = x.SecurityGroupId,
+            //    IsActive =x.IsActive,
+            //    IsDeleted=x.IsDeleted,
+
+            //}
+            //)
+               .AsQueryable().SingleOrDefault(); //_userRepo.GetUser(loginrequest.Username, loginrequest.Password);
             if (dbUser != null)
                 isUsernamePasswordValid = true;
             // if credentials are valid
@@ -97,5 +119,6 @@ namespace FiveGApi.Controllers
             FormsAuthentication.SignOut();
             return Ok();
         }
+        
     }
 }

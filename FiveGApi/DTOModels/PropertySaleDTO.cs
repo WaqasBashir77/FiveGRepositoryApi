@@ -7,6 +7,7 @@ namespace FiveGApi.DTOModels
 {
     public class PropertySaleDTO
     {
+        public int ID { get; set; }
         public int unitId { get; set; }
         public int projectId { get; set; }
         public int mobile_1 { get; set; }
