@@ -12,6 +12,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using System.Data.Entity;
 using FiveGApi.DTOModels;
+using System.Security.Claims;
 
 namespace FiveGApi.Controllers
 {
@@ -20,7 +21,12 @@ namespace FiveGApi.Controllers
     public class RebateDetailsController : ApiController
     {
         private MIS_DBEntities1 db = new MIS_DBEntities1();
+        private string UserId;
+        public RebateDetailsController()
+        {
+            UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
 
+        }
         // GET: api/Rebate_Details
 
         [ResponseType(typeof(IQueryable<Rebate_Details>))]

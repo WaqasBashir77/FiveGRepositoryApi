@@ -35,5 +35,6 @@ namespace FiveGApi.Models
         public string Updated_By { get; set; }
         public Nullable<System.DateTime> Updated_ON { get; set; }
         public Nullable<System.DateTime> Delivered_Date { get; set; }
+        public Nullable<int> SecurityGroupId { get; set; }
     }
 }

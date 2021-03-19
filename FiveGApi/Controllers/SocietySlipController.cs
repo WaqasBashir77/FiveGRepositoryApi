@@ -1,10 +1,12 @@
-﻿using FiveGApi.Models;
+﻿using FiveGApi.Helper;
+using FiveGApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Web.Http;
 using System.Web.Http.Description;
 
@@ -16,13 +18,24 @@ namespace FiveGApi.Controllers
         public class SocietySlipController : ApiController
         {
             private MIS_DBEntities1 db = new MIS_DBEntities1();
+        private string UserId;
+        private User userSecurityGroup = new User();
 
-            // GET: api/Society_Slip
-            [ResponseType(typeof(IQueryable<Society_Slip>))]
+        public SocietySlipController()
+        {
+            UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+            userSecurityGroup = db.Users.Where(x => x.UserName == UserId).AsQueryable().FirstOrDefault();
+
+        }
+        // GET: api/Society_Slip
+        [ResponseType(typeof(IQueryable<Society_Slip>))]
             [Route("GetALLSociety_Slip")]
             [HttpGet]
             public IQueryable<Society_Slip> GetALLSociety_Slip()
-            {
+        {
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                return db.Society_Slip.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId);
+            else
                 return db.Society_Slip;
             }
 
@@ -30,7 +43,11 @@ namespace FiveGApi.Controllers
             [ResponseType(typeof(Society_Slip))]
             public IHttpActionResult GetSociety_SlipByID(int id)
             {
-                Society_Slip Society_Slip = db.Society_Slip.Find(id);
+            Society_Slip Society_Slip = new Society_Slip();
+                if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                Society_Slip=db.Society_Slip.Where(x =>x.ID==id&& x.SecurityGroupId == userSecurityGroup.SecurityGroupId).FirstOrDefault();
+                else
+                Society_Slip=db.Society_Slip.Find(id);
 
                 if (Society_Slip == null)
                 {
@@ -80,8 +97,9 @@ namespace FiveGApi.Controllers
                 existSociety_Slip.Flex_2 = Society_Slip.Flex_2;                
                 existSociety_Slip.Updated_ON = DateTime.Now;
                 existSociety_Slip.Delivered_Date = Society_Slip.Delivered_Date;
-            existSociety_Slip.Updated_By = "1";
-                try
+            existSociety_Slip.Updated_By = userSecurityGroup.UserName;
+            existSociety_Slip.SecurityGroupId = userSecurityGroup.SecurityGroupId;
+            try
                 {
                     db.SaveChanges();
                 }
@@ -107,7 +125,8 @@ namespace FiveGApi.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-            Society_Slip.Created_By = "1";
+            Society_Slip.SecurityGroupId = userSecurityGroup.SecurityGroupId;
+            Society_Slip.Created_By = userSecurityGroup.UserName;
             Society_Slip.Created_ON = DateTime.Now;
             Society_Slip.Flex_1 = "1";
             Society_Slip.Flex_2 = "1";
@@ -157,8 +176,10 @@ namespace FiveGApi.Controllers
             {
                 return NotFound();
             }
-
-            return Ok(Society_Slip);
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                return Ok(Society_Slip.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId));
+            else
+                return Ok(Society_Slip);
         }
         protected override void Dispose(bool disposing)
             {

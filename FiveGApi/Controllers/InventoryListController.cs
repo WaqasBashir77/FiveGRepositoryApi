@@ -12,6 +12,8 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using System.Data.Entity;
 using FiveGApi.DTOModels;
+using System.Security.Claims;
+using FiveGApi.Helper;
 
 namespace FiveGApi.Controllers
 {
@@ -20,13 +22,24 @@ namespace FiveGApi.Controllers
     public class InventoryListController : ApiController
     {
         private MIS_DBEntities1 db = new MIS_DBEntities1();
+        private string UserId;
+        private User userSecurityGroup = new User();
+        public InventoryListController()
+        {
+            UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+            userSecurityGroup = db.Users.Where(x => x.UserName == UserId).AsQueryable().FirstOrDefault();
 
+        }
         // GET: api/Inventory_List
         [Route("GetAllInventory_List")]
         [ResponseType(typeof(IQueryable<Inventory_List>))]
         public IQueryable<Inventory_List> GetAllInventory_List(int RDID)
         {
-            return db.Inventory_List;
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                return db.Inventory_List.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId);
+            else
+                return db.Inventory_List;
+            //return db.Inventory_List;
         }
 
         // GET: api/Inventory_List/5
@@ -34,7 +47,11 @@ namespace FiveGApi.Controllers
         [ResponseType(typeof(Inventory_List))]
         public IHttpActionResult GetInventory_ByID(int id)
         {
-            Inventory_List Inventory_List = db.Inventory_List.Find(id);
+            Inventory_List Inventory_List = new Inventory_List();  //db.Inventory_List.Find(id);
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                Inventory_List= db.Inventory_List.Where(x =>x.ID==id && x.SecurityGroupId == userSecurityGroup.SecurityGroupId).FirstOrDefault();
+            else
+                Inventory_List= db.Inventory_List.Find(id);
             if (Inventory_List == null)
             {
                 return NotFound();
@@ -56,7 +73,9 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest();
             }
-
+            Inventory_List.Updated_By = userSecurityGroup.UserName;
+            Inventory_List.Updated_On = DateTime.Now;
+            Inventory_List.SecurityGroupId = userSecurityGroup.SecurityGroupId;
             db.Entry(Inventory_List).State = EntityState.Modified;
 
             try
@@ -86,7 +105,8 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-            Inventory_List.Created_By = "Admin";
+            Inventory_List.Created_By = userSecurityGroup.UserName;
+            Inventory_List.SecurityGroupId = userSecurityGroup.SecurityGroupId;
             Inventory_List.Created_On = DateTime.Now;
             db.Inventory_List.Add(Inventory_List);
             db.SaveChanges();

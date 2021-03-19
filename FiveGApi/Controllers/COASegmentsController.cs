@@ -7,16 +7,22 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Web.Http;
 using System.Web.Http.Description;
 
 namespace FiveGApi.Controllers
 {
     [Authorize]
-
     [RoutePrefix("api/COASegments")]
     public class COASegmentsController : ApiController
     {
+        private string UserId;
+        public COASegmentsController()
+        {
+            UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+
+        }
         private MIS_DBEntities1 db = new MIS_DBEntities1();
 
         // GET: api/COA_Segments

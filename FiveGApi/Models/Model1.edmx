@@ -59,6 +59,7 @@
           <Property Name="Created_On" Type="datetime" />
           <Property Name="Updated_By" Type="varchar(max)" />
           <Property Name="Updated_On" Type="datetime" />
+          <Property Name="SecurityGroupId" Type="int" />
         </EntityType>
         <EntityType Name="Booking_Entries">
           <Key>
@@ -129,6 +130,7 @@
           <Property Name="Updated_On" Type="varchar" MaxLength="50" />
           <Property Name="Authorize_By" Type="varchar" MaxLength="250" />
           <Property Name="Authorize_Date" Type="datetime" />
+          <Property Name="SecurityGroupId" Type="int" />
         </EntityType>
         <EntityType Name="BookingPayments">
           <Key>
@@ -149,6 +151,7 @@
           <Property Name="Authorize_By" Type="varchar" MaxLength="150" />
           <Property Name="Authorize_Date" Type="datetime" />
           <Property Name="Payment_Account" Type="int" />
+          <Property Name="SecurityGroupId" Type="int" />
         </EntityType>
         <EntityType Name="CashreceivedForm">
           <Key>
@@ -241,6 +244,7 @@
           <Property Name="Updated_By" Type="varchar" MaxLength="50" />
           <Property Name="Updated_On" Type="datetime" />
           <Property Name="Delivery_Status" Type="varchar" MaxLength="250" />
+          <Property Name="SecurityGroupId" Type="int" />
         </EntityType>
         <EntityType Name="Employee">
           <Key>
@@ -320,6 +324,7 @@
           <Property Name="Updated_By" Type="varchar(max)" />
           <Property Name="Updated_On" Type="datetime" />
           <Property Name="Ref_Field" Type="varchar" MaxLength="100" />
+          <Property Name="SecurityGroupId" Type="int" />
         </EntityType>
         <EntityType Name="GL_Lines">
           <Key>
@@ -379,6 +384,7 @@
           <Property Name="Created_On" Type="datetime" />
           <Property Name="Updated_By" Type="varchar" MaxLength="50" />
           <Property Name="Updated_On" Type="datetime" />
+          <Property Name="SecurityGroupId" Type="int" />
         </EntityType>
         <EntityType Name="Lookup_List">
           <Key>
@@ -431,6 +437,7 @@
           <Property Name="instrument_bank_Branch" Type="varchar" MaxLength="50" />
           <Property Name="instrument_date" Type="datetime" />
           <Property Name="instrument_remarks" Type="varchar" MaxLength="50" />
+          <Property Name="SecurityGroupId" Type="int" />
         </EntityType>
         <EntityType Name="PaymentInstallment">
           <Key>
@@ -611,6 +618,7 @@
           <Property Name="Location" Type="varchar(max)" />
           <Property Name="PayableToSociet" Type="varchar(max)" />
           <Property Name="ReciveableToSociety" Type="varchar(max)" />
+          <Property Name="SecurityGroupId" Type="int" />
         </EntityType>
         <EntityType Name="PropertySale">
           <Key>
@@ -684,6 +692,7 @@
           <Property Name="Created_On" Type="datetime" />
           <Property Name="Updated_By" Type="varchar" MaxLength="250" />
           <Property Name="Updated_On" Type="datetime" />
+          <Property Name="SecurityGroupId" Type="int" />
         </EntityType>
         <EntityType Name="Prospect">
           <Key>
@@ -748,6 +757,7 @@
           <Property Name="Created_ON" Type="datetime" />
           <Property Name="Updated_By" Type="varchar" MaxLength="50" />
           <Property Name="Updated_On" Type="varchar" MaxLength="50" />
+          <Property Name="SecurityGroupId" Type="int" />
         </EntityType>
         <EntityType Name="Resale_Form">
           <Key>
@@ -775,6 +785,7 @@
           <Property Name="Updated_By" Type="varchar" MaxLength="250" />
           <Property Name="Updated_On" Type="datetime" />
           <Property Name="SellerName" Type="varchar" MaxLength="250" />
+          <Property Name="SecurityGroupId" Type="int" />
         </EntityType>
         <EntityType Name="Role">
           <Key>
@@ -857,6 +868,7 @@
           <Property Name="Updated_By" Type="varchar" MaxLength="50" />
           <Property Name="Updated_ON" Type="datetime" />
           <Property Name="Delivered_Date" Type="datetime" />
+          <Property Name="SecurityGroupId" Type="int" />
         </EntityType>
         <EntityType Name="TempTableForInstallment">
           <Key>
@@ -1114,6 +1126,7 @@
           <Property Name="Updated_On" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Authorize_By" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="Authorize_Date" Type="DateTime" Precision="3" />
+          <Property Name="SecurityGroupId" Type="Int32" />
         </EntityType>
         <EntityType Name="BookingPayment">
           <Key>
@@ -1134,6 +1147,7 @@
           <Property Name="Authorize_By" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
           <Property Name="Authorize_Date" Type="DateTime" Precision="3" />
           <Property Name="Payment_Account" Type="Int32" />
+          <Property Name="SecurityGroupId" Type="Int32" />
         </EntityType>
         <EntityType Name="Delivery_Sheet">
           <Key>
@@ -1157,6 +1171,7 @@
           <Property Name="Updated_By" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Updated_On" Type="DateTime" Precision="3" />
           <Property Name="Delivery_Status" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="SecurityGroupId" Type="Int32" />
         </EntityType>
         <EntityType Name="Employee">
           <Key>
@@ -1211,6 +1226,7 @@
           <Property Name="instrument_bank_Branch" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="instrument_date" Type="DateTime" Precision="3" />
           <Property Name="instrument_remarks" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SecurityGroupId" Type="Int32" />
         </EntityType>
         <EntityType Name="PaymentInstallment">
           <Key>
@@ -1345,6 +1361,7 @@
           <Property Name="Location" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="PayableToSociet" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="ReciveableToSociety" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="SecurityGroupId" Type="Int32" />
         </EntityType>
         <EntityType Name="PropertySale">
           <Key>
@@ -1449,6 +1466,7 @@
           <Property Name="Updated_By" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Updated_On" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Rebate_Details" Relationship="Self.FK_Rebate_Details_Registration" FromRole="Registration" ToRole="Rebate_Details" />
+          <Property Name="SecurityGroupId" Type="Int32" />
         </EntityType>
         <EntityType Name="SaleInstallment">
           <Key>
@@ -1504,6 +1522,7 @@
           <Property Name="Updated_By" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Updated_ON" Type="DateTime" Precision="3" />
           <Property Name="Delivered_Date" Type="DateTime" Precision="3" />
+          <Property Name="SecurityGroupId" Type="Int32" />
         </EntityType>
         <Association Name="FK_PaymentInstallment_SaleInstallments">
           <End Role="SaleInstallments" Type="Self.SaleInstallment" Multiplicity="0..1" />
@@ -1622,11 +1641,11 @@
           <EntitySet Name="PropertyTransfers" EntityType="MIS_DBModel.PropertyTransfer" />
           <EntitySet Name="Attachments" EntityType="MIS_DBModel.Attachment" />
           <EntitySet Name="Attatchment_Relation" EntityType="MIS_DBModel.Attatchment_Relation" />
-          <EntitySet Name="CashreceivedForms" EntityType="MIS_DBModel.CashreceivedForm" />
           <AssociationSet Name="FK_Lookup_Values_Lookup_List" Association="MIS_DBModel.FK_Lookup_Values_Lookup_List">
             <End Role="Lookup_List" EntitySet="Lookup_List" />
             <End Role="Lookup_Values" EntitySet="Lookup_Values" />
           </AssociationSet>
+          <EntitySet Name="CashreceivedForms" EntityType="MIS_DBModel.CashreceivedForm" />
         </EntityContainer>
         <EntityType Name="User">
           <Key>
@@ -1753,6 +1772,7 @@
           <Property Name="Created_On" Type="DateTime" Precision="3" />
           <Property Name="Updated_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Updated_On" Type="DateTime" Precision="3" />
+          <Property Name="SecurityGroupId" Type="Int32" />
         </EntityType>
         <EntityType Name="GL_Balances">
           <Key>
@@ -1806,6 +1826,7 @@
           <Property Name="Updated_On" Type="DateTime" Precision="3" />
           <NavigationProperty Name="GL_Lines" Relationship="MIS_DBModel.FK_GL_Lines_GL_Headers" FromRole="GL_Headers" ToRole="GL_Lines" />
           <Property Name="Ref_Field" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="SecurityGroupId" Type="Int32" />
         </EntityType>
         <EntityType Name="GL_Lines">
           <Key>
@@ -2002,6 +2023,7 @@
           <Property Name="Created_On" Type="DateTime" Precision="3" />
           <Property Name="Updated_By" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Updated_On" Type="DateTime" Precision="3" />
+          <Property Name="SecurityGroupId" Type="Int32" />
         </EntityType>
         <EntityType Name="Resale_Form">
           <Key>
@@ -2029,6 +2051,7 @@
           <Property Name="Updated_By" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="Updated_On" Type="DateTime" Precision="3" />
           <Property Name="SellerName" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="SecurityGroupId" Type="Int32" />
         </EntityType>
         <EntityType Name="PropertyTransfer">
           <Key>
@@ -2065,6 +2088,7 @@
           <Property Name="Created_On" Type="DateTime" Precision="3" />
           <Property Name="Updated_By" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="Updated_On" Type="DateTime" Precision="3" />
+          <Property Name="SecurityGroupId" Type="Int32" />
         </EntityType>
         <EntityType Name="Attachment">
           <Key>
@@ -2098,6 +2122,18 @@
           <Property Name="FormId" Type="Int32" />
           <Property Name="FileID" Type="Int32" />
         </EntityType>
+        <Association Name="FK_Lookup_Values_Lookup_List">
+          <End Type="MIS_DBModel.Lookup_List" Role="Lookup_List" Multiplicity="1" />
+          <End Type="MIS_DBModel.Lookup_Values" Role="Lookup_Values" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Lookup_List">
+              <PropertyRef Name="REF_ID" />
+            </Principal>
+            <Dependent Role="Lookup_Values">
+              <PropertyRef Name="Ref_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityType Name="CashreceivedForm">
           <Key>
             <PropertyRef Name="ID" />
@@ -2125,18 +2161,6 @@
           <Property Name="Atrib_5" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Atrib_6" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
-        <Association Name="FK_Lookup_Values_Lookup_List">
-          <End Type="MIS_DBModel.Lookup_List" Role="Lookup_List" Multiplicity="1" />
-          <End Type="MIS_DBModel.Lookup_Values" Role="Lookup_Values" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Lookup_List">
-              <PropertyRef Name="REF_ID" />
-            </Principal>
-            <Dependent Role="Lookup_Values">
-              <PropertyRef Name="Ref_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2146,6 +2170,7 @@
           <EntitySetMapping Name="BookingConfirms">
             <EntityTypeMapping TypeName="MIS_DBModel.BookingConfirm">
               <MappingFragment StoreEntitySet="BookingConfirm">
+                <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="Authorize_Date" ColumnName="Authorize_Date" />
                 <ScalarProperty Name="Authorize_By" ColumnName="Authorize_By" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
@@ -2197,6 +2222,7 @@
           <EntitySetMapping Name="BookingPayments">
             <EntityTypeMapping TypeName="MIS_DBModel.BookingPayment">
               <MappingFragment StoreEntitySet="BookingPayments">
+                <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="Payment_Account" ColumnName="Payment_Account" />
                 <ScalarProperty Name="Authorize_Date" ColumnName="Authorize_Date" />
                 <ScalarProperty Name="Authorize_By" ColumnName="Authorize_By" />
@@ -2218,6 +2244,7 @@
           <EntitySetMapping Name="Delivery_Sheet">
             <EntityTypeMapping TypeName="MIS_DBModel.Delivery_Sheet">
               <MappingFragment StoreEntitySet="Delivery_Sheet">
+                <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="Delivery_Status" ColumnName="Delivery_Status" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Ref_num" ColumnName="Ref_num" />
@@ -2281,6 +2308,7 @@
           <EntitySetMapping Name="Payment_Delivery">
             <EntityTypeMapping TypeName="MIS_DBModel.Payment_Delivery">
               <MappingFragment StoreEntitySet="Payment_Delivery">
+                <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="Payment_ID" ColumnName="Payment_ID" />
                 <ScalarProperty Name="Ins_ID" ColumnName="Ins_ID" />
                 <ScalarProperty Name="Unit_ID" ColumnName="Unit_ID" />
@@ -2395,6 +2423,7 @@
           <EntitySetMapping Name="PropertyDefs">
             <EntityTypeMapping TypeName="MIS_DBModel.PropertyDef">
               <MappingFragment StoreEntitySet="PropertyDef">
+                <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="ReciveableToSociety" ColumnName="ReciveableToSociety" />
                 <ScalarProperty Name="PayableToSociet" ColumnName="PayableToSociet" />
                 <ScalarProperty Name="Location" ColumnName="Location" />
@@ -2512,6 +2541,7 @@
           <EntitySetMapping Name="Registrations">
             <EntityTypeMapping TypeName="MIS_DBModel.Registration">
               <MappingFragment StoreEntitySet="Registration">
+                <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -2566,6 +2596,7 @@
           <EntitySetMapping Name="Society_Slip">
             <EntityTypeMapping TypeName="MIS_DBModel.Society_Slip">
               <MappingFragment StoreEntitySet="Society_Slip">
+                <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="Delivered_Date" ColumnName="Delivered_Date" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Ref_num" ColumnName="Ref_num" />
@@ -2688,6 +2719,7 @@
           <EntitySetMapping Name="Bank_Accounts">
             <EntityTypeMapping TypeName="MIS_DBModel.Bank_Accounts">
               <MappingFragment StoreEntitySet="Bank_Accounts">
+                <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
                 <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
                 <ScalarProperty Name="Created_On" ColumnName="Created_On" />
@@ -2731,6 +2763,7 @@
           <EntitySetMapping Name="GL_Headers">
             <EntityTypeMapping TypeName="MIS_DBModel.GL_Headers">
               <MappingFragment StoreEntitySet="GL_Headers">
+                <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="Ref_Field" ColumnName="Ref_Field" />
                 <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
                 <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
@@ -2902,6 +2935,7 @@
           <EntitySetMapping Name="Inventory_List">
             <EntityTypeMapping TypeName="MIS_DBModel.Inventory_List">
               <MappingFragment StoreEntitySet="Inventory_List">
+                <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
                 <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
                 <ScalarProperty Name="Created_On" ColumnName="Created_On" />
@@ -2945,6 +2979,7 @@
           <EntitySetMapping Name="Resale_Form">
             <EntityTypeMapping TypeName="MIS_DBModel.Resale_Form">
               <MappingFragment StoreEntitySet="Resale_Form">
+                <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="SellerName" ColumnName="SellerName" />
                 <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
                 <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
@@ -2973,6 +3008,7 @@
           <EntitySetMapping Name="PropertyTransfers">
             <EntityTypeMapping TypeName="MIS_DBModel.PropertyTransfer">
               <MappingFragment StoreEntitySet="PropertyTransfer">
+                <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
                 <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
                 <ScalarProperty Name="Created_On" ColumnName="Created_On" />

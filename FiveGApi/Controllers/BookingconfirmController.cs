@@ -1,4 +1,5 @@
 ﻿using FiveGApi.DTOModels;
+using FiveGApi.Helper;
 using FiveGApi.Models;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Web.Http;
 using System.Web.Http.Description;
 
@@ -15,7 +17,14 @@ namespace FiveGApi.Controllers
     [RoutePrefix("api/Bookingconfirm")]
     public class BookingconfirmController : ApiController
     {
+        private string UserId;
+        private User userSecurityGroup = new User();
+        public BookingconfirmController()
+        {
+            UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+            userSecurityGroup = db.Users.Where(x => x.UserName == UserId).AsQueryable().FirstOrDefault();
 
+        }
 
         private MIS_DBEntities1 db = new MIS_DBEntities1();
         [Route("GetALLBookingConfirmed")]
@@ -25,72 +34,134 @@ namespace FiveGApi.Controllers
         public IHttpActionResult GetALLBookingConfirmed()
         {
            // IQueryable<BookingConfirmDTO> bookingConfirm;
-
+           
             try
             {
-               var bookingConfirmtt = (from f in db.BookingConfirms
-                                       from p in db.PropertyDefs
-                                       where f.Property_ID == p.ID
-                                       from r in db.Registrations
-                                       where f.Book_Emp == r.ID.ToString()
-                                      
-                                       //join p in db.PropertyDefs on f.Property_ID equals p.ID
-                                       //join r in db.Registrations on f.Book_Emp equals r.ID
+                if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                {
+                    var bookingConfirmtt = (from f in db.BookingConfirms
+                                            from p in db.PropertyDefs
+                                            where f.Property_ID == p.ID
+                                            from r in db.Registrations
+                                            where f.Book_Emp == r.ID.ToString()&&f.SecurityGroupId==userSecurityGroup.SecurityGroupId
 
-                                       select new
-                                          {
-                                              ID = f.ID,
-                                              Ref_num = f.Ref_num,
-                                             Authorize_Status = f.Authorize_Status,
-                                             Form_num=f.Form_num,
-                                             File_Status = f.File_Status,
-                                             Replaced_Form = f.Replaced_Form,
-                                             Applicant_name = f.Applicant_name,
-                                             CNIC = f.CNIC,
-                                             Form_Rec_Date = f.Form_Rec_Date,
-                                             Contact_Num = f.Contact_Num,
-                                             Property_ID = f.Property_ID,
-                                             Member_Num = f.Member_Num,
-                                             Book_Emp = f.Book_Emp,
-                                             Book_Dealer = f.Book_Dealer,
-                                             Booking_Percent = f.Booking_Percent,
-                                             Booking_amount = f.Booking_amount,
-                                             Confirm_Percent = f.Confirm_Percent,
-                                             Confirm_amount = f.Confirm_amount,
-                                             MS_amount = f.MS_amount,
-                                             Total_amount = f.Total_amount,
-                                             Tax_Percent = f.Tax_Percent,
-                                             Rebate_Percent = f.Rebate_Percent,
-                                             Emp_Rebate = f.Emp_Rebate,
-                                             Dealer_Rebate = f.Dealer_Rebate,
-                                             Emp_B_RAmt = f.Emp_B_RAmt,
-                                             Emp_C_RAmt = f.Emp_C_RAmt,
-                                             Dealer_B_RAmt = f.Dealer_B_RAmt,
-                                             Dealer_C_RAmt = f.Dealer_C_RAmt,
-                                             Com_B_RAmt = f.Com_B_RAmt,
-                                             Com_C_RAmt = f.Com_C_RAmt,
-                                             Payment_B_Status = f.Payment_B_Status,
-                                             Payment_C_Status = f.Payment_C_Status,
-                                             Payment_MSFee_Status = f.Payment_MSFee_Status,
-                                             Booking_Date = f.Booking_Date,
-                                             Confirmation_Date = f.Confirmation_Date,
-                                             MSFee_Date = f.MSFee_Date,
-                                             Remarks = f.Remarks,
-                                             Flex_1 = f.Flex_1,
-                                             Flex_2 = f.Flex_2,
-                                             Created_By = f.Created_By,
-                                             Created_ON = f.Created_ON,
-                                             Updated_By = f.Updated_By,
-                                             Updated_On = f.Updated_On,
-                                             Authorize_By = f.Authorize_By,
-                                             Authorize_Date = f.Authorize_Date,
-                                             ProjectName = p.Name,
-                                              EmployeeName = r.StaffName,
+                                            //join p in db.PropertyDefs on f.Property_ID equals p.ID
+                                            //join r in db.Registrations on f.Book_Emp equals r.ID
 
+                                            select new
+                                            {
+                                                ID = f.ID,
+                                                Ref_num = f.Ref_num,
+                                                Authorize_Status = f.Authorize_Status,
+                                                Form_num = f.Form_num,
+                                                File_Status = f.File_Status,
+                                                Replaced_Form = f.Replaced_Form,
+                                                Applicant_name = f.Applicant_name,
+                                                CNIC = f.CNIC,
+                                                Form_Rec_Date = f.Form_Rec_Date,
+                                                Contact_Num = f.Contact_Num,
+                                                Property_ID = f.Property_ID,
+                                                Member_Num = f.Member_Num,
+                                                Book_Emp = f.Book_Emp,
+                                                Book_Dealer = f.Book_Dealer,
+                                                Booking_Percent = f.Booking_Percent,
+                                                Booking_amount = f.Booking_amount,
+                                                Confirm_Percent = f.Confirm_Percent,
+                                                Confirm_amount = f.Confirm_amount,
+                                                MS_amount = f.MS_amount,
+                                                Total_amount = f.Total_amount,
+                                                Tax_Percent = f.Tax_Percent,
+                                                Rebate_Percent = f.Rebate_Percent,
+                                                Emp_Rebate = f.Emp_Rebate,
+                                                Dealer_Rebate = f.Dealer_Rebate,
+                                                Emp_B_RAmt = f.Emp_B_RAmt,
+                                                Emp_C_RAmt = f.Emp_C_RAmt,
+                                                Dealer_B_RAmt = f.Dealer_B_RAmt,
+                                                Dealer_C_RAmt = f.Dealer_C_RAmt,
+                                                Com_B_RAmt = f.Com_B_RAmt,
+                                                Com_C_RAmt = f.Com_C_RAmt,
+                                                Payment_B_Status = f.Payment_B_Status,
+                                                Payment_C_Status = f.Payment_C_Status,
+                                                Payment_MSFee_Status = f.Payment_MSFee_Status,
+                                                Booking_Date = f.Booking_Date,
+                                                Confirmation_Date = f.Confirmation_Date,
+                                                MSFee_Date = f.MSFee_Date,
+                                                Remarks = f.Remarks,
+                                                Flex_1 = f.Flex_1,
+                                                Flex_2 = f.Flex_2,
+                                                Created_By = f.Created_By,
+                                                Created_ON = f.Created_ON,
+                                                Updated_By = f.Updated_By,
+                                                Updated_On = f.Updated_On,
+                                                Authorize_By = f.Authorize_By,
+                                                Authorize_Date = f.Authorize_Date,
+                                                ProjectName = p.Name,
+                                                EmployeeName = r.StaffName
+                                            }).AsQueryable().ToList();
+                    return Ok(bookingConfirmtt);
+                }else
+                {
+                     var bookingConfirmtt = (from f in db.BookingConfirms
+                                            from p in db.PropertyDefs
+                                            where f.Property_ID == p.ID
+                                            from r in db.Registrations
+                                            where f.Book_Emp == r.ID.ToString()
 
-                                       }
-                                         ).AsQueryable().ToList();
-                return Ok(bookingConfirmtt);
+                                            //join p in db.PropertyDefs on f.Property_ID equals p.ID
+                                            //join r in db.Registrations on f.Book_Emp equals r.ID
+
+                                            select new
+                                            {
+                                                ID = f.ID,
+                                                Ref_num = f.Ref_num,
+                                                Authorize_Status = f.Authorize_Status,
+                                                Form_num = f.Form_num,
+                                                File_Status = f.File_Status,
+                                                Replaced_Form = f.Replaced_Form,
+                                                Applicant_name = f.Applicant_name,
+                                                CNIC = f.CNIC,
+                                                Form_Rec_Date = f.Form_Rec_Date,
+                                                Contact_Num = f.Contact_Num,
+                                                Property_ID = f.Property_ID,
+                                                Member_Num = f.Member_Num,
+                                                Book_Emp = f.Book_Emp,
+                                                Book_Dealer = f.Book_Dealer,
+                                                Booking_Percent = f.Booking_Percent,
+                                                Booking_amount = f.Booking_amount,
+                                                Confirm_Percent = f.Confirm_Percent,
+                                                Confirm_amount = f.Confirm_amount,
+                                                MS_amount = f.MS_amount,
+                                                Total_amount = f.Total_amount,
+                                                Tax_Percent = f.Tax_Percent,
+                                                Rebate_Percent = f.Rebate_Percent,
+                                                Emp_Rebate = f.Emp_Rebate,
+                                                Dealer_Rebate = f.Dealer_Rebate,
+                                                Emp_B_RAmt = f.Emp_B_RAmt,
+                                                Emp_C_RAmt = f.Emp_C_RAmt,
+                                                Dealer_B_RAmt = f.Dealer_B_RAmt,
+                                                Dealer_C_RAmt = f.Dealer_C_RAmt,
+                                                Com_B_RAmt = f.Com_B_RAmt,
+                                                Com_C_RAmt = f.Com_C_RAmt,
+                                                Payment_B_Status = f.Payment_B_Status,
+                                                Payment_C_Status = f.Payment_C_Status,
+                                                Payment_MSFee_Status = f.Payment_MSFee_Status,
+                                                Booking_Date = f.Booking_Date,
+                                                Confirmation_Date = f.Confirmation_Date,
+                                                MSFee_Date = f.MSFee_Date,
+                                                Remarks = f.Remarks,
+                                                Flex_1 = f.Flex_1,
+                                                Flex_2 = f.Flex_2,
+                                                Created_By = f.Created_By,
+                                                Created_ON = f.Created_ON,
+                                                Updated_By = f.Updated_By,
+                                                Updated_On = f.Updated_On,
+                                                Authorize_By = f.Authorize_By,
+                                                Authorize_Date = f.Authorize_Date,
+                                                ProjectName = p.Name,
+                                                EmployeeName = r.StaffName
+                                            }).AsQueryable().ToList();
+                    return Ok(bookingConfirmtt);
+                }
                 //bookingConfirm = db.BookingConfirms;
             }
             catch (Exception ex)
@@ -137,8 +208,11 @@ namespace FiveGApi.Controllers
         [ResponseType(typeof(BookingConfirm))]
         public IHttpActionResult GetBookingConf(int id)
         {
-            BookingConfirm BookingConfirm = db.BookingConfirms.Find(id);
-
+            BookingConfirm BookingConfirm = new BookingConfirm();
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                BookingConfirm = db.BookingConfirms.Where(x => x.ID == id && x.SecurityGroupId == userSecurityGroup.SecurityGroupId).FirstOrDefault();
+            else
+                BookingConfirm = db.BookingConfirms.Find(id);
             if (BookingConfirm == null)
             {
                 return NotFound();
@@ -191,7 +265,9 @@ namespace FiveGApi.Controllers
                 existBookingConfirm.Com_C_RAmt = (((property.Price / 100) * BookingConfirm.Rebate_Percent)) * confirmpercentage;
 
                 // db.Entry(BookingConfirm).State = EntityState.Modified;
+                existBookingConfirm.SecurityGroupId = userSecurityGroup.SecurityGroupId;
                 existBookingConfirm.Updated_On = DateTime.Now.ToString();
+                existBookingConfirm.Updated_By = userSecurityGroup.UserName;
 
                 try
                 {
@@ -307,7 +383,8 @@ namespace FiveGApi.Controllers
             BookingConfirm.Emp_C_RAmt = ((((property.Price / 100) * BookingConfirm.Emp_Rebate) ) * confirmpercentage);
             BookingConfirm.Dealer_C_RAmt = ((((property.Price / 100) * BookingConfirm.Dealer_Rebate) ) * confirmpercentage);
             BookingConfirm.Com_C_RAmt = (((property.Price / 100) * BookingConfirm.Rebate_Percent) ) * confirmpercentage;
-            BookingConfirm.Created_By = "Admin";
+            BookingConfirm.Created_By = userSecurityGroup.UserName;
+            BookingConfirm.SecurityGroupId = userSecurityGroup.SecurityGroupId;
             BookingConfirm.Created_ON = DateTime.Now;
             //BookingConfirm.Emp_B_RAmt = (((property.Price / 100) * employeRebate) / 2);
             //BookingConfirm.Emp_C_RAmt = (((property.Price / 100) * employeRebate) / 2);
@@ -342,7 +419,12 @@ namespace FiveGApi.Controllers
         [HttpGet]
         public IHttpActionResult AuthorizedBookingConfCount(int Propertyid)
         {
-            var BookingConfirm = db.BookingConfirms.Where(x=>x.Authorize_Status== "Authorized"&&x.Property_ID== Propertyid).Count();
+            var BookingConfirm = 0;
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                 BookingConfirm = db.BookingConfirms.Where(x=>x.Authorize_Status== "Authorized"&&x.Property_ID== Propertyid &&x.SecurityGroupId==userSecurityGroup.SecurityGroupId).Count();
+            else
+                BookingConfirm = db.BookingConfirms.Where(x => x.Authorize_Status == "Authorized" && x.Property_ID == Propertyid).Count();
+
             return Ok(BookingConfirm);
         }
         [Route("BookingConfByPropertyID")]
@@ -350,31 +432,48 @@ namespace FiveGApi.Controllers
         [HttpGet]
         public IHttpActionResult BookingConfByPropertyID(int Propertyid)
         {
-            var BookingConfirm = db.BookingConfirms.Where(x => x.Property_ID == Propertyid).ToList();
-            return Ok(BookingConfirm);
+            var BookingConfirm=new List<BookingConfirm>() ;
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                BookingConfirm = db.BookingConfirms.Where(x => x.Property_ID == Propertyid && x.SecurityGroupId == userSecurityGroup.SecurityGroupId).ToList();
+            else
+                BookingConfirm = db.BookingConfirms.Where(x => x.Property_ID == Propertyid).ToList();
+             return Ok(BookingConfirm);
         }
         [Route("UnAuthorizedBookingConfCount")]
         [ResponseType(typeof(BookingConfirm))]
         [HttpGet]
         public IHttpActionResult UnAuthorizedBookingConfCount(int Propertyid)
         {
-            var BookingConfirm = db.BookingConfirms.Where(x => x.Authorize_Status != "Authorized" && x.Property_ID == Propertyid).Count();
-            return Ok(BookingConfirm);
+            var BookingConfirm = 0;
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                BookingConfirm = db.BookingConfirms.Where(x => x.Authorize_Status != "Authorized" && x.Property_ID == Propertyid && x.SecurityGroupId == userSecurityGroup.SecurityGroupId).Count();
+            else
+                BookingConfirm= db.BookingConfirms.Where(x => x.Authorize_Status != "Authorized" && x.Property_ID == Propertyid).Count();
+            return Ok(BookingConfirm);           
         }
         [Route("BookingConfTotalPaymentsCount")]
         [ResponseType(typeof(BookingPayment))]
         [HttpGet]
         public IHttpActionResult BookingConfTotalPaymentsCount(int BookingID)
         {
-            var BookingConfirm = db.BookingPayments.Where(x=> x.ID == BookingID).Count();
+            var BookingConfirm = 0;
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                 BookingConfirm = db.BookingPayments.Where(x => x.ID == BookingID && x.SecurityGroupId==userSecurityGroup.SecurityGroupId).Count();
+            else
+                BookingConfirm = db.BookingPayments.Where(x => x.ID == BookingID).Count();
             return Ok(BookingConfirm);
+            
         }
         [Route("BookingPaymentsTotalAuthorizedPaymentsCount")]
         [ResponseType(typeof(BookingPayment))]
         [HttpGet]
         public IHttpActionResult BookingPaymentsTotalAuthorizedPaymentsCount(int BookingID)
         {
-            var BookingConfirm = db.BookingPayments.Where(x => x.Authorize_Status == "Authorized" && x.ID == BookingID).Count();
+             var BookingConfirm = 0;
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                BookingConfirm = db.BookingPayments.Where(x => x.Authorize_Status == "Authorized" && x.ID == BookingID && x.SecurityGroupId==userSecurityGroup.SecurityGroupId).Count();
+            else
+                 BookingConfirm = db.BookingPayments.Where(x => x.Authorize_Status == "Authorized" && x.ID == BookingID).Count();
             return Ok(BookingConfirm);
         }
         [Route("BookingPaymentsTotalUnAuthorizedPaymentsCount")]
@@ -382,38 +481,69 @@ namespace FiveGApi.Controllers
         [HttpGet]
         public IHttpActionResult BookingPaymentsTotalUnAuthorizedPaymentsCount(int BookingID)
         {
-            var BookingConfirm = db.BookingPayments.Where(x => x.Authorize_Status != "Authorized" && x.ID == BookingID).Count();
+            var BookingConfirm = 0;
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                BookingConfirm = db.BookingPayments.Where(x => x.Authorize_Status != "Authorized" && x.ID == BookingID && x.SecurityGroupId == userSecurityGroup.SecurityGroupId).Count();
+            else
+                BookingConfirm = db.BookingPayments.Where(x => x.Authorize_Status != "Authorized" && x.ID == BookingID).Count();
             return Ok(BookingConfirm);
+            //var BookingConfirm = db.BookingPayments.Where(x => x.Authorize_Status != "Authorized" && x.ID == BookingID).Count();
+            //return Ok(BookingConfirm);
         }
         [Route("BookingTotalPayments")]
         [ResponseType(typeof(BookingPayment))]
         [HttpGet]
         public IHttpActionResult BookingTotalPayments(int BookingID)
-        {            
-            var result = db.BookingPayments.Where(o => o.ID==BookingID)
-                   .Sum(g => g.Payment_amount);
-
+        {
+            decimal? result;          
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                          result = db.BookingPayments.Where(o => o.ID == BookingID && o.SecurityGroupId == userSecurityGroup.SecurityGroupId).Sum(g => g.Payment_amount);
+            else
+                           result = db.BookingPayments.Where(o => o.ID == BookingID).Sum(g => g.Payment_amount);
             return Ok(result);
+
+
+            //    = db.BookingPayments.Where(o => o.ID==BookingID).Sum(g => g.Payment_amount);
+
+            //return Ok(result);
         }
         [Route("BookingAuthorizedTotalPayments")]
         [ResponseType(typeof(BookingPayment))]
         [HttpGet]
         public IHttpActionResult BookingAuthorizedTotalPayments(int BookingID)
         {
-            var result = db.BookingPayments.Where(x => x.ID == BookingID && x.Authorize_Status == "Authorized")
+            decimal? result;
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                result = db.BookingPayments.Where(x => x.ID == BookingID && x.Authorize_Status == "Authorized" && x.SecurityGroupId==userSecurityGroup.SecurityGroupId)
                    .Sum(g => g.Payment_amount);
-
+            else
+                result = db.BookingPayments.Where(x => x.ID == BookingID && x.Authorize_Status == "Authorized")
+                   .Sum(g => g.Payment_amount);
             return Ok(result);
+
+            //var result = db.BookingPayments.Where(x => x.ID == BookingID && x.Authorize_Status == "Authorized")
+            //       .Sum(g => g.Payment_amount);
+
+            //return Ok(result);
         }
         [Route("BookingUnAuthorizedTotalPayments")]
         [ResponseType(typeof(BookingPayment))]
         [HttpGet]
         public IHttpActionResult BookingUnAuthorizedTotalPayments(int BookingID)
         {
-            var result = db.BookingPayments.Where(x => x.ID == BookingID && x.Authorize_Status != "Authorized")
+            decimal? result;
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                result = db.BookingPayments.Where(x => x.ID == BookingID && x.Authorize_Status != "Authorized" && x.SecurityGroupId==userSecurityGroup.SecurityGroupId)
                    .Sum(g => g.Payment_amount);
-
+            else
+                result = db.BookingPayments.Where(x => x.ID == BookingID && x.Authorize_Status != "Authorized")
+                   .Sum(g => g.Payment_amount);
             return Ok(result);
+
+            //var result = db.BookingPayments.Where(x => x.ID == BookingID && x.Authorize_Status != "Authorized")
+            //       .Sum(g => g.Payment_amount);
+
+            //return Ok(result);
         }
         protected override void Dispose(bool disposing)
         {
@@ -489,7 +619,14 @@ namespace FiveGApi.Controllers
         }
         private bool BookingConfExists(int id)
         {
-            return db.BookingConfirms.Count(e => e.ID == id) > 0;
+           
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                return db.BookingConfirms.Count(e => e.ID == id && e.SecurityGroupId==userSecurityGroup.SecurityGroupId) > 0;
+            else
+                return db.BookingConfirms.Count(e => e.ID == id) > 0;
+            
+
+            //return db.BookingConfirms.Count(e => e.ID == id) > 0;
         }
         [NonAction]
         public void insertBookingEntries(int bookingID,PropertyDef property,BookingConfirm bookingConfirm)
@@ -628,7 +765,7 @@ namespace FiveGApi.Controllers
                 cOA_Combinations.Location = codeParts[2];
                 cOA_Combinations.Account = codeParts[3];
                 cOA_Combinations.Party = codeParts[4];
-                cOA_Combinations.Created_By = "1";
+                cOA_Combinations.Created_By = userSecurityGroup.UserName;
                 cOA_Combinations.Created_ON = DateTime.Now;
                 db.COA_Combinations.Add(cOA_Combinations);
                 db.SaveChanges();

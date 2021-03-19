@@ -1,10 +1,12 @@
-﻿using FiveGApi.Models;
+﻿using FiveGApi.Helper;
+using FiveGApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Web.Http;
 using System.Web.Http.Description;
 
@@ -15,6 +17,14 @@ namespace FiveGApi.Controllers
     [Authorize]
     public class BankAccountsController : ApiController
     {
+        private string UserId;
+        private User userSecurityGroup=new User();
+        public BankAccountsController()
+        {
+            UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+            userSecurityGroup = db.Users.Where(x => x.UserName == UserId).AsQueryable().FirstOrDefault();
+
+        }
         private MIS_DBEntities1 db = new MIS_DBEntities1();
             // GET: api/Bank_Accounts
             [ResponseType(typeof(IQueryable<Bank_Accounts>))]
@@ -22,16 +32,23 @@ namespace FiveGApi.Controllers
             [HttpGet]
             public IQueryable<Bank_Accounts> GetALLBank_Accounts()
             {
-                return db.Bank_Accounts;
+                  if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                      return db.Bank_Accounts.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId).AsQueryable();
+                  else
+                      return db.Bank_Accounts;
             }
 
             // GET: api/Bank_Accounts/5
             [ResponseType(typeof(Bank_Accounts))]
             public IHttpActionResult GetBank_AccountsByID(int id)
             {
-                Bank_Accounts Bank_Accounts = db.Bank_Accounts.Find(id);
+            Bank_Accounts Bank_Accounts = new Bank_Accounts();
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                Bank_Accounts = db.Bank_Accounts.Where(x=>x.ID==id&& x.SecurityGroupId==userSecurityGroup.SecurityGroupId).FirstOrDefault();
+            else
+                Bank_Accounts = db.Bank_Accounts.Where(x => x.ID == id).FirstOrDefault();
 
-                if (Bank_Accounts == null)
+            if (Bank_Accounts == null)
                 {
                     return NotFound();
                 }
@@ -61,8 +78,9 @@ namespace FiveGApi.Controllers
                 existBank_Accounts.GL_Mapping = Bank_Accounts.GL_Mapping;
                 existBank_Accounts.Flex_1= Bank_Accounts.Flex_1;
                 existBank_Accounts.Flex_2 = Bank_Accounts.Flex_2;
-                existBank_Accounts.Updated_By= "Admin";
+                existBank_Accounts.Updated_By= userSecurityGroup.UserName;
                 existBank_Accounts.Updated_On = DateTime.Now;
+                existBank_Accounts.SecurityGroupId = userSecurityGroup.SecurityGroupId;
                 try
                 {
                     db.SaveChanges();
@@ -88,8 +106,9 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-            Bank_Accounts.Created_By = "Admin";
+            Bank_Accounts.Created_By = userSecurityGroup.UserName;
             Bank_Accounts.Created_On = DateTime.Now;
+            Bank_Accounts.SecurityGroupId = userSecurityGroup.SecurityGroupId;
             var bankDublicate = db.Bank_Accounts.Where(s => s.Acc_Name == Bank_Accounts.Acc_Name||s.Acc_Number==Bank_Accounts.Acc_Number).FirstOrDefault();
             if (bankDublicate != null)
             {

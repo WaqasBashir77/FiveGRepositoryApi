@@ -1,10 +1,12 @@
-﻿using FiveGApi.Models;
+﻿using FiveGApi.Helper;
+using FiveGApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Web.Http;
 using System.Web.Http.Description;
 
@@ -14,17 +16,24 @@ namespace FiveGApi.Controllers
     [RoutePrefix("api/DeliverySheet")]
     public class DeliverySheetController : ApiController
     {
-        
+        private MIS_DBEntities1 db = new MIS_DBEntities1();
+        private User userSecurityGroup = new User();
+        private string UserId;
+        public DeliverySheetController()
+        {
+            UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+            userSecurityGroup = db.Users.Where(x => x.UserName== UserId).AsQueryable().FirstOrDefault();
 
-       
-            private MIS_DBEntities1 db = new MIS_DBEntities1();
-
-            // GET: api/Delivery_Sheet
+        }
+        // GET: api/Delivery_Sheet
             [ResponseType(typeof(IQueryable<Delivery_Sheet>))]
             [Route("GetALLDelivery_Sheet")]
             [HttpGet]
             public IQueryable<Delivery_Sheet> GetALLDeliverySheet()
             {
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                return db.Delivery_Sheet.Where(x=>x.SecurityGroupId==userSecurityGroup.SecurityGroupId);
+            else
                 return db.Delivery_Sheet;
             }
 
@@ -32,9 +41,12 @@ namespace FiveGApi.Controllers
             [ResponseType(typeof(Delivery_Sheet))]
             public IHttpActionResult GetDelivery_SheetByID(int id)
             {
-                Delivery_Sheet Delivery_Sheet = db.Delivery_Sheet.Find(id);
-
-                if (Delivery_Sheet == null)
+                Delivery_Sheet Delivery_Sheet =new Delivery_Sheet()  ;
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                Delivery_Sheet= db.Delivery_Sheet.Where(x =>x.ID==id&& x.SecurityGroupId == userSecurityGroup.SecurityGroupId).FirstOrDefault();
+            else
+                Delivery_Sheet= db.Delivery_Sheet.Find(id);
+            if (Delivery_Sheet == null)
                 {
                     return NotFound();
                 }
@@ -65,8 +77,12 @@ namespace FiveGApi.Controllers
             {
                 return NotFound();
             }
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                return Ok(Delivery_Sheet.Where(x=>x.SecurityGroupId==userSecurityGroup.SecurityGroupId));
+            else
+                return Ok(Delivery_Sheet);
 
-            return Ok(Delivery_Sheet);
+
         }
         // PUT: api/Delivery_Sheet/5
         [ResponseType(typeof(void))]
@@ -88,7 +104,8 @@ namespace FiveGApi.Controllers
             existDelivery_Sheet.Delivery_Status = Delivery_Sheet.Delivery_Status;
             existDelivery_Sheet.Payment_ID = Delivery_Sheet.Payment_ID;
             existDelivery_Sheet.Remarks = Delivery_Sheet.Remarks;
-            existDelivery_Sheet.Updated_By = "1";
+            existDelivery_Sheet.Updated_By = userSecurityGroup.UserName;
+            existDelivery_Sheet.SecurityGroupId = userSecurityGroup.SecurityGroupId;
             existDelivery_Sheet.Updated_On = DateTime.Now ;
             try
                 {
@@ -118,8 +135,9 @@ namespace FiveGApi.Controllers
                 }
                 Delivery_Sheet.Flex_1 = "1";
                 Delivery_Sheet.Flex_2 = "1";
-                Delivery_Sheet.Created_By = "1";
-                Delivery_Sheet.Created_On = DateTime.Now;
+                Delivery_Sheet.Created_By = userSecurityGroup.UserName;
+                Delivery_Sheet.SecurityGroupId = userSecurityGroup.SecurityGroupId;
+            Delivery_Sheet.Created_On = DateTime.Now;
                 db.Delivery_Sheet.Add(Delivery_Sheet);
                 db.SaveChanges();
 
@@ -153,7 +171,10 @@ namespace FiveGApi.Controllers
 
             private bool Delivery_SheetExists(int id)
             {
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                return db.Delivery_Sheet.Count(e => e.ID == id&& e.SecurityGroupId==userSecurityGroup.SecurityGroupId) > 0;
+            else
                 return db.Delivery_Sheet.Count(e => e.ID == id) > 0;
-            }
+        }
         }
     }

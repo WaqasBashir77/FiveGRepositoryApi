@@ -1,10 +1,12 @@
-﻿using FiveGApi.Models;
+﻿using FiveGApi.Helper;
+using FiveGApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Web.Http;
 using System.Web.Http.Description;
 
@@ -17,21 +19,36 @@ namespace FiveGApi.Controllers
     public class PropertyDefController : ApiController
     {
         private MIS_DBEntities1 db = new MIS_DBEntities1();
+        private string UserId;
+        private User userSecurityGroup = new User();
 
+        public PropertyDefController()
+        {
+            UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+            userSecurityGroup = db.Users.Where(x => x.UserName == UserId).AsQueryable().FirstOrDefault();
+
+        }
         // GET: api/PropertyDef
         [ResponseType(typeof(IQueryable<PropertyDef>))]
         [Route("GetALLPropertyDef")]
         [HttpGet]
         public IQueryable<PropertyDef> GetALLPropertyDef()
         {
-            return db.PropertyDefs;
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                return db.PropertyDefs.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId);
+            else
+                return db.PropertyDefs;
         }
 
         // GET: api/PropertyDef/5
         [ResponseType(typeof(PropertyDef))]
         public IHttpActionResult GetPropertyDefByID(int id)
         {
-            PropertyDef PropertyDef = db.PropertyDefs.Find(id);
+            PropertyDef PropertyDef = new PropertyDef();
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                PropertyDef= db.PropertyDefs.Where(x =>x.ID==id&& x.SecurityGroupId == userSecurityGroup.SecurityGroupId).FirstOrDefault();
+            else 
+                PropertyDef= db.PropertyDefs.Find(id);
 
             if (PropertyDef == null)
             {
@@ -71,7 +88,8 @@ namespace FiveGApi.Controllers
             existPropertyDef.BookingCommision = PropertyDef.BookingCommision;            
             existPropertyDef.Flex_1 = "1";
             existPropertyDef.Flex_2 ="1";           
-            existPropertyDef.Updated_By = PropertyDef.Updated_By;
+            existPropertyDef.Updated_By = userSecurityGroup.UserName;
+            existPropertyDef.SecurityGroupId = userSecurityGroup.SecurityGroupId;
             existPropertyDef.Updated_On = DateTime.Now.ToString();
             try
             {
@@ -101,7 +119,8 @@ namespace FiveGApi.Controllers
             }
             PropertyDef.Flex_1 = "1";
             PropertyDef.Flex_2 = "1";
-            PropertyDef.Created_By = "1";
+            PropertyDef.Created_By = userSecurityGroup.UserName;
+            PropertyDef.SecurityGroupId = userSecurityGroup.SecurityGroupId;
             PropertyDef.Created_ON = DateTime.Now;
             db.PropertyDefs.Add(PropertyDef);
             db.SaveChanges();

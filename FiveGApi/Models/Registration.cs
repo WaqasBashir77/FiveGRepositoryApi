@@ -40,6 +40,7 @@ namespace FiveGApi.Models
         public Nullable<System.DateTime> Created_ON { get; set; }
         public string Updated_By { get; set; }
         public string Updated_On { get; set; }
+        public Nullable<int> SecurityGroupId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Rebate_Details> Rebate_Details { get; set; }

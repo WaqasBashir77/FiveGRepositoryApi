@@ -1,4 +1,5 @@
 ﻿using FiveGApi.DTOModels;
+using FiveGApi.Helper;
 using FiveGApi.Models;
 using Newtonsoft.Json;
 using System;
@@ -7,6 +8,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -17,13 +19,25 @@ namespace FiveGApi.Controllers
     [RoutePrefix("api/BookingPayment")]
     public class BookingPaymentController : ApiController
     {
-        private MIS_DBEntities1 db = new MIS_DBEntities1();
 
+        private MIS_DBEntities1 db = new MIS_DBEntities1();
+        private string UserId;
+        private User userSecurityGroup = new User();
+
+        public BookingPaymentController()
+        {
+            UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+            userSecurityGroup = db.Users.Where(x => x.UserName == UserId).AsQueryable().FirstOrDefault();
+
+        }
         // GET: api/Booking_Payments
         [ResponseType(typeof(IQueryable<BookingPayment>))]
         public IQueryable<BookingPayment> GetBookingPaymentsAll()//[FromUri] PagingParameterModel pagingparametermodel)
         {
-            return db.BookingPayments;
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                return db.BookingPayments.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId);
+            else
+                return db.BookingPayments;
             //// Get's No of Rows Count   
             //int count = source.Count();
 
@@ -70,20 +84,30 @@ namespace FiveGApi.Controllers
         [ResponseType(typeof(BookingPayment))]
         public IHttpActionResult GetBooking_Payments(int id)
         {
-            BookingPayment Booking_Payments = db.BookingPayments.Find(id);
+            BookingPayment bookingPayment = new BookingPayment();
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                bookingPayment = db.BookingPayments.Where(x=>x.ID==id&&x.SecurityGroupId==userSecurityGroup.SecurityGroupId).FirstOrDefault();
+            else
+                bookingPayment = db.BookingPayments.Find(id);
 
-            if (Booking_Payments == null)
+            if (bookingPayment == null)
             {
                 return NotFound();
             }
 
-            return Ok(Booking_Payments);
+            return Ok(bookingPayment);
         }
         [Route("GetBooking_PaymentsByConfirmationID")]
         [ResponseType(typeof(BookingPayment))]
         public IHttpActionResult GetBooking_PaymentsByConfirmationID(int id)
         {
-            var Booking_Payments = db.BookingPayments.Where(x=>x.ID==id).ToList();
+            List<BookingPayment> Booking_Payments = new List<BookingPayment>();
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                Booking_Payments = db.BookingPayments.Where(x => x.ID == id && x.SecurityGroupId == userSecurityGroup.SecurityGroupId).ToList();
+            else
+                Booking_Payments=db.BookingPayments.Where(x => x.ID == id).ToList();
+
+            //db.BookingPayments.Where(x=>x.ID==id).ToList();
 
             if (Booking_Payments == null)
             {
@@ -96,7 +120,12 @@ namespace FiveGApi.Controllers
         [ResponseType(typeof(BookingPayment))]
         public IHttpActionResult GetBooking_PaymentsByConfirmationIDandInsType(int id,string instype)
         {
-            var Booking_Payments = db.BookingPayments.Where(x => x.ID == id && x.Ins_Type== instype).ToList();
+            List<BookingPayment> Booking_Payments = new List<BookingPayment>();
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                Booking_Payments = db.BookingPayments.Where(x => x.ID == id && x.Ins_Type == instype && x.SecurityGroupId == userSecurityGroup.SecurityGroupId).ToList();
+            else
+                Booking_Payments = db.BookingPayments.Where(x => x.ID == id && x.Ins_Type == instype).ToList();
+
 
             if (Booking_Payments == null)
             {
@@ -104,6 +133,9 @@ namespace FiveGApi.Controllers
             }
 
             return Ok(Booking_Payments);
+            //var Booking_Payments = db.BookingPayments.Where(x => x.ID == id && x.Ins_Type== instype).ToList();
+
+           
         }
         [Route("AuthorizeBooking_Payments")]
         [ResponseType(typeof(void))]
@@ -150,7 +182,9 @@ namespace FiveGApi.Controllers
                     gL_Headers.Source =existBooking_Payments.Ins_Type;
                     gL_Headers.Trans_Status = "UnPosted";
                     gL_Headers.Source_Tran_Id = existBooking_Payments.ID;
+                    gL_Headers.SecurityGroupId = userSecurityGroup.SecurityGroupId;
                     db.GL_Headers.Add(gL_Headers);
+
                     db.SaveChanges();
                 }
                 int glhv = 0;
@@ -217,6 +251,7 @@ namespace FiveGApi.Controllers
                 existBooking_Payments.Authorize_Status = Booking_Payments.Authorize_Status;
                 existBooking_Payments.Authorize_By = Booking_Payments.Authorize_By;
                 existBooking_Payments.Authorize_Date = Booking_Payments.Authorize_Date;
+                existBooking_Payments.SecurityGroupId = userSecurityGroup.SecurityGroupId;
                 try
                 {
                     db.SaveChanges();
@@ -348,6 +383,7 @@ namespace FiveGApi.Controllers
                 return BadRequest(ModelState);
             }
             Booking_Payments.Authorize_Status = "No";
+            Booking_Payments.SecurityGroupId =userSecurityGroup.SecurityGroupId;
             db.BookingPayments.Add(Booking_Payments);
             db.SaveChanges();
             var existBookingConfirm = db.BookingConfirms.Where(x => x.ID == Booking_Payments.ID).FirstOrDefault();
@@ -495,7 +531,7 @@ namespace FiveGApi.Controllers
                 cOA_Combinations.Location = codeParts[2];
                 cOA_Combinations.Account = codeParts[3];
                 cOA_Combinations.Party = codeParts[4];
-                cOA_Combinations.Created_By = "1";
+                cOA_Combinations.Created_By = userSecurityGroup.UserName;
                 cOA_Combinations.Created_ON = DateTime.Now;
                 db.COA_Combinations.Add(cOA_Combinations);
                 db.SaveChanges();

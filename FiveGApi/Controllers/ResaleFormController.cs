@@ -12,6 +12,8 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using System.Data.Entity;
 using FiveGApi.DTOModels;
+using System.Security.Claims;
+using FiveGApi.Helper;
 
 namespace FiveGApi.Controllers
 {
@@ -20,20 +22,35 @@ namespace FiveGApi.Controllers
     public class ResaleFormController : ApiController
     {
         private MIS_DBEntities1 db = new MIS_DBEntities1();
+        private string UserId;
+        private User userSecurityGroup = new User();
 
+        public ResaleFormController()
+        {
+            UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+            userSecurityGroup = db.Users.Where(x => x.UserName == UserId).AsQueryable().FirstOrDefault();
+
+        }
         // GET: api/Resale_Form
 
         [ResponseType(typeof(IQueryable<Resale_Form>))]
         public IQueryable<Resale_Form> GetAllResale_Form(int RDID)
         {
-            return db.Resale_Form;
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                return db.Resale_Form.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId);
+            else
+                return db.Resale_Form;
         }
         [Route("GetResale_FormByID")]
         // GET: api/Resale_Form/5
         [ResponseType(typeof(Resale_Form))]
         public IHttpActionResult GetResale_FormByID(int id)
         {
-            Resale_Form Resale_Form = db.Resale_Form.Find(id);
+            Resale_Form Resale_Form = new Resale_Form();
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                Resale_Form= db.Resale_Form.Where(x =>x.ID==id&& x.SecurityGroupId == userSecurityGroup.SecurityGroupId).FirstOrDefault();
+            else
+                Resale_Form= db.Resale_Form.Find(id);
             if (Resale_Form == null)
             {
                 return NotFound();
@@ -54,7 +71,9 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest();
             }
-
+            Resale_Form.SecurityGroupId = userSecurityGroup.SecurityGroupId;
+            Resale_Form.Updated_By = userSecurityGroup.UserName;
+            Resale_Form.Updated_On = DateTime.Now;
             db.Entry(Resale_Form).State = EntityState.Modified;
 
             try
@@ -84,7 +103,8 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-            Resale_Form.Created_By = "Admin";
+            Resale_Form.SecurityGroupId = userSecurityGroup.SecurityGroupId;
+            Resale_Form.Created_By = userSecurityGroup.UserName;
             Resale_Form.Created_On = DateTime.Now;
             db.Resale_Form.Add(Resale_Form);
             db.SaveChanges();
@@ -112,7 +132,9 @@ namespace FiveGApi.Controllers
         [ResponseType(typeof(FiveGApi.Models.Resale_Form))]
         public IHttpActionResult ResaleByStaffNameOrPartyCode(string staffName, string partyCode)
         {
-            var result = db.Resale_Form.Where(x => x.StaffName.Contains(staffName) || x.EmployeeCode.Contains(partyCode)).ToList();
+            var result = new List<Resale_Form>();
+           
+                result= db.Resale_Form.Where(x => x.StaffName.Contains(staffName) || x.EmployeeCode.Contains(partyCode)).ToList();
             if (result == null)
             {
 
@@ -120,7 +142,10 @@ namespace FiveGApi.Controllers
             }
             else
             {
-                return Ok(result);
+                if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                    return Ok(result.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId));
+                else
+                    return Ok(result);
             }
         }
 

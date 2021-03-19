@@ -18,12 +18,14 @@ namespace FiveGApi.Controllers
 
     public class Lookup_ListController : ApiController
     {
-        //private string UserId;
-        //public Lookup_ListController()
-        //{
-        //    UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+        private string UserId;
+        private User userSecurityGroup = new User();
+        public Lookup_ListController()
+        {
+            UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+            userSecurityGroup = db.Users.Where(x => x.UserName == UserId).AsQueryable().FirstOrDefault();
 
-        //}
+        }
         private MIS_DBEntities1 db = new MIS_DBEntities1();
         // GET: api/Lookup_List
         public IQueryable<Lookup_List> GetLookup_ListALL()
@@ -77,7 +79,7 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest();
             }
-
+            
             db.Entry(lookup_List).State = EntityState.Modified;
 
             try
@@ -107,7 +109,8 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+            lookup_List.Created_By = userSecurityGroup.UserName;
+            lookup_List.Created_On = DateTime.Now;
             db.Lookup_List.Add(lookup_List);
             db.SaveChanges();
 

@@ -6,9 +6,11 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Web.Http;
 using System.Web.Http.Description;
 using FiveGApi.DTOModels;
+using FiveGApi.Helper;
 using FiveGApi.Models;
 
 namespace FiveGApi.Controllers
@@ -18,31 +20,35 @@ namespace FiveGApi.Controllers
     public class GlHeaderController : ApiController
     {
         private MIS_DBEntities1 db = new MIS_DBEntities1();
+        private string UserId;
+        private User userSecurityGroup = new User();
+        public GlHeaderController()
+        {
+            UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+            userSecurityGroup = db.Users.Where(x => x.UserName == UserId).AsQueryable().FirstOrDefault();
 
+        }
         // GET: api/GL_Headers
         public IQueryable<GL_Headers> GetAllGL_Headers()
         {
             IQueryable<GL_Headers> GL_Headers;
 
-            try
-            {
-                GL_Headers = db.GL_Headers;
-
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-            return GL_Headers;
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                return db.GL_Headers.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId);
+            else
+                return db.GL_Headers;
+           // return GL_Headers;
         }
 
         // GET: api/GL_Headers/5
         [ResponseType(typeof(GL_Headers))]
         public IHttpActionResult GetGL_HeadersByID(int id)
         {
-            GL_Headers gL_Headers = db.GL_Headers.Find(id);
-
+            GL_Headers gL_Headers;
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                gL_Headers=db.GL_Headers.Where(x =>x.H_ID==id && x.SecurityGroupId == userSecurityGroup.SecurityGroupId).FirstOrDefault();
+            else
+                gL_Headers= db.GL_Headers.Find(id);
             if (gL_Headers == null)
             {
                 return NotFound();
@@ -80,8 +86,9 @@ namespace FiveGApi.Controllers
             existgL_Headers.Dep_Project =  gL_Headers.Dep_Project;
             existgL_Headers.Dep_Location = gL_Headers.Dep_Location;
             existgL_Headers.Trans_Status = gL_Headers.Trans_Status;
+            existgL_Headers.SecurityGroupId = gL_Headers.SecurityGroupId;
             ///changes on 15-03-2021-------
-            if(gL_Headers.Trans_Status=="Posted")
+            if (gL_Headers.Trans_Status=="Posted")
             {
                 existgL_Headers.Posted_date = DateTime.Now.ToString();
 
@@ -91,7 +98,7 @@ namespace FiveGApi.Controllers
             existgL_Headers.Trans_Status=   gL_Headers.Trans_Status;
             existgL_Headers.Flex_1=        gL_Headers.Flex_1;
             existgL_Headers.Flex_2 =       gL_Headers.Flex_2; 
-            existgL_Headers.Updated_By=    "Admin";
+            existgL_Headers.Updated_By=    userSecurityGroup.UserName;
             existgL_Headers.Updated_On = DateTime.Now;
             gL_LinesUpdate(existgL_Headers.H_ID, gL_Headers.GL_Lines);
 
@@ -207,7 +214,8 @@ namespace FiveGApi.Controllers
                     }
                 }                
                 gL_Headers.GL_Lines = gL_Headers.GL_Lines.Select(x => { x.Created_By = "Admin";x.Created_On = DateTime.Now; return x; }).ToList() ;
-                gL_Headers.Created_By = "Admin";
+                gL_Headers.Created_By = userSecurityGroup.UserName;
+                gL_Headers.SecurityGroupId = userSecurityGroup.SecurityGroupId;
                 gL_Headers.Created_On = DateTime.Now;
                 db.GL_Headers.Add(gL_Headers);
                 db.SaveChanges();
@@ -450,18 +458,19 @@ namespace FiveGApi.Controllers
             }
             if(status=="Posted")
             {
-                return gL_Headers.OrderBy(x => x.Trans_Status == "Posted").ToList();
+                gL_Headers= gL_Headers.OrderBy(x => x.Trans_Status == "Posted").ToList();
             }
             else if (status == "UnPosted")
             {
-                return gL_Headers.OrderBy(x => x.Trans_Status == "UnPosted").ToList();
+                gL_Headers= gL_Headers.OrderBy(x => x.Trans_Status == "UnPosted").ToList();
 
             }
+            
+                if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                return gL_Headers.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId).ToList();
             else
-            {
                 return gL_Headers;
-            }
-            return null;
+           // return null;
             
         }
     }

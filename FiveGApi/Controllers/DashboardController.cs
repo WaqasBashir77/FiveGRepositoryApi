@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Web.Http;
 
 namespace FiveGApi.Controllers
@@ -15,7 +16,12 @@ namespace FiveGApi.Controllers
     {
         //private FiveG_DBEntities db = new FiveG_DBEntities();
         private MIS_DBEntities1 db = new MIS_DBEntities1();
+        private string UserId;
+        public DashboardController()
+        {
+            UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
 
+        }
         [HttpPost]
         [Route("getmenu")]
         public IHttpActionResult GetMenu(GeneralDTO general)

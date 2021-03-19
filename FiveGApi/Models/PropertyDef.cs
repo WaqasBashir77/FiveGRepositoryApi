@@ -46,5 +46,6 @@ namespace FiveGApi.Models
         public string Location { get; set; }
         public string PayableToSociet { get; set; }
         public string ReciveableToSociety { get; set; }
+        public Nullable<int> SecurityGroupId { get; set; }
     }
 }

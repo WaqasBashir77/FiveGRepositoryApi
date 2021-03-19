@@ -6,6 +6,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Web.Http;
 using System.Web.Http.Description;
 using FiveGApi.DTOModels;
@@ -17,6 +18,12 @@ namespace FiveGApi.Controllers
     [Authorize]
     public class PaymentMilestonesController : ApiController
     {
+        private string UserId;
+        public PaymentMilestonesController()
+        {
+            UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+
+        }
         //private FiveG_DBEntities db = new FiveG_DBEntities();
         private MIS_DBEntities1 db = new MIS_DBEntities1();
         // GET: api/PaymentMilestones

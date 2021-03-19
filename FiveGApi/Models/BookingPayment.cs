@@ -29,5 +29,6 @@ namespace FiveGApi.Models
         public string Authorize_By { get; set; }
         public Nullable<System.DateTime> Authorize_Date { get; set; }
         public Nullable<int> Payment_Account { get; set; }
+        public Nullable<int> SecurityGroupId { get; set; }
     }
 }

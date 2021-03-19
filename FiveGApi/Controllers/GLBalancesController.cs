@@ -6,6 +6,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Web.Http;
 using System.Web.Http.Description;
 
@@ -16,6 +17,12 @@ namespace FiveGApi.Controllers
     [RoutePrefix("api/GLBalances")]
     public class GLBalancesController : ApiController
     {
+        private string UserId;
+        public GLBalancesController()
+        {
+            UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+
+        }
         private MIS_DBEntities1 db = new MIS_DBEntities1();
         // GET: api/GL_Balances
         [ResponseType(typeof(IQueryable<GL_Balances>))]

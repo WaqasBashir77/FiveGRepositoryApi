@@ -12,6 +12,8 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using System.Data.Entity;
 using FiveGApi.DTOModels;
+using System.Security.Claims;
+using FiveGApi.Helper;
 
 namespace FiveGApi.Controllers
 {
@@ -19,6 +21,14 @@ namespace FiveGApi.Controllers
     [RoutePrefix("api/PropertyTransfer")]
     public class PropertyTransferController : ApiController
     {
+        private User userSecurityGroup = new User();
+        private string UserId;
+        public PropertyTransferController()
+        {
+            UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+            userSecurityGroup = db.Users.Where(x => x.UserName == UserId).AsQueryable().FirstOrDefault();
+
+        }
         private MIS_DBEntities1 db = new MIS_DBEntities1();
 
         // GET: api/PropertyTransfer
@@ -26,14 +36,21 @@ namespace FiveGApi.Controllers
         [ResponseType(typeof(IQueryable<PropertyTransfer>))]
         public IQueryable<PropertyTransfer> GetAllPropertyTransfer(int RDID)
         {
-            return db.PropertyTransfers;
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                return db.PropertyTransfers.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId);
+            else
+                return db.PropertyTransfers;
         }
         [Route("GetPropertyTransferByID")]
         // GET: api/PropertyTransfer/5
         [ResponseType(typeof(PropertyTransfer))]
         public IHttpActionResult GetPropertyTransferByID(int id)
         {
-            PropertyTransfer PropertyTransfer = db.PropertyTransfers.Find(id);
+            PropertyTransfer PropertyTransfer = new PropertyTransfer();
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                PropertyTransfer= db.PropertyTransfers.Where(x =>x.ID==id&& x.SecurityGroupId == userSecurityGroup.SecurityGroupId).FirstOrDefault();
+            else
+                PropertyTransfer=  db.PropertyTransfers.Find(id);
             if (PropertyTransfer == null)
             {
                 return NotFound();
@@ -54,7 +71,9 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest();
             }
-
+            PropertyTransfer.Updated_By = userSecurityGroup.UserName;
+            PropertyTransfer.Updated_On  = DateTime.Now;
+            PropertyTransfer.SecurityGroupId  = userSecurityGroup.SecurityGroupId;
             db.Entry(PropertyTransfer).State = EntityState.Modified;
 
             try
@@ -110,8 +129,9 @@ namespace FiveGApi.Controllers
             propertyTransferDM.TransferStatus = PropertyTransfer.TransferStatus;
             propertyTransferDM.Flex_1 = PropertyTransfer.Flex_1;
             propertyTransferDM.Flex_2 = PropertyTransfer.Flex_2;
-            propertyTransferDM.Created_By = "Admin";
+            propertyTransferDM.Created_By = userSecurityGroup.UserName;
             propertyTransferDM.Created_On = DateTime.Now;
+            propertyTransferDM.SecurityGroupId = userSecurityGroup.SecurityGroupId;
             if (PropertyTransfer.Buyer_Picture != "")
             {
                 string[] image = PropertyTransfer.Buyer_Picture.Split(',');
@@ -152,7 +172,11 @@ namespace FiveGApi.Controllers
         {
             var projectID = db.Projects.Where(x => x.projectCode == projectCode).Select(x=>x.Id).AsQueryable().FirstOrDefault();
             var unitId = db.ProjectDetails.Where(x => x.unitNumber == unitCode).Select(x => x.Id).AsQueryable().FirstOrDefault();
-            var result = db.PropertySales.Where(x =>x.Project_ID==projectID && x.Unit_ID==unitId && x.Buyer_Name==buyerName && x.Nominee_Name==nomineeName&&x.CNIC==BuyerCnic).AsQueryable().FirstOrDefault();
+            var result = new PropertySale(); 
+            if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                result=db.PropertySales.Where(x =>x.Project_ID==projectID && x.Unit_ID==unitId && x.Buyer_Name==buyerName && x.Nominee_Name==nomineeName&&x.CNIC==BuyerCnic&&x.SecurityGroupId==userSecurityGroup.SecurityGroupId).AsQueryable().FirstOrDefault();
+            else
+                result=db.PropertySales.Where(x =>x.Project_ID==projectID && x.Unit_ID==unitId && x.Buyer_Name==buyerName && x.Nominee_Name==nomineeName&&x.CNIC==BuyerCnic).AsQueryable().FirstOrDefault();
             if (result == null)
             {
 

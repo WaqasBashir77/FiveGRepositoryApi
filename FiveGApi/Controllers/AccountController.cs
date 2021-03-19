@@ -16,7 +16,7 @@ using System.Linq;
 
 namespace FiveGApi.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class AccountController : ApiController
     {
         //private FiveG_DBEntities db = new FiveG_DBEntities();
