@@ -13,7 +13,6 @@ using System.Web.Http.Description;
 namespace FiveGApi.Controllers
 {
     [Authorize]
-
     [RoutePrefix("api/GLBalances")]
     public class GLBalancesController : ApiController
     {

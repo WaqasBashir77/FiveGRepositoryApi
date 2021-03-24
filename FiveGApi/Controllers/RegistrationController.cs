@@ -14,7 +14,6 @@ using System.Web.Http.Description;
 namespace FiveGApi.Controllers
 {
     [Authorize]
-
     [RoutePrefix("api/Registration")]
     public class RegistrationController : ApiController
     {
@@ -101,13 +100,18 @@ namespace FiveGApi.Controllers
         [ResponseType(typeof(bool))]
         public IHttpActionResult GetPartyCodeValidation(string partyCode)
         {
-            var Reg = db.Registrations.AsQueryable().Where(x => x.Code == partyCode).FirstOrDefault();
+            var Reg = db.Registrations.Where(x => x.Code == partyCode).FirstOrDefault();
+            var Seg = db.COA_Segments.Where(x => x.Segment_Value == partyCode && x.Type == "Party").FirstOrDefault();
             if (Reg != null)
             {
                 var error = new { message = "Party must be unique" }; //<-- anonymous object
                 return this.Content(HttpStatusCode.Conflict, error);
             }
-
+            if (Seg != null)
+            {
+                var error = new { message = "Party Code allready exist in Chart Of Account" }; //<-- anonymous object
+                return this.Content(HttpStatusCode.Conflict, error);
+            }
             return Ok(partyCode);
         }
         [Route("GetRegistrationByType")]
@@ -148,7 +152,7 @@ namespace FiveGApi.Controllers
                     Registration = db.Registrations.Where(x => x.Type == type && x.SecurityGroupId == userSecurityGroup.SecurityGroupId).Select(item => new ResultViewModel
                     {
                         ID = item.ID,
-                        Name = item.StaffName,
+                        Name = item.Name,
                         Code = item.Code,
                         isSelected = false
 
@@ -157,7 +161,7 @@ namespace FiveGApi.Controllers
                     Registration = db.Registrations.Where(x => x.Type == type).Select(item => new ResultViewModel
                     {
                         ID = item.ID,
-                        Name = item.StaffName,
+                        Name = item.Name,
                         Code = item.Code,
                         isSelected = false
 

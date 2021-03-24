@@ -9,7 +9,7 @@ namespace FiveGApi.DTOModels
     {
         public int Payment_ID { get; set; }     
         public string paymentMethod { get; set; }
-        public int recievedAmount { get; set; }
+        public decimal recievedAmount { get; set; }
         public string InstrumentBank { get; set; }
         public string InstrumentNumber { get; set; }
         public string InsturmentBankBranch { get; set; }

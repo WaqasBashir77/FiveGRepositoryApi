@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FiveGApi.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -30,6 +31,7 @@ namespace FiveGApi.DTOModels
         public string LocationSeg { get; set; }
         public string ProjectSeg { get; set; }
         public string PlotAres { get; set; }
+        public virtual ICollection<ProjectDetail> ProjectDetails { get; set; }
 
     }
 }

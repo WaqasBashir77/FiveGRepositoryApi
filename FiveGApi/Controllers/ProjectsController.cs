@@ -69,12 +69,12 @@ namespace FiveGApi.Controllers
             try
             {
                 if (!SecurityGroupDTO.CheckSuperAdmin(groupId))
-                    projects = db.Projects.Where(x => x.SecurityGroupId == groupId).Select(x=> new ProjectListDTO
+                    projects = db.Projects.Where(x => x.SecurityGroupId == groupId).Select(x => new ProjectListDTO
                     {
-                        Id=x.Id,
+                        Id = x.Id,
                         projectCode = x.projectCode,
-                        location=x.location,
-                        projectName=x.projectName,
+                        location = x.location,
+                        projectName = x.projectName,
                         projectType = x.projectType,
                         totalArea = x.totalArea,
                         address = x.address,
@@ -93,8 +93,8 @@ namespace FiveGApi.Controllers
                         LocationSeg = x.location,
                         Company = x.Company,
                         ProjectSeg = x.ProjectSeg,
-                        PlotAres = x.PlotAres
-                       
+                        PlotAres = x.PlotAres,
+                       ProjectDetails = db.ProjectDetails.Where(y => y.projectId == x.Id).ToList()
                     }).OrderByDescending(x=>x.Created_By).AsQueryable();
                 else
                     projects = db.Projects.Select(x => new ProjectListDTO
@@ -121,7 +121,8 @@ namespace FiveGApi.Controllers
                         LocationSeg = x.location,
                         Company = x.Company,
                         ProjectSeg = x.ProjectSeg,
-                        PlotAres = x.PlotAres
+                        PlotAres = x.PlotAres,
+                       ProjectDetails = db.ProjectDetails.Where(y => y.projectId == x.Id).ToList()
 
                     }).OrderByDescending(x => x.Created_By).AsQueryable();
             }
@@ -336,14 +337,7 @@ namespace FiveGApi.Controllers
                     booking_EntriesforROS.Debit = (decimal)projectDetail.unitPrice;
                     booking_EntriesforROS.Credit = 0;
                     db.Project_Entries.Add(booking_EntriesforROS);
-                    db.SaveChanges();
-                    ///-------------------To Unearned revenue------------------------------///////////            
-                    coa_Segment = db.COA_Segments.Where(x => x.Name == "Unearned revenue").FirstOrDefault();
-                    booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".0000").ToString();
-                    booking_EntriesforROS.Credit = (decimal)projectDetail.unitPrice;
-                    booking_EntriesforROS.Debit = 0;
-                    db.Project_Entries.Add(booking_EntriesforROS);
-                    db.SaveChanges();
+                    db.SaveChanges();                    
                     ///-------------------Commission to staff------------------------------///////////
                     coa_Segment = db.COA_Segments.Where(x => x.Name == "Commission to staff").FirstOrDefault();
                     booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".0000").ToString();

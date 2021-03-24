@@ -440,6 +440,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
+    <Content Include="Attachments\Logo\5glogo.png" />
+    <Content Include="Attachments\Logo\WhatsApp Image 2021-03-08 at 3.00.15 PM.jpeg" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />

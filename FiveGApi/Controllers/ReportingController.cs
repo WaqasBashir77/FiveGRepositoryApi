@@ -15,7 +15,7 @@ using System.Web.UI.WebControls;
 
 namespace FiveGApi.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [RoutePrefix("api/Reporting")]
     public class ReportingController : ApiController
     {

@@ -67,6 +67,7 @@ namespace FiveGApi.Controllers
         }
 
         // PUT: api/Lookup_List/5
+        [HttpPut]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutLookup_List(int id, Lookup_List lookup_List)
         {
@@ -79,14 +80,21 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest();
             }
-            
-            db.Entry(lookup_List).State = EntityState.Modified;
-
+            var Db_Object_LookUpList = db.Lookup_List.Where(x => x.REF_ID == id).FirstOrDefault();
+            if(Db_Object_LookUpList==null)
+            {
+                return NotFound();
+            }
+            db.Lookup_Values.RemoveRange(Db_Object_LookUpList.Lookup_Values);
             try
             {
+                 
+                Db_Object_LookUpList.Lookup_Name = lookup_List.Lookup_Name;
+                Db_Object_LookUpList.Lookup_Type = lookup_List.Lookup_Type;
+                Db_Object_LookUpList.Lookup_Values = lookup_List.Lookup_Values;  
                 db.SaveChanges();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
                 if (!Lookup_ListExists(id))
                 {
@@ -97,7 +105,6 @@ namespace FiveGApi.Controllers
                     throw;
                 }
             }
-
             return StatusCode(HttpStatusCode.NoContent);
         }
 

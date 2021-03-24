@@ -228,7 +228,7 @@ namespace FiveGApi.Controllers
             }
         }
             // PUT: api/Booking_Payments/5
-            [Route("PutBooking_Payments")]
+        [Route("PutBooking_Payments")]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutBooking_Payments(int id, BookingPayment Booking_Payments)
         {
