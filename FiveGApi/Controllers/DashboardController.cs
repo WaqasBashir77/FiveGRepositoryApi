@@ -31,17 +31,17 @@ namespace FiveGApi.Controllers
             if (getUserRole != null)
             {
                 var pra = (from f in db.Forms
-                          join p in db.PrivilegesToRoles on f.Id equals p.FormId
-                          where p.RoleId == getUserRole.RoleId
-                          && f.IsMenuItem==true
-                          select f).OrderBy(x=>x.OrderBy).GroupBy(x=>x.ModuleId).AsQueryable().ToList();
+                           join p in db.PrivilegesToRoles on f.Id equals p.FormId
+                           where p.RoleId == getUserRole.RoleId
+                           && f.IsMenuItem == true
+                           select f).OrderBy(x => x.OrderBy).GroupBy(x => x.ModuleId).AsQueryable().ToList();
                 if (pra.Count() < 0)
                 {
                     return NotFound();
                 }
                 else
                 {
-                    var modulesList=db.Modules.AsQueryable().ToList();
+                    var modulesList = db.Modules.AsQueryable().ToList();
                     foreach (var item in pra)
                     {
                         foreach (var Formvalues in item)
@@ -66,15 +66,15 @@ namespace FiveGApi.Controllers
             }
             return Ok(forms);
         }
-        
+
         [Route("GetBookingData")]
         public IHttpActionResult GetBookingData()
         {
             var BookingConfirms = db.BookingConfirms.ToList();
-           var totalBooking= BookingConfirms.Count();
-           var totalAuthorizedBooking = BookingConfirms.Where(x=>x.Authorize_Status== "Authorized").AsQueryable().Count();
-           var totalPendingBooking = BookingConfirms.Where(x=>x.Authorize_Status== "Pending").AsQueryable().Count();
-           var totalDraftBooking = BookingConfirms.Where(x=>x.Authorize_Status== "Draft").AsQueryable().Count();
+            var totalBooking = BookingConfirms.Count();
+            var totalAuthorizedBooking = BookingConfirms.Where(x => x.Authorize_Status == "Authorized").AsQueryable().Count();
+            var totalPendingBooking = BookingConfirms.Where(x => x.Authorize_Status == "Pending").AsQueryable().Count();
+            var totalDraftBooking = BookingConfirms.Where(x => x.Authorize_Status == "Draft").AsQueryable().Count();
             decimal totalAuthorizedP = (decimal)(((decimal)totalAuthorizedBooking / (decimal)totalBooking) * 100);
             decimal totalPendingP = (decimal)((decimal)totalPendingBooking / (decimal)totalBooking) * 100;
             decimal totalDraftP = (decimal)((decimal)totalDraftBooking / (decimal)totalBooking) * 100;
@@ -99,14 +99,14 @@ namespace FiveGApi.Controllers
         {
             var pra = (from f in db.PropertyDefs
                        join p in db.BookingConfirms on f.ID equals p.Property_ID
-                       select p).GroupBy(x=>x.Property_ID).AsQueryable().DefaultIfEmpty().ToList();
+                       select p).GroupBy(x => x.Property_ID).AsQueryable().DefaultIfEmpty().ToList();
             if (pra == null)
             {
                 return NotFound();
             }
             else
             {
-                var PropertyDefs= db.PropertyDefs.ToList();
+                var PropertyDefs = db.PropertyDefs.ToList();
                 List<PropertyDashboardModel> propertyDashboardModels = new List<PropertyDashboardModel>();
                 var totalBookingconfirmSale = db.BookingConfirms.Sum(x => x.Total_amount);
                 foreach (var item in pra)
@@ -142,9 +142,9 @@ namespace FiveGApi.Controllers
                     CommisionReciveableDashboard propertyDashboardModel = new CommisionReciveableDashboard();
                     var propertyID = Convert.ToInt32(item.Select(x => x.Property_ID).FirstOrDefault());
                     propertyDashboardModel.SocietyName = PropertyDefs.Where(x => x.ID == propertyID).Select(x => x.Name).FirstOrDefault();
-                   var listBookingPaid= item.Where(x => x.Payment_B_Status == "paid").ToList();
-                    propertyDashboardModel.PropertyBooking = item.Where(x=>x.Payment_B_Status=="Paid").Count();
-                    propertyDashboardModel.BookingCommision = item.Where(x=>x.Payment_B_Status=="paid").Sum(x=>x.Booking_amount);
+                    var listBookingPaid = item.Where(x => x.Payment_B_Status == "paid").ToList();
+                    propertyDashboardModel.PropertyBooking = item.Where(x => x.Payment_B_Status == "Paid").Count();
+                    propertyDashboardModel.BookingCommision = item.Where(x => x.Payment_B_Status == "paid").Sum(x => x.Booking_amount);
                     propertyDashboardModel.PropertyConfimr = item.Where(x => x.Payment_C_Status == "paid").Count();
                     propertyDashboardModel.ConfimrCommision = item.Where(x => x.Payment_C_Status == "paid").Sum(x => x.Confirm_amount);
                     propertyDashboardModel.TotalCommision = propertyDashboardModel.ConfimrCommision + propertyDashboardModel.PropertyConfimr;
@@ -152,6 +152,216 @@ namespace FiveGApi.Controllers
                 }
                 return Ok(commisionReciveableDashboards);
             }
+        }
+        [Route("GetProjectData")]
+        public IHttpActionResult GetProjectData()
+        {
+            var ProjectsConfirms = db.Projects.Select(x => new ProjectListDTO
+            {
+                Id = x.Id,
+                projectCode = x.projectCode,
+                location = x.location,
+                projectName = x.projectName,
+                projectType = x.projectType,
+                totalArea = x.totalArea,
+                address = x.address,
+                city = x.city,
+                status = x.status,
+                description = x.description,
+                unit = x.unit,
+                noc = x.noc,
+                projectCurrency = x.projectCurrency,
+                PaymentPlanStatus = x.PaymentPlanStatus,
+                SecurityGroupId = x.SecurityGroupId,
+                Created_By = x.Created_By,
+                Created_Date = x.Created_Date,
+                Update_By = x.Update_By,
+                Update_Date = x.Update_Date,
+                LocationSeg = x.location,
+                Company = x.Company,
+                ProjectSeg = x.ProjectSeg,
+                PlotAres = x.PlotAres,
+                ProjectDetails = db.ProjectDetails.Where(y => y.projectId == x.Id).ToList()
+            }).AsQueryable().ToList();
+            var totalProjects = ProjectsConfirms.Count();
+            var totalUnderconstructionProjects = ProjectsConfirms.Where(x => x.status == "Underconstruction").AsQueryable().Count();
+            var totalDevelopProjects = ProjectsConfirms.Where(x => x.status == "Develop").AsQueryable().Count();
+            var ProjectSale = db.PropertySales.Select(x => new PropertySaleDashboardDto
+            {
+                AuthorizeStatus = x.AuthorizeStatus,
+                Sale_Status = x.Sale_Status,
+            }).ToList();
+            var TotalProjectSale = ProjectSale.Count();
+            var TotalProjectAuthorizedSale = ProjectSale.Where(x => x.AuthorizeStatus == true).AsQueryable().Count();
+            var TotalProjectUnAuthorizedSale = ProjectSale.Where(x => x.AuthorizeStatus == false).AsQueryable().Count();
+            var TotalProjectProjectsBySaleStatus = ProjectSale.Where(x => x.Sale_Status == "Amendment").AsQueryable().Count();
+            var TotalProjectNewSale = ProjectSale.Where(x => x.Sale_Status == "New").AsQueryable().Count();
+            var TotalProjectCancelSale = ProjectSale.Where(x => x.Sale_Status == "Cancel").AsQueryable().Count();
+            var SaleInstallments = db.SaleInstallments.ToList();
+            var TotalPaidProjectSaleBookings = SaleInstallments.Where(x => x.ins_milestone == "Booking" && x.ins_payment_status == "Paid").AsQueryable().Count();
+            var TotalPaidProjectSaleConfirmations = SaleInstallments.Where(x => x.ins_milestone == "Confirmation" && x.ins_payment_status == "Paid").AsQueryable().Count();
+            var TotalPaidProjectSalePossessions = SaleInstallments.Where(x => x.ins_milestone == "Possession" && x.ins_payment_status == "Paid").AsQueryable().Count();
+
+            var Total_Amendment_ProjectSale = ProjectSale.Where(x => x.Sale_Status == "Amendment").AsQueryable().Count();
+            var Total_New_ProjectSale = ProjectSale.Where(x => x.Sale_Status == "New").AsQueryable().Count();
+            var Total_Cancel_ProjectSalePayments = ProjectSale.Where(x => x.Sale_Status == "Cancel").AsQueryable().Count();
+
+
+            var Total_Amendment_Amount_ProjectSale = (from ps in db.PropertySales
+                                                      join si in db.SaleInstallments on ps.Booking_ID equals si.Booking_ID
+                                                      where si.ins_payment_status == "Paid" && ps.Sale_Status == "Amendment"
+                                                      select si).AsQueryable().Sum(x => x.ins_amount);
+            var Total_Cancel_Amount_ProjectSale = (from ps in db.PropertySales
+                                                   join si in db.SaleInstallments on ps.Booking_ID equals si.Booking_ID
+                                                   where si.ins_payment_status == "Paid" && ps.Sale_Status == "Cancel"
+                                                   select si).AsQueryable().Sum(x => x.ins_amount);
+            var Total_New_Amount_ProjectSale = (from ps in db.PropertySales
+                                                join si in db.SaleInstallments on ps.Booking_ID equals si.Booking_ID
+                                                where si.ins_payment_status == "Paid" && ps.Sale_Status == "New"
+                                                select si).AsQueryable().Sum(x => x.ins_amount);
+
+            //var TotalPaidProjectSalePossessions = SaleInstallments.Where(x => x.ins_milestone == "Possession" && x.ins_payment_status == "Paid").AsQueryable().Count();
+
+            var list = new List<Tuple<string, string>>();
+            list.Add(new Tuple<string, string>("totalProjects", totalProjects.ToString()));
+            list.Add(new Tuple<string, string>("totalUnderconstructionProjects", totalUnderconstructionProjects.ToString()));
+            list.Add(new Tuple<string, string>("totalDevelopProjects", totalDevelopProjects.ToString()));
+            list.Add(new Tuple<string, string>("TotalProjectSale", TotalProjectSale.ToString()));
+            list.Add(new Tuple<string, string>("TotalProjectAuthorizedSale", TotalProjectAuthorizedSale.ToString()));
+            list.Add(new Tuple<string, string>("TotalProjectUnAuthorizedSale", TotalProjectUnAuthorizedSale.ToString()));
+            list.Add(new Tuple<string, string>("TotalProjectProjectsBySaleStatus", TotalProjectProjectsBySaleStatus.ToString()));
+            list.Add(new Tuple<string, string>("TotalProjectNewSale", TotalProjectNewSale.ToString()));
+            list.Add(new Tuple<string, string>("TotalProjectCancelSale", TotalProjectCancelSale.ToString()));
+            list.Add(new Tuple<string, string>("TotalPaidProjectSaleBookings", TotalPaidProjectSaleBookings.ToString()));
+            list.Add(new Tuple<string, string>("TotalPaidProjectSaleConfirmations", TotalPaidProjectSaleConfirmations.ToString()));
+            list.Add(new Tuple<string, string>("TotalPaidProjectSalePossessions", TotalPaidProjectSalePossessions.ToString()));
+            list.Add(new Tuple<string, string>("Total_Amendment_ProjectSale", Total_Amendment_Amount_ProjectSale.ToString()));
+            list.Add(new Tuple<string, string>("Total_New_ProjectSale", Total_New_ProjectSale.ToString()));
+            list.Add(new Tuple<string, string>("Total_Cancel_ProjectSalePayments", Total_Cancel_ProjectSalePayments.ToString()));
+            list.Add(new Tuple<string, string>("Total_Amendment_Amount_ProjectSale", Total_Amendment_Amount_ProjectSale.ToString()));
+            list.Add(new Tuple<string, string>("Total_Cancel_Amount_ProjectSale", Total_Cancel_Amount_ProjectSale.ToString()));
+            list.Add(new Tuple<string, string>("Total_New_Amount_ProjectSale", Total_New_Amount_ProjectSale.ToString()));
+            return Ok(list);
+        }
+        [Route("GetCommisionData")]
+        public IHttpActionResult GetCommisionData()
+        {
+            var EmployeeList = db.Registrations.Where(x => x.Type == "Staff").ToList();
+            var DealerList = db.Registrations.Where(x => x.Type == "Dealer").ToList();
+            var EmployeeCommisionList = new List<EmployeeCommisionList>();
+            var DealerCommisionList = new List<EmployeeCommisionList>();
+
+            if (EmployeeList != null)
+            {
+                foreach (var eList in EmployeeList)
+                {
+                    EmployeeCommisionList employeeCommisionList = new EmployeeCommisionList();
+                    employeeCommisionList.Name = eList.StaffName;
+                    employeeCommisionList.totalBookingCommisson = db.BookingConfirms.Where(x => x.Book_Emp == eList.ID.ToString()).AsQueryable().Sum(x => x.Emp_B_RAmt);
+                    employeeCommisionList.totalConfirmCommisson = db.BookingConfirms.Where(x => x.Book_Emp == eList.ID.ToString()).AsQueryable().Sum(x => x.Emp_C_RAmt);
+                    employeeCommisionList.totalCommisson = employeeCommisionList.totalBookingCommisson + employeeCommisionList.totalConfirmCommisson;
+                    EmployeeCommisionList.Add(employeeCommisionList);
+                }
+            }
+            if (DealerList != null)
+            {
+                foreach (var eList in DealerList)
+                {
+                    EmployeeCommisionList dCommisionList = new EmployeeCommisionList();
+                    dCommisionList.Name = eList.Name;
+                    dCommisionList.totalBookingCommisson = db.BookingConfirms.Where(x => x.Book_Dealer == eList.ID.ToString()).AsQueryable().Sum(x => x.Dealer_B_RAmt);
+                    dCommisionList.totalConfirmCommisson = db.BookingConfirms.Where(x => x.Book_Dealer == eList.ID.ToString()).AsQueryable().Sum(x => x.Dealer_C_RAmt);
+                    dCommisionList.totalCommisson = dCommisionList.totalBookingCommisson + dCommisionList.totalConfirmCommisson;
+                    DealerCommisionList.Add(dCommisionList);
+                }
+            }
+            var list = new List<Tuple<string, List<EmployeeCommisionList>>>();
+            list.Add(new Tuple<string, List<EmployeeCommisionList>>("EmployeeCommisionList", EmployeeCommisionList));
+            list.Add(new Tuple<string, List<EmployeeCommisionList>>("DealerCommisionList", DealerCommisionList));
+            return Ok(list);
+        }
+        [Route("GetSlipsAndDeliverySheetData")]
+        public IHttpActionResult GetSlipsAndDeliverySheetData()
+        {
+            //-------------- Total Pending Slips
+            var PendingSlipTotal = db.Society_Slip.Where(x => x.Letter_Status == "Pending").AsQueryable().Count();
+            var BookingPendingSlipTotal = db.Society_Slip.Where(x => x.Letter_Status == "Pending" && x.Slip_Type == "Booking").AsQueryable().Count();
+            var ConfirmationPendingSlipTotal = db.Society_Slip.Where(x => x.Letter_Status == "Pending" && x.Slip_Type == "Confirmation").AsQueryable().Count();
+            var BookingSlipTotal = db.Society_Slip.Where(x => x.Slip_Type == "Booking").AsQueryable().Count();
+            var ConfirmationSlipTotal = db.Society_Slip.Where(x => x.Slip_Type == "Confirmation").AsQueryable().Count();
+            var BookingPercentageSlips = (decimal)((BookingPendingSlipTotal / BookingSlipTotal) * 100);
+            var ConfirmationPercentageSlips = (decimal)((ConfirmationPendingSlipTotal / ConfirmationSlipTotal) * 100);
+            //--------------End Total Pending Slips
+           
+            //-------------- Total Pending Slips
+            var PendingDeliverySheetTotal = db.Delivery_Sheet.Where(x => x.Delivery_Status == "UnDelivered").AsQueryable().Count();
+            var UnDeliveredBookingDeliverySheetTotal = db.Delivery_Sheet.Where(x => x.Delivery_Status == "UnDelivered" && x.Delivery_Type == "Booking").AsQueryable().Count();
+            var ConfirmationUnDeleiveredDeliverySheetTotal = db.Delivery_Sheet.Where(x => x.Delivery_Status == "UnDelivered" && x.Delivery_Type == "Confirmation").AsQueryable().Count();
+            var BookingDeliverySheetTotal = db.Delivery_Sheet.Where(x => x.Delivery_Type == "Booking").AsQueryable().Count();
+            var ConfirmationDeliverySheetTotal = db.Delivery_Sheet.Where(x => x.Delivery_Type == "Confirmation").AsQueryable().Count();
+            var BookingPercentageDeliverySheet = (decimal)((UnDeliveredBookingDeliverySheetTotal / BookingDeliverySheetTotal) * 100);
+            var ConfirmationPercentageDeliverySheet = (decimal)((ConfirmationUnDeleiveredDeliverySheetTotal / ConfirmationDeliverySheetTotal) * 100);
+            //--------------End Total Pending Slips
+
+           
+            var list = new List<Tuple<string, string>>();
+            list.Add(new Tuple<string, string>("PendingSlipTotal", PendingSlipTotal.ToString()));
+            list.Add(new Tuple<string, string>("BookingPendingSlipTotal", BookingPendingSlipTotal.ToString()));
+            list.Add(new Tuple<string, string>("ConfirmationPendingSlipTotal", ConfirmationPendingSlipTotal.ToString()));
+            list.Add(new Tuple<string, string>("BookingSlipTotal", BookingSlipTotal.ToString()));
+            list.Add(new Tuple<string, string>("ConfirmationSlipTotal", ConfirmationSlipTotal.ToString()));
+            list.Add(new Tuple<string, string>("BookingPercentageSlips", BookingPercentageSlips.ToString()));
+            list.Add(new Tuple<string, string>("ConfirmationPercentageSlips", ConfirmationPercentageSlips.ToString()));
+            
+            list.Add(new Tuple<string, string>("PendingDeliverySheetTotal", PendingDeliverySheetTotal.ToString()));
+            list.Add(new Tuple<string, string>("UnDeliveredBookingDeliverySheetTotal", UnDeliveredBookingDeliverySheetTotal.ToString()));
+            list.Add(new Tuple<string, string>("ConfirmationUnDeleiveredDeliverySheetTotal", ConfirmationUnDeleiveredDeliverySheetTotal.ToString()));
+            list.Add(new Tuple<string, string>("BookingDeliverySheetTotal", BookingDeliverySheetTotal.ToString()));
+            list.Add(new Tuple<string, string>("ConfirmationDeliverySheetTotal", ConfirmationDeliverySheetTotal.ToString()));
+            list.Add(new Tuple<string, string>("BookingPercentageDeliverySheet", BookingPercentageDeliverySheet.ToString()));
+            list.Add(new Tuple<string, string>("ConfirmationPercentageDeliverySheet", ConfirmationPercentageDeliverySheet.ToString()));
+           return Ok(list);
+        }
+        [Route("GetSlipsAndDeliverySheetListData")]
+        public IHttpActionResult GetSlipsAndDeliverySheetListData()
+        { //--------------Society Slips-------
+            var SocietySlips = (from pd in db.PropertyDefs
+                                join bc in db.BookingConfirms on pd.ID equals bc.Property_ID
+                                join ss in db.Society_Slip on bc.Ref_num equals ss.Ref_num
+                                select new SocietySlipDTODashboard
+                                {
+                                    Name = pd.Name,
+                                    totalSlips = db.Society_Slip.Where(s => s.Ref_num == ss.Ref_num).Count(),
+                                    totalPendingSlips = db.Society_Slip.Where(s => s.Ref_num == ss.Ref_num && s.Letter_Status == "Pending").Count(),
+                                    totalDeliveredSlips = db.Society_Slip.Where(s => s.Ref_num == ss.Ref_num && s.Letter_Status == "Received").Count(),
+                                    totalBookingSlips = db.Society_Slip.Where(s => s.Ref_num == ss.Ref_num && s.Slip_Type == "Booking").Count(),
+                                    totalConfirmSlips = db.Society_Slip.Where(s => s.Ref_num == ss.Ref_num && s.Slip_Type == "Confirmation").Count(),
+                                    totalBookingSlipsAmount = db.Society_Slip.Where(s => s.Ref_num == ss.Ref_num && s.Slip_Type == "Booking").Sum(s => s.Receipt_Amount),
+                                    totalConfirmationSlipsAmount = db.Society_Slip.Where(s => s.Ref_num == ss.Ref_num && s.Slip_Type == "Confirmation").Sum(s => s.Receipt_Amount),
+
+                                }).Distinct().AsQueryable().DefaultIfEmpty().ToList();
+            //--------------End Society Slips-------
+            //--------------Society Slips-------
+            var DleiveySheets = (from pd in db.PropertyDefs
+                                 join bc in db.BookingConfirms on pd.ID equals bc.Property_ID
+                                 join ss in db.Delivery_Sheet on bc.Ref_num equals ss.Ref_num
+                                 select new SocietySlipDTODashboard
+                                 {
+                                     Name = pd.Name,
+                                     totalSlips = db.Delivery_Sheet.Where(s => s.Ref_num == ss.Ref_num).Count(),
+                                     totalPendingSlips = db.Delivery_Sheet.Where(s => s.Ref_num == ss.Ref_num && s.Delivery_Status == "UnDelivered").Count(),
+                                     totalDeliveredSlips = db.Delivery_Sheet.Where(s => s.Ref_num == ss.Ref_num && s.Delivery_Status == "Delivered").Count(),
+                                     totalBookingSlips = db.Delivery_Sheet.Where(s => s.Ref_num == ss.Ref_num && s.Delivery_Type == "Booking").Count(),
+                                     totalConfirmSlips = db.Delivery_Sheet.Where(s => s.Ref_num == ss.Ref_num && s.Delivery_Type == "Confirmation").Count(),
+                                     totalBookingSlipsAmount = db.Delivery_Sheet.Where(s => s.Ref_num == ss.Ref_num && s.Delivery_Type == "Booking").Sum(s => s.Total_Amount),
+                                     totalConfirmationSlipsAmount = db.Delivery_Sheet.Where(s => s.Ref_num == ss.Ref_num && s.Delivery_Type == "Confirmation").Sum(s => s.Total_Amount),
+
+                                 }).Distinct().AsQueryable().DefaultIfEmpty().ToList();
+            //--------------End Society Slips-------
+            var list = new List<Tuple<string, List<SocietySlipDTODashboard>>>();
+            list.Add(new Tuple<string, List<SocietySlipDTODashboard>>("SocietySlips", SocietySlips));
+            list.Add(new Tuple<string, List<SocietySlipDTODashboard>>("DleiveySheets", DleiveySheets));
+            return Ok(list);
         }
     }
 }

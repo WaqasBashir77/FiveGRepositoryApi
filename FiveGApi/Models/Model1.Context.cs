@@ -66,5 +66,6 @@ namespace FiveGApi.Models
         public virtual DbSet<Attachment> Attachments { get; set; }
         public virtual DbSet<Attatchment_Relation> Attatchment_Relation { get; set; }
         public virtual DbSet<CashreceivedForm> CashreceivedForms { get; set; }
+        public virtual DbSet<SMS_Template> SMS_Template { get; set; }
     }
 }

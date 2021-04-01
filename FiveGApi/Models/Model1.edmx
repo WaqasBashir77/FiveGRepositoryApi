@@ -656,6 +656,7 @@
           <Property Name="differentiableAmount" Type="decimal" Precision="18" Scale="3" />
           <Property Name="Nominee_Picture" Type="image" />
           <Property Name="AuthorizeStatus" Type="bit" />
+          <Property Name="Nominee_Father_Name" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="PropertyTransfer">
           <Key>
@@ -693,6 +694,7 @@
           <Property Name="Updated_By" Type="varchar" MaxLength="250" />
           <Property Name="Updated_On" Type="datetime" />
           <Property Name="SecurityGroupId" Type="int" />
+          <Property Name="Transfer_Fee" Type="decimal" Precision="18" Scale="3" />
         </EntityType>
         <EntityType Name="Prospect">
           <Key>
@@ -842,6 +844,23 @@
           <Property Name="Created_By" Type="int" />
           <Property Name="Update_Date" Type="date" />
           <Property Name="Update_By" Type="int" />
+        </EntityType>
+        <EntityType Name="SMS_Template">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Template_Code" Type="varchar" MaxLength="250" />
+          <Property Name="Tempalte_Name" Type="varchar" MaxLength="250" />
+          <Property Name="Template_Text" Type="varchar(max)" />
+          <Property Name="Template_Date" Type="datetime" />
+          <Property Name="SecurityGroupId" Type="int" />
+          <Property Name="Flex_1" Type="varchar" MaxLength="350" />
+          <Property Name="Flex_2" Type="varchar" MaxLength="350" />
+          <Property Name="Created_On" Type="datetime" />
+          <Property Name="Created_By" Type="varchar" MaxLength="250" />
+          <Property Name="Updated_On" Type="datetime" />
+          <Property Name="Updated_By" Type="varchar" MaxLength="350" />
         </EntityType>
         <EntityType Name="Society_Slip">
           <Key>
@@ -1037,6 +1056,7 @@
           <EntitySet Name="RolesToUser" EntityType="Self.RolesToUser" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SaleInstallments" EntityType="Self.SaleInstallments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SecurityGroup" EntityType="Self.SecurityGroup" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SMS_Template" EntityType="Self.SMS_Template" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Society_Slip" EntityType="Self.Society_Slip" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TempTableForInstallment" EntityType="Self.TempTableForInstallment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
@@ -1400,6 +1420,7 @@
           <Property Name="differentiableAmount" Type="Decimal" Precision="18" Scale="3" />
           <Property Name="Nominee_Picture" Type="Binary" MaxLength="Max" FixedLength="false" />
           <Property Name="AuthorizeStatus" Type="Boolean" />
+          <Property Name="Nominee_Father_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Prospect">
           <Key>
@@ -1646,6 +1667,7 @@
             <End Role="Lookup_Values" EntitySet="Lookup_Values" />
           </AssociationSet>
           <EntitySet Name="CashreceivedForms" EntityType="MIS_DBModel.CashreceivedForm" />
+          <EntitySet Name="SMS_Template" EntityType="MIS_DBModel.SMS_Template" />
         </EntityContainer>
         <EntityType Name="User">
           <Key>
@@ -2089,6 +2111,7 @@
           <Property Name="Updated_By" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="Updated_On" Type="DateTime" Precision="3" />
           <Property Name="SecurityGroupId" Type="Int32" />
+          <Property Name="Transfer_Fee" Type="Decimal" Precision="18" Scale="3" />
         </EntityType>
         <EntityType Name="Attachment">
           <Key>
@@ -2160,6 +2183,23 @@
           <Property Name="Atrib_4" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Atrib_5" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Atrib_6" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SMS_Template">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Template_Code" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Tempalte_Name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Template_Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Template_Date" Type="DateTime" Precision="3" />
+          <Property Name="Flex_1" Type="String" MaxLength="350" FixedLength="false" Unicode="false" />
+          <Property Name="Flex_2" Type="String" MaxLength="350" FixedLength="false" Unicode="false" />
+          <Property Name="Created_On" Type="DateTime" Precision="3" />
+          <Property Name="Created_By" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Updated_On" Type="DateTime" Precision="3" />
+          <Property Name="Updated_By" Type="String" MaxLength="350" FixedLength="false" Unicode="false" />
+          <Property Name="SecurityGroupId" Type="Int32" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -2462,6 +2502,7 @@
           <EntitySetMapping Name="PropertySales">
             <EntityTypeMapping TypeName="MIS_DBModel.PropertySale">
               <MappingFragment StoreEntitySet="PropertySale">
+                <ScalarProperty Name="Nominee_Father_Name" ColumnName="Nominee_Father_Name" />
                 <ScalarProperty Name="AuthorizeStatus" ColumnName="AuthorizeStatus" />
                 <ScalarProperty Name="Nominee_Picture" ColumnName="Nominee_Picture" />
                 <ScalarProperty Name="differentiableAmount" ColumnName="differentiableAmount" />
@@ -3008,6 +3049,7 @@
           <EntitySetMapping Name="PropertyTransfers">
             <EntityTypeMapping TypeName="MIS_DBModel.PropertyTransfer">
               <MappingFragment StoreEntitySet="PropertyTransfer">
+                <ScalarProperty Name="Transfer_Fee" ColumnName="Transfer_Fee" />
                 <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
                 <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
@@ -3101,6 +3143,24 @@
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Recived_Date" ColumnName="Recived_Date" />
                 <ScalarProperty Name="Receipt_Number" ColumnName="Receipt_Number" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SMS_Template">
+            <EntityTypeMapping TypeName="MIS_DBModel.SMS_Template">
+              <MappingFragment StoreEntitySet="SMS_Template">
+                <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
+                <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
+                <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="Created_On" ColumnName="Created_On" />
+                <ScalarProperty Name="Flex_2" ColumnName="Flex_2" />
+                <ScalarProperty Name="Flex_1" ColumnName="Flex_1" />
+                <ScalarProperty Name="Template_Date" ColumnName="Template_Date" />
+                <ScalarProperty Name="Template_Text" ColumnName="Template_Text" />
+                <ScalarProperty Name="Tempalte_Name" ColumnName="Tempalte_Name" />
+                <ScalarProperty Name="Template_Code" ColumnName="Template_Code" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

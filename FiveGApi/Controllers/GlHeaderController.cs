@@ -234,7 +234,7 @@ namespace FiveGApi.Controllers
 
                         }
                         glBalance.Effect_Trans_ID = gllines.L_ID.ToString();
-                        glBalance.Updated_By = "Admin";
+                        glBalance.Updated_By = userSecurityGroup.UserName; ;
                         glBalance.Updated_On = DateTime.Now;
                         db.SaveChanges();
                     }
@@ -254,7 +254,7 @@ namespace FiveGApi.Controllers
                         gL_Balances.C_CODE = gllines.C_CODE;
                         gL_Balances.Bal_Date = DateTime.Now;
                         gL_Balances.Effect_Trans_ID = gllines.L_ID.ToString();
-                        gL_Balances.Created_By ="Admin";
+                        gL_Balances.Created_By = userSecurityGroup.UserName; ;
                         gL_Balances.Created_On =DateTime.Now;
                         db.GL_Balances.Add(gL_Balances);
                         db.SaveChanges();
@@ -458,11 +458,11 @@ namespace FiveGApi.Controllers
             }
             if(status=="Posted")
             {
-                gL_Headers= gL_Headers.OrderBy(x => x.Trans_Status == "Posted").ToList();
+                gL_Headers= gL_Headers.Where(x => x.Trans_Status == "Posted").ToList();
             }
             else if (status == "UnPosted")
             {
-                gL_Headers= gL_Headers.OrderBy(x => x.Trans_Status == "UnPosted").ToList();
+                gL_Headers= gL_Headers.Where(x => x.Trans_Status == "UnPosted").ToList();
 
             }
             

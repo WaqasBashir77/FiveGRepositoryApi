@@ -125,16 +125,14 @@ namespace FiveGApi.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-            Society_Slip.SecurityGroupId = userSecurityGroup.SecurityGroupId;
-            Society_Slip.Created_By = userSecurityGroup.UserName;
-            Society_Slip.Created_ON = DateTime.Now;
-            Society_Slip.Flex_1 = "1";
-            Society_Slip.Flex_2 = "1";
-
-
-            db.Society_Slip.Add(Society_Slip);
+              //  var findingMsNumber = db.Society_Slip.Where(x => x.MS_number == Society_Slip.MS_number).FirstOrDefault();
+                Society_Slip.SecurityGroupId = userSecurityGroup.SecurityGroupId;
+                Society_Slip.Created_By = userSecurityGroup.UserName;
+                Society_Slip.Created_ON = DateTime.Now;
+                Society_Slip.Flex_1 = "1";
+                Society_Slip.Flex_2 = "1";
+                db.Society_Slip.Add(Society_Slip);
                 db.SaveChanges();
-
                 return CreatedAtRoute("DefaultApi", new { id = Society_Slip.ID }, Society_Slip);
             }
 

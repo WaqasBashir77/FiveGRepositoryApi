@@ -115,6 +115,18 @@ namespace FiveGApi.Controllers
             propertyTransferDM.BuyerMobile_1 = PropertyTransfer.BuyerMobile_1;
             propertyTransferDM.BuyerMobile_2 = PropertyTransfer.BuyerMobile_2;
             propertyTransferDM.BuyerMember_Reg_No = PropertyTransfer.BuyerMember_Reg_No;
+            if (PropertyTransfer.Buyer_Picture != "")
+            {
+                string[] image = PropertyTransfer.Buyer_Picture.Split(',');
+                propertyTransferDM.Buyer_Picture = Convert.FromBase64String(image[1]);
+
+            }
+            if (PropertyTransfer.Seller_Picture != "")
+            {
+                string[] image = PropertyTransfer.Seller_Picture.Split(',');
+                propertyTransferDM.Seller_Picture = Convert.FromBase64String(image[1]);
+
+            }
             //propertyTransferDM.Buyer_Picture = PropertyTransfer.Buyer_Picture;
             propertyTransferDM.Seller_Name = PropertyTransfer.Seller_Name;
             propertyTransferDM.Seller_FatherName = PropertyTransfer.Seller_FatherName;
@@ -132,18 +144,8 @@ namespace FiveGApi.Controllers
             propertyTransferDM.Created_By = userSecurityGroup.UserName;
             propertyTransferDM.Created_On = DateTime.Now;
             propertyTransferDM.SecurityGroupId = userSecurityGroup.SecurityGroupId;
-            if (PropertyTransfer.Buyer_Picture != "")
-            {
-                string[] image = PropertyTransfer.Buyer_Picture.Split(',');
-                propertyTransferDM.Buyer_Picture = Convert.FromBase64String(image[1]);
+            propertyTransferDM.Transfer_Fee = PropertyTransfer.Transfer_Fee;
 
-            }
-            if (PropertyTransfer.Seller_Picture != "")
-            {
-                string[] image = PropertyTransfer.Seller_Picture.Split(',');
-                propertyTransferDM.Seller_Picture = Convert.FromBase64String(image[1]);
-
-            }
             db.PropertyTransfers.Add(propertyTransferDM);
             db.SaveChanges();
 

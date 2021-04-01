@@ -236,12 +236,14 @@
     <Compile Include="Controllers\ProspectsController.cs" />
     <Compile Include="Controllers\ReportingController.cs" />
     <Compile Include="Controllers\ResaleFormController.cs" />
+    <Compile Include="Controllers\SMSTemplateController.cs" />
     <Compile Include="Controllers\SocietySlipController.cs" />
     <Compile Include="Controllers\UserManageController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Custom\CustomExceptionFilter.cs" />
     <Compile Include="DTOModels\BookingConfirmDTO.cs" />
     <Compile Include="DTOModels\COA_Segments_Enums.cs" />
+    <Compile Include="DTOModels\EmployeeCommisionList.cs" />
     <Compile Include="DTOModels\FormDTO.cs" />
     <Compile Include="DTOModels\GeneralDTO.cs" />
     <Compile Include="DTOModels\Gl_HeaderLinesC_Code.cs" />
@@ -252,15 +254,19 @@
     <Compile Include="DTOModels\ProjectDetailDto.cs" />
     <Compile Include="DTOModels\ProjectDto.cs" />
     <Compile Include="DTOModels\ProjectListDTO.cs" />
+    <Compile Include="DTOModels\ProjectUnitDetailsDTO.cs" />
     <Compile Include="DTOModels\PropertyDashboardModel.cs" />
+    <Compile Include="DTOModels\PropertySaleDashboardDto.cs" />
     <Compile Include="DTOModels\PropertySaleDetailDTO.cs" />
     <Compile Include="DTOModels\PropertySaleDTO.cs" />
     <Compile Include="DTOModels\PropertySaleListDTO.cs" />
+    <Compile Include="DTOModels\PropertySaleNewDTO.cs" />
     <Compile Include="DTOModels\PropertyTransferDTO.cs" />
     <Compile Include="DTOModels\RegistrationModel.cs" />
     <Compile Include="DTOModels\ResponseModel.cs" />
     <Compile Include="DTOModels\ResultViewModel.cs" />
     <Compile Include="DTOModels\RoleAndPermissions.cs" />
+    <Compile Include="DTOModels\SocietySlipDTODashboard.cs" />
     <Compile Include="DTOModels\TempTableForInstallmentDTO.cs" />
     <Compile Include="DTOModels\UserDTO.cs" />
     <Compile Include="Global.asax.cs">
@@ -424,6 +430,9 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SecurityGroup.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SMS_Template.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Society_Slip.cs">

@@ -52,6 +52,7 @@
         <EntityTypeShape EntityType="MIS_DBModel.Attatchment_Relation" Width="1.5" PointX="19.75" PointY="12.75" />
         <AssociationConnector Association="MIS_DBModel.FK_Lookup_Values_Lookup_List" />
         <EntityTypeShape EntityType="MIS_DBModel.CashreceivedForm" Width="1.5" PointX="21.375" PointY="5.75" />
+        <EntityTypeShape EntityType="MIS_DBModel.SMS_Template" Width="1.5" PointX="21.375" PointY="15.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

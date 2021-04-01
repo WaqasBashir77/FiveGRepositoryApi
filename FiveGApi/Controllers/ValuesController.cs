@@ -15,7 +15,7 @@ using System.Security.Claims;
 
 namespace FiveGApi.Controllers
 {
-  [Authorize]
+    [Authorize]
     [RoutePrefix("api/Values")]
     public class ValuesController : ApiController
     {
@@ -240,6 +240,7 @@ namespace FiveGApi.Controllers
                     OriginalPropertySale.Relationship_With_Nominee = propertySale.relationWithNomine;
                     OriginalPropertySale.Sale_Status = propertySale.saleStatus;
                     OriginalPropertySale.Nominee_Name = propertySale.nomineeName;
+                    OriginalPropertySale.Nominee_Father_Name = propertySale.nomineeFatherName;
                     OriginalPropertySale.Nominee_CNIC = propertySale.nomineeCnic;
                     OriginalPropertySale.Discount_Amount = propertySale.discountAmount;
                     OriginalPropertySale.Nominee_G_Number = propertySale.nomineeGNumber;
@@ -290,7 +291,6 @@ namespace FiveGApi.Controllers
                             saleInstallment.SecurityGroupId = propertySale.SecurityGroupId;
                             saleInstallment.OtherTaxAmount = item.OtherTaxAmount;
                             saleInstallment.Payment_Account = Convert.ToInt32(item.paymentDetailDTOs.Payment_Account);
-
                             if (item.balance == 0 && item.paymentStatus != "Paid")
                             {
                                 saleInstallment.ins_payment_status = "UnPaid";
@@ -347,7 +347,7 @@ namespace FiveGApi.Controllers
                 
                     var pro = paymentInstallment;
                     Project_Entries booking_EntriesforROS = new Project_Entries();
-                    booking_EntriesforROS.Transaction_ID = pro.Booking_ID;
+                    booking_EntriesforROS.Transaction_ID = paymentID;
                     booking_EntriesforROS.Entry_Date = DateTime.Now;
                     booking_EntriesforROS.Entry_Type = "Rebate";
                     booking_EntriesforROS.Created_By = "Admin";
@@ -375,12 +375,26 @@ namespace FiveGApi.Controllers
                     booking_EntriesforROS.Debit = 0;
                     db.Project_Entries.Add(booking_EntriesforROS);
                     db.SaveChanges();
-                    ///-------------------To Unearned revenue------------------------------///////////            
+                    /////-------------------To Unearned revenue------------------------------///////////            
+                    //booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Codes + "." + coa_Segments.Segment_Value + ".0000").ToString();
+                    //booking_EntriesforROS.Credit = 0;
+                    //booking_EntriesforROS.Debit = projectUnitPrice;
+                    //db.Project_Entries.Add(booking_EntriesforROS);
+                    //db.SaveChanges();
+                    ///-------------------Receivable from members------------------------------///////////
+                    coa_Segments = db.COA_Segments.Where(x => x.Name == "Receivable from members").FirstOrDefault();
                     booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Codes + "." + coa_Segments.Segment_Value + ".0000").ToString();
-                    booking_EntriesforROS.Credit = 0;
                     booking_EntriesforROS.Debit = projectUnitPrice;
+                    booking_EntriesforROS.Credit = 0;
                     db.Project_Entries.Add(booking_EntriesforROS);
                     db.SaveChanges();
+                    /////-------------------Receivable from members------------------------------///////////
+                    //coa_Segments= db.COA_Segments.Where(x => x.Name == "Receivable from members").FirstOrDefault();
+                    //booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Codes + "." + coa_Segments.Segment_Value + ".0000").ToString();
+                    //booking_EntriesforROS.Debit = 0;
+                    //booking_EntriesforROS.Credit = projectUnitPrice;
+                    //db.Project_Entries.Add(booking_EntriesforROS);
+                    //db.SaveChanges();
                 }
                 #endregion
                 #region Project Sale Price / Dealer Commision / Employee Commision
@@ -480,6 +494,47 @@ namespace FiveGApi.Controllers
                         be.Updated_By = "1";
                         be.Updated_On = DateTime.Now;
                         db.SaveChanges();
+                        #region update Gl Balances
+                        ///-----------------GL_Blances Update on insert into GL Lines-----------------//
+                        var glBalance = db.GL_Balances.Where(x => x.C_CODE == gL_Lines.C_CODE).AsQueryable().FirstOrDefault();
+                        if (glBalance != null)
+                        {
+                            if (gL_Lines.Credit != null)
+                            {
+                                glBalance.Credit = glBalance.Credit + gL_Lines.Credit;
+                            }
+                            if (gL_Lines.Debit != null)
+                            {
+                                glBalance.Debit = glBalance.Debit + gL_Lines.Debit;
+
+                            }
+                            glBalance.Effect_Trans_ID = gL_Lines.L_ID.ToString();
+                            glBalance.Updated_By = userSecurityGroup.UserName;
+                            glBalance.Updated_On = DateTime.Now;
+                            db.SaveChanges();
+                        }
+                        else
+                        {
+                            GL_Balances gL_Balances = new GL_Balances();
+                            if (gL_Lines.Credit != null)
+                            {
+                                gL_Balances.Credit = gL_Lines.Credit;
+                            }
+                            if (gL_Lines.Debit != null)
+                            {
+                                gL_Balances.Debit = gL_Lines.Debit;
+
+                            }
+                            //gL_Balances.Debit = gL_Lines.Debit;
+                            gL_Balances.C_CODE = gL_Lines.C_CODE;
+                            gL_Balances.Bal_Date = DateTime.Now;
+                            gL_Balances.Effect_Trans_ID = gL_Lines.L_ID.ToString();
+                            gL_Balances.Created_By = userSecurityGroup.UserName; ;
+                            gL_Balances.Created_On = DateTime.Now;
+                            db.GL_Balances.Add(gL_Balances);
+                            db.SaveChanges();
+                        }
+                        #endregion  update Gl Balances
                     }
 
                 }
@@ -577,11 +632,87 @@ namespace FiveGApi.Controllers
         [Route("getPropertySaleDataForUpdate")]
         public IHttpActionResult getPropertySaleDataForUpdate(GeneralDTO general)
         {          
-            PropertySale propertySale = new PropertySale();
+            PropertySaleNewDTO propertySale = new PropertySaleNewDTO();
             if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                propertySale = db.PropertySales.Where(x => x.Booking_ID == general.Id && userSecurityGroup.SecurityGroupId == userSecurityGroup.UserId).FirstOrDefault();
+                propertySale = db.PropertySales.Where(x => x.Booking_ID == general.Id && userSecurityGroup.SecurityGroupId == userSecurityGroup.UserId)
+                    .Select(x=>new PropertySaleNewDTO {
+                Booking_ID=x.Booking_ID,
+                Project_ID=x.Project_ID,
+                Project_Name=db.Projects.Where(z=>z.Id==x.Project_ID).Select(z=>z.projectName).AsQueryable().FirstOrDefault(),
+                Unit_ID=x.Unit_ID,
+                unit_Detail=db.ProjectDetails.Where(z=>z.Id==x.Unit_ID).Select(z=>new ProjectUnitDetailsDTO { unit_ID = z.Id, unitNumber = z.unitNumber, UnitType = z.unitType, unitBuilding = z.building, Unitfloor = z.floor, UnitStatus = z.childStatus }).AsQueryable().FirstOrDefault(),
+                Buyer_Name=x.Buyer_Name,
+                Buyer_Father_Name=x.Buyer_Father_Name,
+                Mobile_1=x.Mobile_1,
+                Mobile_2=x.Mobile_2,
+                Member_Reg_No=x.Member_Reg_No,
+                Purchaser_Picture=x.Purchaser_Picture,
+                Dealer_Comm=x.Dealer_Comm,
+                Address=x.Address,
+                Email=x.Email,
+                Relationship_With_Nominee=x.Relationship_With_Nominee,
+                Sale_Status=x.Sale_Status,
+                Nominee_Name=x.Nominee_Name,
+                Nominee_CNIC=x.Nominee_CNIC,
+                CNIC=x.CNIC,
+                Nominee_G_Number=x.Nominee_G_Number,
+                Discount_Amount=x.Discount_Amount,
+                Description=x.Description,
+                Employee=x.Employee,
+                Employee_Com=x.Employee_Com,
+                Dealer_ID=x.Dealer_ID,
+                Created_By=x.Created_By,
+                Created_ON=x.Created_ON,
+                Updated_By=x.Updated_By,
+                Updated_On=x.Updated_On,
+                PaymentCode=x.PaymentCode,
+                SecurityGroupId=x.SecurityGroupId,
+                differentiableAmount =x.differentiableAmount,
+                Nominee_Picture=x.Nominee_Picture,
+                AuthorizeStatus=x.AuthorizeStatus,
+                Nominee_Father_Name=x.Nominee_Father_Name,
+                SaleInstallments=x.SaleInstallments,
+                    }).AsQueryable().FirstOrDefault();
             else
-                propertySale = db.PropertySales.Where(x => x.Booking_ID == general.Id).FirstOrDefault();
+                propertySale = db.PropertySales.Where(x => x.Booking_ID == general.Id).Select(x => new PropertySaleNewDTO
+                {
+                    Booking_ID = x.Booking_ID,
+                    Project_ID = x.Project_ID,
+                    Project_Name = db.Projects.Where(z => z.Id == x.Project_ID).Select(z => z.projectName).AsQueryable().FirstOrDefault(),
+                    Unit_ID = x.Unit_ID,
+                    unit_Detail = db.ProjectDetails.Where(z => z.Id == x.Unit_ID).Select(z => new ProjectUnitDetailsDTO { unit_ID = z.Id, unitNumber = z.unitNumber, UnitType = z.unitType, unitBuilding = z.building, Unitfloor = z.floor, UnitStatus = z.childStatus }).AsQueryable().FirstOrDefault(),
+                    Buyer_Name = x.Buyer_Name,
+                    Buyer_Father_Name = x.Buyer_Father_Name,
+                    Mobile_1 = x.Mobile_1,
+                    Mobile_2 = x.Mobile_2,
+                    Member_Reg_No = x.Member_Reg_No,
+                    Purchaser_Picture = x.Purchaser_Picture,
+                    Dealer_Comm = x.Dealer_Comm,
+                    Address = x.Address,
+                    Email = x.Email,
+                    Relationship_With_Nominee = x.Relationship_With_Nominee,
+                    Sale_Status = x.Sale_Status,
+                    Nominee_Name = x.Nominee_Name,
+                    Nominee_CNIC = x.Nominee_CNIC,
+                    CNIC = x.CNIC,
+                    Nominee_G_Number = x.Nominee_G_Number,
+                    Discount_Amount = x.Discount_Amount,
+                    Description = x.Description,
+                    Employee = x.Employee,
+                    Employee_Com = x.Employee_Com,
+                    Dealer_ID = x.Dealer_ID,
+                    Created_By = x.Created_By,
+                    Created_ON = x.Created_ON,
+                    Updated_By = x.Updated_By,
+                    Updated_On = x.Updated_On,
+                    PaymentCode = x.PaymentCode,
+                    SecurityGroupId = x.SecurityGroupId,
+                    differentiableAmount = x.differentiableAmount,
+                    Nominee_Picture = x.Nominee_Picture,
+                    AuthorizeStatus = x.AuthorizeStatus,
+                    Nominee_Father_Name = x.Nominee_Father_Name,
+                    SaleInstallments = x.SaleInstallments,
+                }).AsQueryable().FirstOrDefault();
 
             if (propertySale == null)
             {
@@ -753,7 +884,19 @@ namespace FiveGApi.Controllers
             return Ok(paymentInstallmentList);
 
         }
+        [HttpPost]
+        [Route("getPropertyNoOfFile")]
+        public IHttpActionResult getPropertyNoOfFile(int property_ID)
+        {
 
+            var TotalFiles = db.PropertyDefs.Where(x => x.ID == property_ID).Select(x=>x.Total_Files).AsQueryable().FirstOrDefault();
+            var totalBooking = db.BookingConfirms.Where(x => x.Property_ID == property_ID).AsQueryable().Count();
+            var list = new List<Tuple<string, string>>();
+            list.Add(new Tuple<string, string>("TotalFiles", TotalFiles.ToString()));
+            list.Add(new Tuple<string, string>("totalBooking", totalBooking.ToString()));
+            return Ok(list);
+
+        }
 
         [HttpGet]
         [Route("getemployees")]
@@ -826,7 +969,9 @@ namespace FiveGApi.Controllers
                         if (upload.ContentLength == 0) continue;
                         //Fetch the File Name.
                         var key = postedFile.AllKeys[i];
-                        string fileName = upload.FileName + DateTime.Now.ToFileTime() + Path.GetExtension(upload.FileName);
+                        var FileExtension=Path.GetExtension(upload.FileName);
+                        var fileNamewithoutExtension = Path.GetFileNameWithoutExtension(upload.FileName);
+                        string fileName = fileNamewithoutExtension + DateTime.Now.ToFileTime() +FileExtension ;
                         //Save the File.
                         upload.SaveAs(path + fileName);
                         stringList.Add(fileName);

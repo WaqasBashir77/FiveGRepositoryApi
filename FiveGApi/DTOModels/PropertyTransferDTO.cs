@@ -38,5 +38,6 @@ namespace FiveGApi.DTOModels
         public Nullable<System.DateTime> Created_On { get; set; }
         public string Updated_By { get; set; }
         public Nullable<System.DateTime> Updated_On { get; set; }
+        public Nullable<decimal> Transfer_Fee { get; set; }
     }
 }

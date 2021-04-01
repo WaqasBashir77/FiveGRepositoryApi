@@ -20,6 +20,8 @@ namespace FiveGApi.DTOModels
         public int dealerId { get; set; }
         public string buyerName { get; set; }
         public string buyerFatherName { get; set; }
+        public string nomineeFatherName { get; set; }
+        
         public string address { get; set; }
         public string email { get; set; }
         public string relationWithNomine { get; set; }

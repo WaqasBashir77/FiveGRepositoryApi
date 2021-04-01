@@ -331,15 +331,9 @@ namespace FiveGApi.Controllers
                     booking_EntriesforROS.Status = "Transfered";
                     var c_Code = pro.Company + "." + pro.ProjectSeg + "." + pro.LocationSeg;
                     #region Project Sale Price / Dealer Commision / Employee Commision
-                    ///-------------------Receivable from members------------------------------///////////
-                    var coa_Segment = db.COA_Segments.Where(x => x.Name == "Receivable from members").FirstOrDefault();
-                    booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".0000").ToString();
-                    booking_EntriesforROS.Debit = (decimal)projectDetail.unitPrice;
-                    booking_EntriesforROS.Credit = 0;
-                    db.Project_Entries.Add(booking_EntriesforROS);
-                    db.SaveChanges();                    
+                                      
                     ///-------------------Commission to staff------------------------------///////////
-                    coa_Segment = db.COA_Segments.Where(x => x.Name == "Commission to staff").FirstOrDefault();
+                    var coa_Segment = db.COA_Segments.Where(x => x.Name == "Commission to staff").FirstOrDefault();
                     booking_EntriesforROS.C_CODE = GenerateCOACombinations(c_Code + "." + coa_Segment.Segment_Value + ".0000").ToString();
                     booking_EntriesforROS.Debit = (decimal)EmployeeCommision;
                     booking_EntriesforROS.Credit = 0;
