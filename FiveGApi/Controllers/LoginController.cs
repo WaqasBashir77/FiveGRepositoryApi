@@ -37,7 +37,7 @@ namespace FiveGApi.Controllers
             HttpResponseMessage responseMsg = new HttpResponseMessage();
             bool isUsernamePasswordValid = false;
 
-            var dbUser = db.Users.Where(x => x.UserName == login.Username && x.Password == login.Password).SingleOrDefault(); 
+            var dbUser = db.Users.Where(x => x.UserName == login.Username && x.Password == login.Password && x.IsActive==true && x.IsDeleted==false).AsQueryable().SingleOrDefault(); 
             if (dbUser != null)
                 isUsernamePasswordValid = true;
             // if credentials are valid

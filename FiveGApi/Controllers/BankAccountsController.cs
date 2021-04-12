@@ -33,13 +33,22 @@ namespace FiveGApi.Controllers
             public IQueryable<Bank_Accounts> GetALLBank_Accounts()
             {
                   if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                      return db.Bank_Accounts.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId).AsQueryable();
+                      return db.Bank_Accounts.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId && x.Status== "Active").AsQueryable();
                   else
-                      return db.Bank_Accounts;
+                      return db.Bank_Accounts.Where(x=>x.Status== "Active").AsQueryable();
             }
-
-            // GET: api/Bank_Accounts/5
-            [ResponseType(typeof(Bank_Accounts))]
+            [ResponseType(typeof(IQueryable<Bank_Accounts>))]
+            [Route("GetALLBank_AccountsWithoutFilter")]
+            [HttpGet]
+            public IQueryable<Bank_Accounts> GetALLBank_AccountsWithoutFilter()
+            {
+                if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                    return db.Bank_Accounts.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId).AsQueryable();
+                else
+                    return db.Bank_Accounts;
+            }
+        // GET: api/Bank_Accounts/5
+        [ResponseType(typeof(Bank_Accounts))]
             public IHttpActionResult GetBank_AccountsByID(int id)
             {
             Bank_Accounts Bank_Accounts = new Bank_Accounts();
@@ -81,6 +90,7 @@ namespace FiveGApi.Controllers
                 existBank_Accounts.Updated_By= userSecurityGroup.UserName;
                 existBank_Accounts.Updated_On = DateTime.Now;
                 existBank_Accounts.SecurityGroupId = userSecurityGroup.SecurityGroupId;
+                existBank_Accounts.PaymentType = Bank_Accounts.PaymentType;
                 try
                 {
                     db.SaveChanges();
@@ -109,7 +119,7 @@ namespace FiveGApi.Controllers
             Bank_Accounts.Created_By = userSecurityGroup.UserName;
             Bank_Accounts.Created_On = DateTime.Now;
             Bank_Accounts.SecurityGroupId = userSecurityGroup.SecurityGroupId;
-            var bankDublicate = db.Bank_Accounts.Where(s => s.Acc_Name == Bank_Accounts.Acc_Name||s.Acc_Number==Bank_Accounts.Acc_Number).FirstOrDefault();
+            var bankDublicate = db.Bank_Accounts.Where(s => s.Acc_Name == Bank_Accounts.Acc_Name).FirstOrDefault();
             if (bankDublicate != null)
             {
                 var error = new { message = "Bank Account must be unique" }; //<-- anonymous object

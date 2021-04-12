@@ -45,6 +45,6 @@ namespace FiveGApi.DTOModels
         public Nullable<bool> AuthorizeStatus { get; set; }
         public string Nominee_Father_Name { get; set; }
         public virtual ICollection<SaleInstallment> SaleInstallments { get; set; }
-
+        public string BuyerMemberCode { get; set; }
     }
 }

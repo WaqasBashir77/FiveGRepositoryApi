@@ -210,6 +210,11 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Attributes\CustomExceptionFilter.cs" />
+    <Compile Include="BalanceSheetDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BalanceSheetDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BankAccountsController.cs" />
     <Compile Include="Controllers\BookingconfirmController.cs" />
@@ -241,6 +246,7 @@
     <Compile Include="Controllers\UserManageController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Custom\CustomExceptionFilter.cs" />
+    <Compile Include="Custom\GLBalanceUpdater.cs" />
     <Compile Include="DTOModels\BookingConfirmDTO.cs" />
     <Compile Include="DTOModels\COA_Segments_Enums.cs" />
     <Compile Include="DTOModels\EmployeeCommisionList.cs" />
@@ -302,6 +308,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>mis_dbProjectDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="mis_dbTrailBalanceSheetByDateDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>mis_dbTrailBalanceSheetByDateDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="Models\Attachment.cs">
       <DependentUpon>Model1.tt</DependentUpon>
@@ -501,6 +512,17 @@
       <DependentUpon>mis_dbDataSet.xsd</DependentUpon>
     </Content>
     <Content Include="libman.json" />
+    <Content Include="BalanceSheetDataSet.xsc">
+      <DependentUpon>BalanceSheetDataSet.xsd</DependentUpon>
+    </Content>
+    <None Include="BalanceSheetDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>BalanceSheetDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="BalanceSheetDataSet.xss">
+      <DependentUpon>BalanceSheetDataSet.xsd</DependentUpon>
+    </Content>
     <None Include="mis_dbDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>mis_dbDataSet.Designer.cs</LastGenOutput>
@@ -563,6 +585,17 @@
     </None>
     <Content Include="mis_dbProjectDataSet.xss">
       <DependentUpon>mis_dbProjectDataSet.xsd</DependentUpon>
+    </Content>
+    <Content Include="mis_dbTrailBalanceSheetByDateDataSet.xsc">
+      <DependentUpon>mis_dbTrailBalanceSheetByDateDataSet.xsd</DependentUpon>
+    </Content>
+    <None Include="mis_dbTrailBalanceSheetByDateDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>mis_dbTrailBalanceSheetByDateDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="mis_dbTrailBalanceSheetByDateDataSet.xss">
+      <DependentUpon>mis_dbTrailBalanceSheetByDateDataSet.xsd</DependentUpon>
     </Content>
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
@@ -636,6 +669,7 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Reports\BalanceSheetReport.rdlc" />
     <EmbeddedResource Include="Reports\MasterProjectReportData.rdlc" />
     <EmbeddedResource Include="Reports\MasterSheetReport.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -644,6 +678,7 @@
     <EmbeddedResource Include="Reports\MISMasterSheetReport1.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Reports\Trail.rdlc" />
     <EmbeddedResource Include="Reports\TrailBalanceReport.rdlc" />
   </ItemGroup>
   <PropertyGroup>

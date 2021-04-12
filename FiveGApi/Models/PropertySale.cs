@@ -53,6 +53,7 @@ namespace FiveGApi.Models
         public byte[] Nominee_Picture { get; set; }
         public Nullable<bool> AuthorizeStatus { get; set; }
         public string Nominee_Father_Name { get; set; }
+        public string BuyerMemberCode { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SaleInstallment> SaleInstallments { get; set; }

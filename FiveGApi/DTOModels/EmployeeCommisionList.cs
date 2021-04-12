@@ -11,6 +11,8 @@ namespace FiveGApi.DTOModels
         public decimal? totalBookingCommisson { get; set; }
         public decimal? totalConfirmCommisson { get; set; }
         public decimal? totalCommisson { get; set; }
+        public int totalNoBookings { get; set; }
+        public int totalNoCommision { get; set; }
 
     }
 }

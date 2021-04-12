@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Web.Http;
 using System.Web.Http.Description;
+using FiveGApi.Custom;
 using FiveGApi.DTOModels;
 using FiveGApi.Helper;
 using FiveGApi.Models;
@@ -67,59 +68,128 @@ namespace FiveGApi.Controllers
             }
 
             var existgL_Headers = db.GL_Headers.Where(x => x.H_ID == id).FirstOrDefault();
-            existgL_Headers.J_Date = gL_Headers.J_Date;
-            existgL_Headers.Doc_Date = gL_Headers.Doc_Date;
-            existgL_Headers.Currency = gL_Headers.Currency;
-            existgL_Headers.Description = gL_Headers.Description;
-            existgL_Headers.Remarks = gL_Headers.Remarks;
-            existgL_Headers.Source = gL_Headers.Source;
-            existgL_Headers.Source_Tran_Id = gL_Headers.Source_Tran_Id;
-            existgL_Headers.Pay_Mode = gL_Headers.Pay_Mode;
-            existgL_Headers.Pay_Bank = gL_Headers.Pay_Bank;
-            existgL_Headers.Pay_To = gL_Headers.Pay_To;
-            existgL_Headers.Pay_Company =  gL_Headers.Pay_Company;
-            existgL_Headers.Pay_Project =  gL_Headers.Pay_Project;
-            existgL_Headers.Pay_Location = gL_Headers.Pay_Location;
-            existgL_Headers.Dep_Mode =     gL_Headers.Dep_Mode;
-            existgL_Headers.Dep_Bank =     gL_Headers.Dep_Bank;
-            existgL_Headers.Dep_Company =  gL_Headers.Dep_Company;
-            existgL_Headers.Dep_Project =  gL_Headers.Dep_Project;
-            existgL_Headers.Dep_Location = gL_Headers.Dep_Location;
-            existgL_Headers.Trans_Status = gL_Headers.Trans_Status;
-            existgL_Headers.SecurityGroupId = gL_Headers.SecurityGroupId;
-            ///changes on 15-03-2021-------
-            if (gL_Headers.Trans_Status=="Posted")
-            {
-                existgL_Headers.Posted_date = DateTime.Now.ToString();
 
-            }
-            /// end   changes on 15-03-2021-------
-
-            existgL_Headers.Trans_Status=   gL_Headers.Trans_Status;
-            existgL_Headers.Flex_1=        gL_Headers.Flex_1;
-            existgL_Headers.Flex_2 =       gL_Headers.Flex_2; 
-            existgL_Headers.Updated_By=    userSecurityGroup.UserName;
-            existgL_Headers.Updated_On = DateTime.Now;
-            gL_LinesUpdate(existgL_Headers.H_ID, gL_Headers.GL_Lines);
-
-            try
+            if (existgL_Headers.Source == "Payments" || existgL_Headers.Source == "Deposit")
             {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!gL_HeadersExists(gL_Headers.H_ID))
+                if (existgL_Headers.Trans_Status == "Posted")
                 {
-                    return NotFound();
+                    return Conflict();
                 }
                 else
                 {
-                    throw;
+                    existgL_Headers.J_Date = gL_Headers.J_Date;
+                    existgL_Headers.Doc_Date = gL_Headers.Doc_Date;
+                    existgL_Headers.Currency = gL_Headers.Currency;
+                    existgL_Headers.Description = gL_Headers.Description;
+                    existgL_Headers.Remarks = gL_Headers.Remarks;
+                    existgL_Headers.Source = gL_Headers.Source;
+                    existgL_Headers.Source_Tran_Id = gL_Headers.Source_Tran_Id;
+                    existgL_Headers.Pay_Mode = gL_Headers.Pay_Mode;
+                    existgL_Headers.Pay_Bank = gL_Headers.Pay_Bank;
+                    existgL_Headers.Pay_To = gL_Headers.Pay_To;
+                    existgL_Headers.Pay_Company = gL_Headers.Pay_Company;
+                    existgL_Headers.Pay_Project = gL_Headers.Pay_Project;
+                    existgL_Headers.Pay_Location = gL_Headers.Pay_Location;
+                    existgL_Headers.Dep_Mode = gL_Headers.Dep_Mode;
+                    existgL_Headers.Dep_Bank = gL_Headers.Dep_Bank;
+                    existgL_Headers.Dep_Company = gL_Headers.Dep_Company;
+                    existgL_Headers.Dep_Project = gL_Headers.Dep_Project;
+                    existgL_Headers.Dep_Location = gL_Headers.Dep_Location;
+                    existgL_Headers.Trans_Status = gL_Headers.Trans_Status;
+                    existgL_Headers.SecurityGroupId = gL_Headers.SecurityGroupId;
+                    existgL_Headers.Payment_Mode = gL_Headers.Payment_Mode;
+                    ///changes on 15-03-2021-------
+                    if (gL_Headers.Trans_Status == "Posted")
+                    {
+                        existgL_Headers.Posted_date = DateTime.Now.ToString();
+
+                    }
+                    /// end   changes on 15-03-2021-------
+
+                    existgL_Headers.Trans_Status = gL_Headers.Trans_Status;
+                    existgL_Headers.Flex_1 = gL_Headers.Flex_1;
+                    existgL_Headers.Flex_2 = gL_Headers.Flex_2;
+                    existgL_Headers.Updated_By = userSecurityGroup.UserName;
+                    existgL_Headers.Updated_On = DateTime.Now;
+                    gL_LinesUpdate(existgL_Headers.H_ID, gL_Headers.GL_Lines);
+
+                    try
+                    {
+                        db.SaveChanges();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!gL_HeadersExists(gL_Headers.H_ID))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+
+                    return StatusCode(HttpStatusCode.NoContent);
                 }
             }
+            else
+            {
+                existgL_Headers.J_Date = gL_Headers.J_Date;
+                existgL_Headers.Doc_Date = gL_Headers.Doc_Date;
+                existgL_Headers.Currency = gL_Headers.Currency;
+                existgL_Headers.Description = gL_Headers.Description;
+                existgL_Headers.Remarks = gL_Headers.Remarks;
+                existgL_Headers.Source = gL_Headers.Source;
+                existgL_Headers.Source_Tran_Id = gL_Headers.Source_Tran_Id;
+                existgL_Headers.Pay_Mode = gL_Headers.Pay_Mode;
+                existgL_Headers.Pay_Bank = gL_Headers.Pay_Bank;
+                existgL_Headers.Pay_To = gL_Headers.Pay_To;
+                existgL_Headers.Pay_Company = gL_Headers.Pay_Company;
+                existgL_Headers.Pay_Project = gL_Headers.Pay_Project;
+                existgL_Headers.Pay_Location = gL_Headers.Pay_Location;
+                existgL_Headers.Dep_Mode = gL_Headers.Dep_Mode;
+                existgL_Headers.Dep_Bank = gL_Headers.Dep_Bank;
+                existgL_Headers.Dep_Company = gL_Headers.Dep_Company;
+                existgL_Headers.Dep_Project = gL_Headers.Dep_Project;
+                existgL_Headers.Dep_Location = gL_Headers.Dep_Location;
+                existgL_Headers.Trans_Status = gL_Headers.Trans_Status;
+                existgL_Headers.SecurityGroupId = gL_Headers.SecurityGroupId;
+                existgL_Headers.Payment_Mode = gL_Headers.Payment_Mode;
+                ///changes on 15-03-2021-------
+                if (gL_Headers.Trans_Status == "Posted")
+                {
+                    existgL_Headers.Posted_date = DateTime.Now.ToString();
 
-            return StatusCode(HttpStatusCode.NoContent);
+                }
+                /// end   changes on 15-03-2021-------
+
+                existgL_Headers.Trans_Status = gL_Headers.Trans_Status;
+                existgL_Headers.Flex_1 = gL_Headers.Flex_1;
+                existgL_Headers.Flex_2 = gL_Headers.Flex_2;
+                existgL_Headers.Updated_By = userSecurityGroup.UserName;
+                existgL_Headers.Updated_On = DateTime.Now;
+                gL_LinesUpdate(existgL_Headers.H_ID, gL_Headers.GL_Lines);
+
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!gL_HeadersExists(gL_Headers.H_ID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return StatusCode(HttpStatusCode.NoContent);
+            }
         }
+
 
         // POST: api/GL_Headers
         [ResponseType(typeof(GL_Headers))]
@@ -219,48 +289,49 @@ namespace FiveGApi.Controllers
                 gL_Headers.Created_On = DateTime.Now;
                 db.GL_Headers.Add(gL_Headers);
                 db.SaveChanges();
-                foreach (var gllines in gL_Headers.GL_Lines)
-                {
-                    var glBalance = db.GL_Balances.Where(x => x.C_CODE == gllines.C_CODE).AsQueryable().FirstOrDefault();
-                    if(glBalance!=null)
-                    {
-                        if(gllines.Credit!=null)
-                        {
-                            glBalance.Credit = glBalance.Credit + gllines.Credit;
-                        }
-                        if(gllines.Debit!=null)
-                        {
-                            glBalance.Debit = glBalance.Debit + gllines.Debit;
+                GLBalanceUpdater.UpdateGLBalances(gL_Headers.H_ID, userSecurityGroup);
+                //foreach (var gllines in gL_Headers.GL_Lines)
+                //{
+                //    var glBalance = db.GL_Balances.Where(x => x.C_CODE == gllines.C_CODE).AsQueryable().FirstOrDefault();
+                //    if(glBalance!=null)
+                //    {
+                //        if(gllines.Credit!=null)
+                //        {
+                //            glBalance.Credit = glBalance.Credit + gllines.Credit;
+                //        }
+                //        if(gllines.Debit!=null)
+                //        {
+                //            glBalance.Debit = glBalance.Debit + gllines.Debit;
 
-                        }
-                        glBalance.Effect_Trans_ID = gllines.L_ID.ToString();
-                        glBalance.Updated_By = userSecurityGroup.UserName; ;
-                        glBalance.Updated_On = DateTime.Now;
-                        db.SaveChanges();
-                    }
-                    else
-                    {
-                        GL_Balances gL_Balances = new GL_Balances();
-                        if (gllines.Credit != null)
-                        {
-                            gL_Balances.Credit =  gllines.Credit;
-                        }
-                        if (gllines.Debit != null)
-                        {
-                            gL_Balances.Debit =  gllines.Debit;
+                //        }
+                //        glBalance.Effect_Trans_ID = gllines.L_ID.ToString();
+                //        glBalance.Updated_By = userSecurityGroup.UserName; ;
+                //        glBalance.Updated_On = DateTime.Now;
+                //        db.SaveChanges();
+                //    }
+                //    else
+                //    {
+                //        GL_Balances gL_Balances = new GL_Balances();
+                //        if (gllines.Credit != null)
+                //        {
+                //            gL_Balances.Credit =  gllines.Credit;
+                //        }
+                //        if (gllines.Debit != null)
+                //        {
+                //            gL_Balances.Debit =  gllines.Debit;
 
-                        }                        
-                        //gL_Balances.Debit = gllines.Debit;
-                        gL_Balances.C_CODE = gllines.C_CODE;
-                        gL_Balances.Bal_Date = DateTime.Now;
-                        gL_Balances.Effect_Trans_ID = gllines.L_ID.ToString();
-                        gL_Balances.Created_By = userSecurityGroup.UserName; ;
-                        gL_Balances.Created_On =DateTime.Now;
-                        db.GL_Balances.Add(gL_Balances);
-                        db.SaveChanges();
-                    }
+                //        }                        
+                //        //gL_Balances.Debit = gllines.Debit;
+                //        gL_Balances.C_CODE = gllines.C_CODE;
+                //        gL_Balances.Bal_Date = DateTime.Now;
+                //        gL_Balances.Effect_Trans_ID = gllines.L_ID.ToString();
+                //        gL_Balances.Created_By = userSecurityGroup.UserName; ;
+                //        gL_Balances.Created_On =DateTime.Now;
+                //        db.GL_Balances.Add(gL_Balances);
+                //        db.SaveChanges();
+                //    }
 
-                }
+                //}
             }
             catch (Exception ex)
             {
@@ -320,36 +391,46 @@ namespace FiveGApi.Controllers
         
         private IQueryable<FiveGApi.Models.GL_Lines> gL_LinesUpdate(int H_ID, ICollection<FiveGApi.Models.GL_Lines> gL_Lines)
         {
-            var gllinesCount = gL_Lines.Count();
+            // var gllinesCount = gL_Lines.Count();
+            var removeList = db.GL_Lines.Where(x => x.H_ID == H_ID).ToList();
+            if (removeList != null)
+            {
+                foreach (var removeL in removeList)
+                {
+                    db.GL_Lines.Remove(removeL);
+                    db.SaveChanges();
+                }
 
+            }
             foreach (var item in gL_Lines)
             {
                 var existgL_LinesExisted = db.GL_Lines.Where(x => x.L_ID == item.L_ID).FirstOrDefault();
 
-                if (existgL_LinesExisted!=null)
-                {
-                    existgL_LinesExisted.H_ID       = item.H_ID;
-                    existgL_LinesExisted.C_CODE     = item.C_CODE;
-                    existgL_LinesExisted.Debit      = item.Debit;
-                    existgL_LinesExisted.Credit     = item.Credit;
-                    existgL_LinesExisted.Description= item.Description;
-                    existgL_LinesExisted.Flex_1     = item.Flex_1;
-                    existgL_LinesExisted.Flex_2     = item.Flex_2;           
-                    existgL_LinesExisted.Updated_By = "Admin" ;
-                    existgL_LinesExisted.Updated_On = DateTime.Now;
-                    db.SaveChanges();
-                }                                     
-                else
-                {
+                //if (existgL_LinesExisted!=null)
+                //{
+                //    existgL_LinesExisted.H_ID       = item.H_ID;
+                //    existgL_LinesExisted.C_CODE     = item.C_CODE;
+                //    existgL_LinesExisted.Debit      = item.Debit;
+                //    existgL_LinesExisted.Credit     = item.Credit;
+                //    existgL_LinesExisted.Description= item.Description;
+                //    existgL_LinesExisted.Flex_1     = item.Flex_1;
+                //    existgL_LinesExisted.Flex_2     = item.Flex_2;           
+                //    existgL_LinesExisted.Updated_By = "Admin" ;
+                //    existgL_LinesExisted.Updated_On = DateTime.Now;
+                //    db.SaveChanges();
+                //}                                     
+                //else
+                //{
 
                     item.H_ID = H_ID;
                     item.Created_By = "Admin";
                     item.Created_On = DateTime.Now;                   
                     db.GL_Lines.Add(item);
                     db.SaveChanges();
-                }               
+               // }               
             }
-            return db.GL_Lines.Where(x => x.H_ID == H_ID);
+            //GLBalanceUpdater.UpdateGLBalances(H_ID, userSecurityGroup);
+                return db.GL_Lines.Where(x => x.H_ID == H_ID);
         }
         [Route("gLLinesByVlaues")]
         [HttpGet]

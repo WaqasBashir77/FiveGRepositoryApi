@@ -170,7 +170,20 @@ namespace FiveGApi.Controllers
             }
             return Ok(Type);
         }
-
+        [Route("CoaSegmentAccountUnique")]
+        [HttpGet]      
+        public IHttpActionResult CoaSegmentAccountUniqueCheck(string AccountTitle)
+        {
+            var coa_segment = db.COA_Segments.Where(x => x.Name == AccountTitle).FirstOrDefault();
+            if(coa_segment==null)
+            {
+                return Ok();
+            }
+            else
+            {
+                return Conflict();
+            }
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

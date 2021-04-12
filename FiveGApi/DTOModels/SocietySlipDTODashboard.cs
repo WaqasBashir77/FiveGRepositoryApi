@@ -16,4 +16,10 @@ namespace FiveGApi.DTOModels
         public decimal? totalBookingSlipsAmount { get; set; }
         public decimal? totalConfirmationSlipsAmount { get; set; }
     }
+    public class PropertyAndRefList
+    {
+        public int PropertID { get; set; }
+        public string Name { get; set; }
+        public List<string> Ref_Num { get; set; }
+    } 
 }

@@ -1,4 +1,5 @@
-﻿using FiveGApi.DTOModels;
+﻿using FiveGApi.Custom;
+using FiveGApi.DTOModels;
 using FiveGApi.Helper;
 using FiveGApi.Models;
 using System;
@@ -320,8 +321,10 @@ namespace FiveGApi.Controllers
 
                                 }
                                 db.SaveChanges();
+                               // GLBalanceUpdater.UpdateGLBalances(glheader.H_ID, userSecurityGroup);
+
                             }
-                            catch(Exception ex)
+                            catch (Exception ex)
                             {
                                 return StatusCode(HttpStatusCode.ExpectationFailed);
                             }
@@ -607,6 +610,8 @@ namespace FiveGApi.Controllers
                         be.Updated_On = DateTime.Now;
                         db.SaveChanges();
                     }
+                   // GLBalanceUpdater.UpdateGLBalances(glheader.H_ID, userSecurityGroup);
+
                 }
 
                 return StatusCode(HttpStatusCode.OK);

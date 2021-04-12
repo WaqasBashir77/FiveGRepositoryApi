@@ -260,6 +260,9 @@ namespace FiveGApi.Controllers
                     employeeCommisionList.totalBookingCommisson = db.BookingConfirms.Where(x => x.Book_Emp == eList.ID.ToString()).AsQueryable().Sum(x => x.Emp_B_RAmt);
                     employeeCommisionList.totalConfirmCommisson = db.BookingConfirms.Where(x => x.Book_Emp == eList.ID.ToString()).AsQueryable().Sum(x => x.Emp_C_RAmt);
                     employeeCommisionList.totalCommisson = employeeCommisionList.totalBookingCommisson + employeeCommisionList.totalConfirmCommisson;
+                    employeeCommisionList.totalNoBookings = db.BookingConfirms.Where(x => x.Book_Emp == eList.ID.ToString() && x.Emp_B_RAmt>0).AsQueryable().Count();
+                    employeeCommisionList.totalNoCommision = db.BookingConfirms.Where(x => x.Book_Emp == eList.ID.ToString() && x.Emp_C_RAmt > 0).AsQueryable().Count();
+
                     EmployeeCommisionList.Add(employeeCommisionList);
                 }
             }
@@ -272,6 +275,8 @@ namespace FiveGApi.Controllers
                     dCommisionList.totalBookingCommisson = db.BookingConfirms.Where(x => x.Book_Dealer == eList.ID.ToString()).AsQueryable().Sum(x => x.Dealer_B_RAmt);
                     dCommisionList.totalConfirmCommisson = db.BookingConfirms.Where(x => x.Book_Dealer == eList.ID.ToString()).AsQueryable().Sum(x => x.Dealer_C_RAmt);
                     dCommisionList.totalCommisson = dCommisionList.totalBookingCommisson + dCommisionList.totalConfirmCommisson;
+                    dCommisionList.totalNoBookings = db.BookingConfirms.Where(x => x.Book_Dealer == eList.ID.ToString() && x.Dealer_B_RAmt>0).AsQueryable().Count();
+                    dCommisionList.totalNoCommision = db.BookingConfirms.Where(x => x.Book_Dealer == eList.ID.ToString() && x.Dealer_C_RAmt>0).AsQueryable().Count();
                     DealerCommisionList.Add(dCommisionList);
                 }
             }
@@ -299,8 +304,17 @@ namespace FiveGApi.Controllers
             var ConfirmationUnDeleiveredDeliverySheetTotal = db.Delivery_Sheet.Where(x => x.Delivery_Status == "UnDelivered" && x.Delivery_Type == "Confirmation").AsQueryable().Count();
             var BookingDeliverySheetTotal = db.Delivery_Sheet.Where(x => x.Delivery_Type == "Booking").AsQueryable().Count();
             var ConfirmationDeliverySheetTotal = db.Delivery_Sheet.Where(x => x.Delivery_Type == "Confirmation").AsQueryable().Count();
-            var BookingPercentageDeliverySheet = (decimal)((UnDeliveredBookingDeliverySheetTotal / BookingDeliverySheetTotal) * 100);
-            var ConfirmationPercentageDeliverySheet = (decimal)((ConfirmationUnDeleiveredDeliverySheetTotal / ConfirmationDeliverySheetTotal) * 100);
+            decimal BookingPercentageDeliverySheet = 0;
+            decimal ConfirmationPercentageDeliverySheet = 0;
+            if (UnDeliveredBookingDeliverySheetTotal == 0 || BookingDeliverySheetTotal == 0 || ConfirmationUnDeleiveredDeliverySheetTotal == 0 || ConfirmationDeliverySheetTotal == 0)
+            {
+
+            }
+            else
+            {
+                BookingPercentageDeliverySheet = (decimal)((UnDeliveredBookingDeliverySheetTotal / BookingDeliverySheetTotal) * 100);
+                ConfirmationPercentageDeliverySheet = (decimal)((ConfirmationUnDeleiveredDeliverySheetTotal / ConfirmationDeliverySheetTotal) * 100);
+            }
             //--------------End Total Pending Slips
 
            
@@ -324,43 +338,66 @@ namespace FiveGApi.Controllers
         }
         [Route("GetSlipsAndDeliverySheetListData")]
         public IHttpActionResult GetSlipsAndDeliverySheetListData()
-        { //--------------Society Slips-------
-            var SocietySlips = (from pd in db.PropertyDefs
-                                join bc in db.BookingConfirms on pd.ID equals bc.Property_ID
-                                join ss in db.Society_Slip on bc.Ref_num equals ss.Ref_num
-                                select new SocietySlipDTODashboard
-                                {
-                                    Name = pd.Name,
-                                    totalSlips = db.Society_Slip.Where(s => s.Ref_num == ss.Ref_num).Count(),
-                                    totalPendingSlips = db.Society_Slip.Where(s => s.Ref_num == ss.Ref_num && s.Letter_Status == "Pending").Count(),
-                                    totalDeliveredSlips = db.Society_Slip.Where(s => s.Ref_num == ss.Ref_num && s.Letter_Status == "Received").Count(),
-                                    totalBookingSlips = db.Society_Slip.Where(s => s.Ref_num == ss.Ref_num && s.Slip_Type == "Booking").Count(),
-                                    totalConfirmSlips = db.Society_Slip.Where(s => s.Ref_num == ss.Ref_num && s.Slip_Type == "Confirmation").Count(),
-                                    totalBookingSlipsAmount = db.Society_Slip.Where(s => s.Ref_num == ss.Ref_num && s.Slip_Type == "Booking").Sum(s => s.Receipt_Amount),
-                                    totalConfirmationSlipsAmount = db.Society_Slip.Where(s => s.Ref_num == ss.Ref_num && s.Slip_Type == "Confirmation").Sum(s => s.Receipt_Amount),
+        {
+            var propertListWithref_Value = db.PropertyDefs.Select(x => new PropertyAndRefList
+            {
+                Name = x.Name,
+                Ref_Num = db.BookingConfirms.Where(z => z.Property_ID == x.ID).Select(z => z.Ref_num).AsQueryable().ToList()
+            }).AsQueryable().ToList();
+           // List<SocietySlipDTODashboard> societySlipDTODashboards = new List<SocietySlipDTODashboard>();
+            var societySlipDTODashboards = propertListWithref_Value.Select(x => new SocietySlipDTODashboard
+            {
+             Name = x.Name,
+            totalSlips = db.Society_Slip.Where(s => x.Ref_Num.Contains(s.Ref_num)).Select(s=>s.ID).AsQueryable().Count(),
+            totalPendingSlips = db.Society_Slip.Where(s => x.Ref_Num.Contains(s.Ref_num) && s.Letter_Status == "Pending").Select(s => s.ID).AsQueryable().Count(),
+            totalDeliveredSlips = db.Society_Slip.Where(s => x.Ref_Num.Contains(s.Ref_num) && s.Letter_Status == "Received").Select(s => s.ID).AsQueryable().Count(),
+            totalBookingSlips = db.Society_Slip.Where(s => x.Ref_Num.Contains(s.Ref_num) && s.Slip_Type == "Booking").Select(s => s.ID).AsQueryable().Count(),
+            totalConfirmSlips = db.Society_Slip.Where(s => x.Ref_Num.Contains(s.Ref_num) && s.Slip_Type == "Confirmation").Select(s => s.ID).AsQueryable().Count(),
+            totalBookingSlipsAmount = db.Society_Slip.Where(s => x.Ref_Num.Contains(s.Ref_num) && s.Slip_Type == "Booking").AsQueryable().Sum(s => s.Receipt_Amount),
+            totalConfirmationSlipsAmount = db.Society_Slip.Where(s => x.Ref_Num.Contains(s.Ref_num) && s.Slip_Type == "Confirmation").AsQueryable().Sum(s => s.Receipt_Amount),
+             }).AsQueryable().ToList();
+            //foreach (var item in propertListWithref_Value)
+            //{
+            //    SocietySlipDTODashboard societySlipDTODashboard = new SocietySlipDTODashboard();
+            //    societySlipDTODashboard.Name = item.Name;
+            //    societySlipDTODashboard.totalSlips = db.Society_Slip.Where(s => item.Ref_Num.Contains(s.Ref_num)).Count();
+            //    societySlipDTODashboard.totalPendingSlips = db.Society_Slip.Where(s => item.Ref_Num.Contains(s.Ref_num) && s.Letter_Status == "Pending").Count();
+            //    societySlipDTODashboard.totalDeliveredSlips = db.Society_Slip.Where(s => item.Ref_Num.Contains(s.Ref_num) && s.Letter_Status == "Received").Count();
+            //    societySlipDTODashboard.totalBookingSlips = db.Society_Slip.Where(s => item.Ref_Num.Contains(s.Ref_num) && s.Slip_Type == "Booking").Count();
+            //    societySlipDTODashboard.totalConfirmSlips = db.Society_Slip.Where(s => item.Ref_Num.Contains(s.Ref_num) && s.Slip_Type == "Confirmation").Count();
+            //    societySlipDTODashboard.totalBookingSlipsAmount = db.Society_Slip.Where(s => item.Ref_Num.Contains(s.Ref_num) && s.Slip_Type == "Booking").Sum(s => s.Receipt_Amount);
+            //    societySlipDTODashboard.totalConfirmationSlipsAmount = db.Society_Slip.Where(s => item.Ref_Num.Contains(s.Ref_num) && s.Slip_Type == "Confirmation").Sum(s => s.Receipt_Amount);
+            //    societySlipDTODashboards.Add(societySlipDTODashboard);
+            //}
+            //List<SocietySlipDTODashboard> DleiveySheetsDTODashboards = new List<SocietySlipDTODashboard>();
+            var DleiveySheetsDTODashboards = propertListWithref_Value.Select(x => new SocietySlipDTODashboard
+            {
+                Name = x.Name,
+                totalSlips = db.Delivery_Sheet.Where(s => x.Ref_Num.Contains(s.Ref_num)).AsQueryable().Count(),
+                totalPendingSlips = db.Delivery_Sheet.Where(s => x.Ref_Num.Contains(s.Ref_num) && s.Delivery_Status == "UnDelivered").Select(s => s.ID).AsQueryable().Count(),
+                totalDeliveredSlips = db.Delivery_Sheet.Where(s => x.Ref_Num.Contains(s.Ref_num) && s.Delivery_Status == "Delivered").Select(s => s.ID).AsQueryable().Count(),
+                totalBookingSlips = db.Delivery_Sheet.Where(s => x.Ref_Num.Contains(s.Ref_num) && s.Delivery_Type == "Booking").Select(s => s.ID).AsQueryable().Count(),
+                totalConfirmSlips = db.Delivery_Sheet.Where(s => x.Ref_Num.Contains(s.Ref_num) && s.Delivery_Type == "Confirmation").Select(s => s.ID).AsQueryable().Count(),
+                totalBookingSlipsAmount = db.Delivery_Sheet.Where(s => x.Ref_Num.Contains(s.Ref_num) && s.Delivery_Type == "Booking").AsQueryable().Sum(s => s.Total_Amount),
+                totalConfirmationSlipsAmount = db.Delivery_Sheet.Where(s => x.Ref_Num.Contains(s.Ref_num) && s.Delivery_Type == "Confirmation").AsQueryable().Sum(s => s.Total_Amount),
+            }).AsQueryable().ToList();
+            //foreach (var item in propertListWithref_Value)
+            //{
+            //    SocietySlipDTODashboard DleiveySheetsDTODashboard = new SocietySlipDTODashboard();
+            //    DleiveySheetsDTODashboard.Name = item.Name;
+            //    DleiveySheetsDTODashboard.totalSlips = db.Delivery_Sheet.Where(s => item.Ref_Num.Contains(s.Ref_num)).Count();
+            //    DleiveySheetsDTODashboard.totalPendingSlips = db.Delivery_Sheet.Where(s => item.Ref_Num.Contains(s.Ref_num) && s.Delivery_Status == "UnDelivered").Count();
+            //    DleiveySheetsDTODashboard.totalDeliveredSlips = db.Delivery_Sheet.Where(s => item.Ref_Num.Contains(s.Ref_num) && s.Delivery_Status == "Delivered").Count();
+            //    DleiveySheetsDTODashboard.totalBookingSlips = db.Delivery_Sheet.Where(s => item.Ref_Num.Contains(s.Ref_num) && s.Delivery_Type == "Booking").Count();
+            //    DleiveySheetsDTODashboard.totalConfirmSlips = db.Delivery_Sheet.Where(s => item.Ref_Num.Contains(s.Ref_num) && s.Delivery_Type == "Confirmation").Count();
+            //    DleiveySheetsDTODashboard.totalBookingSlipsAmount = db.Delivery_Sheet.Where(s => item.Ref_Num.Contains(s.Ref_num) && s.Delivery_Type == "Booking").Sum(s => s.Total_Amount);
+            //    DleiveySheetsDTODashboard.totalConfirmationSlipsAmount = db.Delivery_Sheet.Where(s => item.Ref_Num.Contains(s.Ref_num) && s.Delivery_Type == "Confirmation").Sum(s => s.Total_Amount);
+            //    DleiveySheetsDTODashboards.Add(DleiveySheetsDTODashboard);
+            //}
 
-                                }).Distinct().AsQueryable().DefaultIfEmpty().ToList();
-            //--------------End Society Slips-------
-            //--------------Society Slips-------
-            var DleiveySheets = (from pd in db.PropertyDefs
-                                 join bc in db.BookingConfirms on pd.ID equals bc.Property_ID
-                                 join ss in db.Delivery_Sheet on bc.Ref_num equals ss.Ref_num
-                                 select new SocietySlipDTODashboard
-                                 {
-                                     Name = pd.Name,
-                                     totalSlips = db.Delivery_Sheet.Where(s => s.Ref_num == ss.Ref_num).Count(),
-                                     totalPendingSlips = db.Delivery_Sheet.Where(s => s.Ref_num == ss.Ref_num && s.Delivery_Status == "UnDelivered").Count(),
-                                     totalDeliveredSlips = db.Delivery_Sheet.Where(s => s.Ref_num == ss.Ref_num && s.Delivery_Status == "Delivered").Count(),
-                                     totalBookingSlips = db.Delivery_Sheet.Where(s => s.Ref_num == ss.Ref_num && s.Delivery_Type == "Booking").Count(),
-                                     totalConfirmSlips = db.Delivery_Sheet.Where(s => s.Ref_num == ss.Ref_num && s.Delivery_Type == "Confirmation").Count(),
-                                     totalBookingSlipsAmount = db.Delivery_Sheet.Where(s => s.Ref_num == ss.Ref_num && s.Delivery_Type == "Booking").Sum(s => s.Total_Amount),
-                                     totalConfirmationSlipsAmount = db.Delivery_Sheet.Where(s => s.Ref_num == ss.Ref_num && s.Delivery_Type == "Confirmation").Sum(s => s.Total_Amount),
-
-                                 }).Distinct().AsQueryable().DefaultIfEmpty().ToList();
-            //--------------End Society Slips-------
             var list = new List<Tuple<string, List<SocietySlipDTODashboard>>>();
-            list.Add(new Tuple<string, List<SocietySlipDTODashboard>>("SocietySlips", SocietySlips));
-            list.Add(new Tuple<string, List<SocietySlipDTODashboard>>("DleiveySheets", DleiveySheets));
+            list.Add(new Tuple<string, List<SocietySlipDTODashboard>>("SocietySlips", societySlipDTODashboards));
+            list.Add(new Tuple<string, List<SocietySlipDTODashboard>>("DleiveySheets", DleiveySheetsDTODashboards));
             return Ok(list);
         }
     }

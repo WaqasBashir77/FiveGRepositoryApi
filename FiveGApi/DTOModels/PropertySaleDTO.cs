@@ -41,6 +41,6 @@ namespace FiveGApi.DTOModels
         public decimal differentiableAmount { get; set; }
         public string Nominee_Picture { get; set; }
         public List<TempTableForInstallmentDTO> propertySaleDetails { get; set; }
-       
+        public string BuyerMemberCode { get; set; }
     }
 }

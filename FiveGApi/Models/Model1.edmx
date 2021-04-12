@@ -60,6 +60,7 @@
           <Property Name="Updated_By" Type="varchar(max)" />
           <Property Name="Updated_On" Type="datetime" />
           <Property Name="SecurityGroupId" Type="int" />
+          <Property Name="PaymentType" Type="varchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="Booking_Entries">
           <Key>
@@ -325,6 +326,7 @@
           <Property Name="Updated_On" Type="datetime" />
           <Property Name="Ref_Field" Type="varchar" MaxLength="100" />
           <Property Name="SecurityGroupId" Type="int" />
+          <Property Name="Payment_Mode" Type="varchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="GL_Lines">
           <Key>
@@ -657,6 +659,7 @@
           <Property Name="Nominee_Picture" Type="image" />
           <Property Name="AuthorizeStatus" Type="bit" />
           <Property Name="Nominee_Father_Name" Type="varchar(max)" />
+          <Property Name="BuyerMemberCode" Type="varchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="PropertyTransfer">
           <Key>
@@ -945,18 +948,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Lookup_Values_Lookup_List">
-          <End Role="Lookup_List" Type="Self.Lookup_List" Multiplicity="1" />
-          <End Role="Lookup_Values" Type="Self.Lookup_Values" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Lookup_List">
-              <PropertyRef Name="REF_ID" />
-            </Principal>
-            <Dependent Role="Lookup_Values">
-              <PropertyRef Name="Ref_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_PaymentInstallment_SaleInstallments">
           <End Role="SaleInstallments" Type="Self.SaleInstallments" Multiplicity="0..1" />
           <End Role="PaymentInstallment" Type="Self.PaymentInstallment" Multiplicity="*" />
@@ -1067,10 +1058,6 @@
           <AssociationSet Name="FK_GL_Lines_GL_Headers" Association="Self.FK_GL_Lines_GL_Headers">
             <End Role="GL_Headers" EntitySet="GL_Headers" />
             <End Role="GL_Lines" EntitySet="GL_Lines" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Lookup_Values_Lookup_List" Association="Self.FK_Lookup_Values_Lookup_List">
-            <End Role="Lookup_List" EntitySet="Lookup_List" />
-            <End Role="Lookup_Values" EntitySet="Lookup_Values" />
           </AssociationSet>
           <AssociationSet Name="FK_PaymentInstallment_SaleInstallments" Association="Self.FK_PaymentInstallment_SaleInstallments">
             <End Role="SaleInstallments" EntitySet="SaleInstallments" />
@@ -1421,6 +1408,7 @@
           <Property Name="Nominee_Picture" Type="Binary" MaxLength="Max" FixedLength="false" />
           <Property Name="AuthorizeStatus" Type="Boolean" />
           <Property Name="Nominee_Father_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="BuyerMemberCode" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Prospect">
           <Key>
@@ -1795,6 +1783,7 @@
           <Property Name="Updated_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Updated_On" Type="DateTime" Precision="3" />
           <Property Name="SecurityGroupId" Type="Int32" />
+          <Property Name="PaymentType" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="GL_Balances">
           <Key>
@@ -1849,6 +1838,7 @@
           <NavigationProperty Name="GL_Lines" Relationship="MIS_DBModel.FK_GL_Lines_GL_Headers" FromRole="GL_Headers" ToRole="GL_Lines" />
           <Property Name="Ref_Field" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="SecurityGroupId" Type="Int32" />
+          <Property Name="Payment_Mode" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="GL_Lines">
           <Key>
@@ -2502,6 +2492,7 @@
           <EntitySetMapping Name="PropertySales">
             <EntityTypeMapping TypeName="MIS_DBModel.PropertySale">
               <MappingFragment StoreEntitySet="PropertySale">
+                <ScalarProperty Name="BuyerMemberCode" ColumnName="BuyerMemberCode" />
                 <ScalarProperty Name="Nominee_Father_Name" ColumnName="Nominee_Father_Name" />
                 <ScalarProperty Name="AuthorizeStatus" ColumnName="AuthorizeStatus" />
                 <ScalarProperty Name="Nominee_Picture" ColumnName="Nominee_Picture" />
@@ -2760,6 +2751,7 @@
           <EntitySetMapping Name="Bank_Accounts">
             <EntityTypeMapping TypeName="MIS_DBModel.Bank_Accounts">
               <MappingFragment StoreEntitySet="Bank_Accounts">
+                <ScalarProperty Name="PaymentType" ColumnName="PaymentType" />
                 <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
                 <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
@@ -2804,6 +2796,7 @@
           <EntitySetMapping Name="GL_Headers">
             <EntityTypeMapping TypeName="MIS_DBModel.GL_Headers">
               <MappingFragment StoreEntitySet="GL_Headers">
+                <ScalarProperty Name="Payment_Mode" ColumnName="Payment_Mode" />
                 <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />
                 <ScalarProperty Name="Ref_Field" ColumnName="Ref_Field" />
                 <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />

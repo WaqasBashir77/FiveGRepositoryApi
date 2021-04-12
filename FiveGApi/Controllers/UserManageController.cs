@@ -77,7 +77,7 @@ namespace FiveGApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var UserExisted = db.Users.Where(x => x.UserId == id && x.IsDeleted == false).FirstOrDefault();
+            var UserExisted = db.Users.Where(x => x.UserId == id ).FirstOrDefault();
             if (UserExisted == null)
             {
                 return NotFound();
@@ -135,6 +135,8 @@ namespace FiveGApi.Controllers
                                 RoleID = ru.RoleId,
                                 RoleName = r.Name,
                                 SecurityGroupId = u.SecurityGroupId,
+                                IsActive= (bool)u.IsActive,
+                                IsDeleted=(bool)u.IsDeleted
                             })
                 .AsQueryable()
                .ToList();
@@ -144,7 +146,7 @@ namespace FiveGApi.Controllers
         [Route("GetUsersByID")]
         public IHttpActionResult GetUsersByID(int userID)
         {
-            var user = db.Users.Where(x => x.UserId == userID && x.IsDeleted == false).AsQueryable().FirstOrDefault();
+            var user = db.Users.Where(x => x.UserId == userID).AsQueryable().FirstOrDefault();
             if (user != null)
             {
                 UserDTO userDTO = new UserDTO();
@@ -195,7 +197,8 @@ namespace FiveGApi.Controllers
         [Route("CreateUpdateRolesPermissions")]
         public IHttpActionResult CreateUpdateRolesPermissions(RoleAndPermissions roleAndPermissions)
         {
-            var roles = db.Roles.Where(x => x.Name == roleAndPermissions.Role).FirstOrDefault();
+            
+            var roles = db.Roles.Where(x => x.Id == roleAndPermissions.RoleID).FirstOrDefault();
             if (roles == null)
             {
                 Role role = new Role();
@@ -246,7 +249,6 @@ namespace FiveGApi.Controllers
                     privilegesToRole.Created_ON = DateTime.Now;
                     db.PrivilegesToRoles.Add(privilegesToRole);
                     db.SaveChanges();
-
                     i = i + 1;
                 }
                 return Ok(roles);

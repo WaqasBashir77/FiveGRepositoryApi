@@ -122,8 +122,8 @@ namespace FiveGApi.Controllers
             var Registration = new List<ResultViewModel>();
             if (type == "staff")
             {
-                 if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                    Registration = db.Registrations.Where(x => x.Type == type&&x.SecurityGroupId==userSecurityGroup.SecurityGroupId).Select(item => new ResultViewModel
+                if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
+                    Registration = db.Registrations.Where(x => x.Type == type && x.SecurityGroupId == userSecurityGroup.SecurityGroupId).Select(item => new ResultViewModel
                     {
                         ID = item.ID,
                         Name = item.StaffName,
@@ -132,19 +132,19 @@ namespace FiveGApi.Controllers
 
                     }).ToList();
                 else
-                Registration= db.Registrations.Where(x => x.Type == type).Select(item => new ResultViewModel
-                {
-                    ID = item.ID,
-                    Name = item.StaffName,
-                    Code=item.Code,
-                    isSelected = false
+                    Registration = db.Registrations.Where(x => x.Type == type).Select(item => new ResultViewModel
+                    {
+                        ID = item.ID,
+                        Name = item.StaffName,
+                        Code = item.Code,
+                        isSelected = false
 
-                }).ToList(); 
+                    }).ToList();
                 if (Registration == null)
                 {
                     return NotFound();
-                }               
-                    return Ok(Registration);
+                }
+                return Ok(Registration);
             }
             else
             {
@@ -165,7 +165,7 @@ namespace FiveGApi.Controllers
                         Code = item.Code,
                         isSelected = false
 
-                    }).ToList(); 
+                    }).ToList();
                 if (Registration == null)
                 {
                     return NotFound();
@@ -173,9 +173,9 @@ namespace FiveGApi.Controllers
 
                 return Ok(Registration);
             }
-            
 
-           
+
+
         }
         // PUT: api/Registrations/5
         [ResponseType(typeof(void))]
@@ -236,7 +236,7 @@ namespace FiveGApi.Controllers
                 return BadRequest(ModelState);
             }
             var Reg = db.Registrations.Where(x => x.Code == Registration.Code).FirstOrDefault();
-            var Seg = db.COA_Segments.Where(x => x.Segment_Value == Registration.Code && x.Type=="Party").FirstOrDefault();
+            var Seg = db.COA_Segments.Where(x => x.Segment_Value == Registration.Code && x.Type == "Party").FirstOrDefault();
             if (Reg != null)
             {
                 var error = new { message = "Party must be unique" }; //<-- anonymous object
@@ -262,14 +262,13 @@ namespace FiveGApi.Controllers
             }
             db.SaveChanges();
             COA_Segments _cOA_Segments = new COA_Segments();
-            if(Registration.Type== "Dealer")
+            if (Registration.Type == "Dealer")
             {
                 _cOA_Segments.Name = Registration.Name;
             }
-            if(Registration.Type == "Staff")
+            if (Registration.Type == "Staff")
             {
                 _cOA_Segments.Name = Registration.StaffName;
-
             }
             _cOA_Segments.Segment = "Party";
             _cOA_Segments.Segment_Value = Registration.Code;
@@ -279,7 +278,7 @@ namespace FiveGApi.Controllers
 
             return CreatedAtRoute("DefaultApi", new { id = Registration.ID }, Registration);
         }
-        
+
         // DELETE: api/Registrations/5
         [ResponseType(typeof(FiveGApi.Models.Registration))]
         public IHttpActionResult DeleteRegistration(int id)
@@ -337,7 +336,7 @@ namespace FiveGApi.Controllers
 
             }
             return db.Rebate_Details.Where(x => x.Reg_ID == regID);
-        }
+        }      
 
     }
 }

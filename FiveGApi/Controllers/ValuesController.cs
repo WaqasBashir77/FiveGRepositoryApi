@@ -101,6 +101,7 @@ namespace FiveGApi.Controllers
                     SecurityGroupId = x.SecurityGroupId,
                     differentiableAmount = x.differentiableAmount,
                     AuthorizeStatus = x.AuthorizeStatus,
+                    BuyerMemberCode = x.BuyerMemberCode
                 }).OrderByDescending(x => x.Created_ON).AsQueryable().ToList();
             else
                 propertySale = db.PropertySales.Select(x => new PropertySaleListDTO
@@ -136,6 +137,7 @@ namespace FiveGApi.Controllers
                     SecurityGroupId = x.SecurityGroupId,
                     differentiableAmount = x.differentiableAmount,
                     AuthorizeStatus = x.AuthorizeStatus,
+                    BuyerMemberCode = x.BuyerMemberCode
                 }).OrderByDescending(x => x.Created_ON).AsQueryable().ToList();
 
             if (propertySale == null)
@@ -252,6 +254,7 @@ namespace FiveGApi.Controllers
                     OriginalPropertySale.Created_By = propertySale.Created_By;
                     OriginalPropertySale.SecurityGroupId = propertySale.SecurityGroupId;
                     OriginalPropertySale.differentiableAmount = propertySale.differentiableAmount;
+                    OriginalPropertySale.BuyerMemberCode = propertySale.memberRegNo.ToString();
                     //OriginalPropertySale.Nominee_Picture = propertySale.Nominee_Picture;
                     if (propertySale.Purchaser_Picture != "")
                     {
@@ -273,7 +276,6 @@ namespace FiveGApi.Controllers
                         foreach (var item in propertySale.propertySaleDetails.ToList())
                         {
                             SaleInstallment saleInstallment = new SaleInstallment();
-
                             saleInstallment.Project_ID = propertySale.projectId;
                             saleInstallment.Unit_ID = propertySale.unitId;
                             saleInstallment.ins_milestone = item.Installment;
@@ -327,6 +329,17 @@ namespace FiveGApi.Controllers
                     }
                     db.PropertySales.Add(OriginalPropertySale);
                     db.SaveChanges();
+                    COA_Segments _cOA_Segments = new COA_Segments();
+                    _cOA_Segments.Segment = "Party";
+                    _cOA_Segments.Segment_Value = OriginalPropertySale.BuyerMemberCode;
+                    _cOA_Segments.Status = "Active";
+                    _cOA_Segments.Name = OriginalPropertySale.Description; ;
+                    _cOA_Segments.Created_By =userSecurityGroup.UserName;
+                    _cOA_Segments.Created_ON =DateTime.Now;
+                    _cOA_Segments.Control_Account = "false";
+                    db.COA_Segments.Add(_cOA_Segments);
+                    db.SaveChanges();
+
                     response.Code = 1;
                 }
             }
@@ -672,6 +685,7 @@ namespace FiveGApi.Controllers
                 AuthorizeStatus=x.AuthorizeStatus,
                 Nominee_Father_Name=x.Nominee_Father_Name,
                 SaleInstallments=x.SaleInstallments,
+                BuyerMemberCode=x.BuyerMemberCode
                     }).AsQueryable().FirstOrDefault();
             else
                 propertySale = db.PropertySales.Where(x => x.Booking_ID == general.Id).Select(x => new PropertySaleNewDTO
@@ -712,6 +726,8 @@ namespace FiveGApi.Controllers
                     AuthorizeStatus = x.AuthorizeStatus,
                     Nominee_Father_Name = x.Nominee_Father_Name,
                     SaleInstallments = x.SaleInstallments,
+                    BuyerMemberCode = x.BuyerMemberCode
+
                 }).AsQueryable().FirstOrDefault();
 
             if (propertySale == null)
@@ -758,6 +774,7 @@ namespace FiveGApi.Controllers
                     MasterObj.Created_By = propertySale.Created_By;
                     MasterObj.SecurityGroupId = propertySale.SecurityGroupId;
                     MasterObj.differentiableAmount = propertySale.differentiableAmount;
+                    MasterObj.BuyerMemberCode = propertySale.Member_Reg_No;
                     ////OriginalPropertySale.Nominee_Picture = propertySale.Nominee_Picture;
                     //if (propertySale.Purchaser_Picture != null)
                     //{
@@ -1147,6 +1164,21 @@ namespace FiveGApi.Controllers
                 return null;
             }
         }
+        [HttpGet]
+        [Route("Get_Segment_ID_By_Name")]
+        public IHttpActionResult Get_Segment_ID_By_Name(string name)
+        {
+            var segment = db.COA_Segments.Where(x => x.Name == name).AsQueryable().FirstOrDefault();
+            if(segment!=null)
+            {
+                return Ok(segment.ID.ToString());
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
         [NonAction]
         private int GenerateCOACombinations(string CCode)
         {
@@ -1173,5 +1205,6 @@ namespace FiveGApi.Controllers
             }
 
         }
+
     }
 }

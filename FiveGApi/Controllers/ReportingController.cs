@@ -249,6 +249,118 @@ namespace FiveGApi.Controllers
                 throw new HttpResponseException(errorResponse);
             }
         }
+        [Route("TrailBalanceSecondReport")]
+        public HttpResponseMessage TrailBalanceSecondReport(DateTime? startDate, DateTime? endDate, string segment, int parentAccount)
+        {
+            try
+            {
+                Warning[] warnings;
+                string[] streamids;
+                string mimeType;
+                string encoding;
+                string extension;
+                ReportViewer ReportViewerRSFReports = new ReportViewer();
+                ReportViewerRSFReports.Height = Unit.Parse("100%");
+                ReportViewerRSFReports.Width = Unit.Parse("100%");
+                ReportViewerRSFReports.CssClass = "table";
+                var rptPath = System.Web.Hosting.HostingEnvironment.MapPath(@"~/Reports/Trail.rdlc");
+                ReportViewerRSFReports.LocalReport.ReportPath = rptPath;
+                DataTable dt = reportDateWithParameters("TrailBalancesDataByDate",startDate, endDate,segment,parentAccount);
+                ReportViewerRSFReports.ProcessingMode = ProcessingMode.Local;
+                ReportViewerRSFReports.LocalReport.DataSources.Clear();
+                ReportViewerRSFReports.LocalReport.DataSources.Add(new ReportDataSource("DataSet1", dt));
+                ReportViewerRSFReports.LocalReport.Refresh();
+                byte[] mybytes = ReportViewerRSFReports.LocalReport.Render("Excel", null, out mimeType, out encoding, out extension, out streamids, out warnings);
+                FileStream file;//=new FileStream();
+                string path2 = System.Web.Hosting.HostingEnvironment.MapPath(@"~\Attachments\NewFiles\");
+                string fileName = "TrailBalanceWithDateStampsReport-" + DateTime.Now.ToFileTime() + ".xls";
+                dynamic savePath2 = (path2 + fileName);
+                file = new FileStream(savePath2, FileMode.Create);
+                file.Write(mybytes, 0, mybytes.Length);
+                file.Close();
+                file.Dispose();
+                byte[] bytes = File.ReadAllBytes(savePath2);
+                HttpResponseMessage response = null;
+                //Create HTTP Response.
+                response = Request.CreateResponse(HttpStatusCode.OK);
+                //Set the Response Content.
+                response.Content = new ByteArrayContent(bytes);
+
+                //Set the Response Content Length.
+                response.Content.Headers.ContentLength = bytes.LongLength;
+
+                //Set the Content Disposition Header Value and FileName.
+                response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
+                response.Content.Headers.ContentDisposition.FileName = fileName;
+
+                //Set the File Content Type.
+                response.Content.Headers.ContentType = new MediaTypeHeaderValue(MimeMapping.GetMimeMapping(fileName));
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                var message = String.Format("Not Found Or Error Message", ex.Message);
+                var errorResponse = Request.CreateErrorResponse(HttpStatusCode.NotFound, message);
+                throw new HttpResponseException(errorResponse);
+            }
+        }
+        [Route("BalanceSheetReport")]
+        public HttpResponseMessage BalanceSheetReport()
+        {
+            try
+            {
+                Warning[] warnings;
+                string[] streamids;
+                string mimeType;
+                string encoding;
+                string extension;
+                ReportViewer ReportViewerRSFReports = new ReportViewer();
+                ReportViewerRSFReports.Height = Unit.Parse("100%");
+                ReportViewerRSFReports.Width = Unit.Parse("100%");
+                ReportViewerRSFReports.CssClass = "table";
+                var rptPath = System.Web.Hosting.HostingEnvironment.MapPath(@"~/Reports/BalanceSheetReport.rdlc");
+                ReportViewerRSFReports.LocalReport.ReportPath = rptPath;
+                DataTable dt = reportDate("BalanceSheetData");
+                ReportViewerRSFReports.ProcessingMode = ProcessingMode.Local;
+                ReportViewerRSFReports.LocalReport.DataSources.Clear();
+                ReportViewerRSFReports.LocalReport.DataSources.Add(new ReportDataSource("DataSet1", dt));
+                ReportViewerRSFReports.LocalReport.Refresh();
+                byte[] mybytes = ReportViewerRSFReports.LocalReport.Render("Excel", null, out mimeType, out encoding, out extension, out streamids, out warnings);
+                FileStream file;//=new FileStream();
+                string path2 = System.Web.Hosting.HostingEnvironment.MapPath(@"~\Attachments\NewFiles\");
+                string fileName = "BalanceSheetReport-" + DateTime.Now.ToFileTime() + ".xls";
+                dynamic savePath2 = (path2 + fileName);
+                file = new FileStream(savePath2, FileMode.Create);
+                file.Write(mybytes, 0, mybytes.Length);
+                file.Close();
+                file.Dispose();
+                byte[] bytes = File.ReadAllBytes(savePath2);
+                HttpResponseMessage response = null;
+                //Create HTTP Response.
+                response = Request.CreateResponse(HttpStatusCode.OK);
+                //Set the Response Content.
+                response.Content = new ByteArrayContent(bytes);
+
+                //Set the Response Content Length.
+                response.Content.Headers.ContentLength = bytes.LongLength;
+
+                //Set the Content Disposition Header Value and FileName.
+                response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
+                response.Content.Headers.ContentDisposition.FileName = fileName;
+
+                //Set the File Content Type.
+                response.Content.Headers.ContentType = new MediaTypeHeaderValue(MimeMapping.GetMimeMapping(fileName));
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                var message = String.Format("Not Found Or Error Message", ex.Message);
+                var errorResponse = Request.CreateErrorResponse(HttpStatusCode.NotFound, message);
+                throw new HttpResponseException(errorResponse);
+            }
+        }
         private DataTable reportDate(string procedureName)
         {
             DataTable dt = new DataTable();
@@ -269,6 +381,32 @@ namespace FiveGApi.Controllers
                 }
             }
         }
+        private DataTable reportDateWithParameters(string procedureName,DateTime? startDate, DateTime? endDate,string segment,int parentAccount )
+        {
+            DataTable dt = new DataTable();
+            var conString = ConfigurationManager.ConnectionStrings["mis_dbConnectionString"].ToString(); ;
+            SqlCommand cmd = new SqlCommand(procedureName);
+            cmd.Parameters.AddWithValue("@StartDate", startDate); //"2021-03-27 08:54:04.323"
+            cmd.Parameters.AddWithValue("@EndDate", endDate);//"2021-04-30 06:52:18.193"
+            cmd.Parameters.AddWithValue("@Segment", segment); //"Account"
+            cmd.Parameters.AddWithValue("@ParentAccount", parentAccount); //27
+
+            using (SqlConnection con = new SqlConnection(conString))
+            {
+                using (SqlDataAdapter sda = new SqlDataAdapter())
+                {
+                    cmd.Connection = con;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    sda.SelectCommand = cmd;
+                    using (DataSet dsCustomers = new DataSet())
+                    {
+                        sda.Fill(dsCustomers, "Customers");
+                        return dsCustomers.Tables[0];
+                    }
+                }
+            }
+        }
+        
         private DataTable reportDateWithParameters(DateTime? StartDate,DateTime? EndDate,decimal? PlotStartingPrice,decimal? PlotEndingPrice
             ,string Category,DateTime? LetterRecivingStartDate,DateTime? LetterRecivingEndDate,
             string LetterStatus, decimal? BookingStartingPrice,decimal? BookingEndingPrice, string BookingStatus,
