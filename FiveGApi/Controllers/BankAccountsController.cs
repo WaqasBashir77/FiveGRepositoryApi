@@ -33,9 +33,9 @@ namespace FiveGApi.Controllers
             public IQueryable<Bank_Accounts> GetALLBank_Accounts()
             {
                   if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                      return db.Bank_Accounts.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId && x.Status== "Active").AsQueryable();
+                      return db.Bank_Accounts.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId && x.Status== "Active").OrderByDescending(x=>x.Created_On).AsQueryable();
                   else
-                      return db.Bank_Accounts.Where(x=>x.Status== "Active").AsQueryable();
+                      return db.Bank_Accounts.Where(x=>x.Status== "Active").OrderByDescending(x => x.Created_On).AsQueryable();
             }
             [ResponseType(typeof(IQueryable<Bank_Accounts>))]
             [Route("GetALLBank_AccountsWithoutFilter")]
@@ -43,9 +43,9 @@ namespace FiveGApi.Controllers
             public IQueryable<Bank_Accounts> GetALLBank_AccountsWithoutFilter()
             {
                 if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                    return db.Bank_Accounts.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId).AsQueryable();
+                    return db.Bank_Accounts.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId).OrderByDescending(x => x.Created_On).AsQueryable();
                 else
-                    return db.Bank_Accounts;
+                    return db.Bank_Accounts.OrderByDescending(x => x.Created_On).AsQueryable();
             }
         // GET: api/Bank_Accounts/5
         [ResponseType(typeof(Bank_Accounts))]

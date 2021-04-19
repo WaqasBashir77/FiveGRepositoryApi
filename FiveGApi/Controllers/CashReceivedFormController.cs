@@ -32,11 +32,11 @@ namespace FiveGApi.Controllers
                 var userSecurityGroup = db.Users.Where(x => x.UserName == UserId).AsQueryable().Select(x => x.SecurityGroupId).FirstOrDefault();
                 if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup))
                 {
-                    return db.CashreceivedForms.Where(x=>x.Security_Group_ID==userSecurityGroup.ToString()).AsQueryable();
+                    return db.CashreceivedForms.Where(x=>x.Security_Group_ID==userSecurityGroup.ToString()).OrderByDescending(x => x.Created_On).AsQueryable();
                 }
                 else
                 {
-                    return db.CashreceivedForms;
+                    return db.CashreceivedForms.OrderByDescending(x => x.Created_On).AsQueryable();
 
                 }
 

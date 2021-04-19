@@ -40,9 +40,9 @@ namespace FiveGApi.Controllers
             try
             {
                 if (!SecurityGroupDTO.CheckSuperAdmin(groupId))
-                    paymentMilestonesList = db.PaymentMilestones.Where(x => x.SecurityGroupId == groupId).ToList();
+                    paymentMilestonesList = db.PaymentMilestones.Where(x => x.SecurityGroupId == groupId&& x.Status==true).OrderByDescending(x => x.Created_Date).AsQueryable().ToList();
                 else
-                    paymentMilestonesList = db.PaymentMilestones.ToList();
+                    paymentMilestonesList = db.PaymentMilestones.Where(x=>x.Status == true).OrderByDescending(x => x.Created_Date).AsQueryable().ToList();
 
             }
             catch (Exception ex)
@@ -105,6 +105,7 @@ namespace FiveGApi.Controllers
             milestoneMaster.Tax = paymentMilestone.Tax;
             milestoneMaster.GracePeriodDays = paymentMilestone.GracePeriodDays;
             milestoneMaster.description = paymentMilestone.description;
+            milestoneMaster.Status = paymentMilestone.Status;
             milestoneMaster.LateFeePercent = paymentMilestone.LateFeePercent;
             milestoneMaster.Update_By = paymentMilestone.Update_By;
             milestoneMaster.Update_Date = DateTime.Now;

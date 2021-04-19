@@ -51,6 +51,9 @@ namespace FiveGApi.Models
         public string Ref_Field { get; set; }
         public Nullable<int> SecurityGroupId { get; set; }
         public string Payment_Mode { get; set; }
+        public string ChequeNumber { get; set; }
+        public Nullable<System.DateTime> ChequeDate { get; set; }
+        public string PayeeName { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<GL_Lines> GL_Lines { get; set; }

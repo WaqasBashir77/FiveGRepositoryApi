@@ -34,9 +34,9 @@ namespace FiveGApi.Controllers
             public IQueryable<Society_Slip> GetALLSociety_Slip()
         {
             if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                return db.Society_Slip.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId);
+                return db.Society_Slip.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId).OrderByDescending(x => x.Created_ON).AsQueryable();
             else
-                return db.Society_Slip;
+                return db.Society_Slip.OrderByDescending(x => x.Created_ON).AsQueryable();
             }
 
             // GET: api/Society_Slip/5
@@ -175,9 +175,9 @@ namespace FiveGApi.Controllers
                 return NotFound();
             }
             if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                return Ok(Society_Slip.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId));
+                return Ok(Society_Slip.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId).OrderByDescending(x => x.Created_ON).AsQueryable());
             else
-                return Ok(Society_Slip);
+                return Ok(Society_Slip.OrderByDescending(x => x.Created_ON).AsQueryable());
         }
         protected override void Dispose(bool disposing)
             {

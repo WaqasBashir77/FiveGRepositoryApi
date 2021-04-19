@@ -32,9 +32,9 @@ namespace FiveGApi.Controllers
             public IQueryable<Delivery_Sheet> GetALLDeliverySheet()
             {
             if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                return db.Delivery_Sheet.Where(x=>x.SecurityGroupId==userSecurityGroup.SecurityGroupId);
+                return db.Delivery_Sheet.Where(x=>x.SecurityGroupId==userSecurityGroup.SecurityGroupId).OrderByDescending(x => x.Created_On).AsQueryable();
             else
-                return db.Delivery_Sheet;
+                return db.Delivery_Sheet.OrderByDescending(x => x.Created_On).AsQueryable();
             }
 
             // GET: api/Delivery_Sheet/5
@@ -61,16 +61,16 @@ namespace FiveGApi.Controllers
             IEnumerable<Delivery_Sheet> Delivery_Sheet;
             if (Ref_num==null)
             {
-                Delivery_Sheet = db.Delivery_Sheet.Where(x => x.Form_num == Form_num).ToList();
+                Delivery_Sheet = db.Delivery_Sheet.Where(x => x.Form_num == Form_num).OrderByDescending(x => x.Created_On).AsQueryable().ToList();
             }
             else if(Form_num==null)
             {
-                Delivery_Sheet = db.Delivery_Sheet.Where(x => x.Ref_num == Ref_num).ToList();
+                Delivery_Sheet = db.Delivery_Sheet.Where(x => x.Ref_num == Ref_num).OrderByDescending(x => x.Created_On).AsQueryable().ToList();
 
             }
             else
             {
-                Delivery_Sheet = db.Delivery_Sheet.Where(x => x.Ref_num == Ref_num && x.Form_num == Form_num).ToList();
+                Delivery_Sheet = db.Delivery_Sheet.Where(x => x.Ref_num == Ref_num && x.Form_num == Form_num).OrderByDescending(x => x.Created_On).AsQueryable().ToList();
 
             }
             if (Delivery_Sheet == null)
@@ -78,9 +78,9 @@ namespace FiveGApi.Controllers
                 return NotFound();
             }
             if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                return Ok(Delivery_Sheet.Where(x=>x.SecurityGroupId==userSecurityGroup.SecurityGroupId));
+                return Ok(Delivery_Sheet.Where(x=>x.SecurityGroupId==userSecurityGroup.SecurityGroupId).OrderByDescending(x => x.Created_On).AsQueryable());
             else
-                return Ok(Delivery_Sheet);
+                return Ok(Delivery_Sheet.OrderByDescending(x => x.Created_On).AsQueryable());
 
 
         }

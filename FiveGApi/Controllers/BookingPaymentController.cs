@@ -35,9 +35,9 @@ namespace FiveGApi.Controllers
         public IQueryable<BookingPayment> GetBookingPaymentsAll()//[FromUri] PagingParameterModel pagingparametermodel)
         {
             if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                return db.BookingPayments.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId);
+                return db.BookingPayments.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId).OrderByDescending(x => x.instrument_date).AsQueryable();
             else
-                return db.BookingPayments;
+                return db.BookingPayments.OrderByDescending(x => x.instrument_date).AsQueryable();
             //// Get's No of Rows Count   
             //int count = source.Count();
 
@@ -103,9 +103,9 @@ namespace FiveGApi.Controllers
         {
             List<BookingPayment> Booking_Payments = new List<BookingPayment>();
             if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                Booking_Payments = db.BookingPayments.Where(x => x.ID == id && x.SecurityGroupId == userSecurityGroup.SecurityGroupId).ToList();
+                Booking_Payments = db.BookingPayments.Where(x => x.ID == id && x.SecurityGroupId == userSecurityGroup.SecurityGroupId).OrderByDescending(x => x.instrument_date).AsQueryable().ToList();
             else
-                Booking_Payments=db.BookingPayments.Where(x => x.ID == id).ToList();
+                Booking_Payments=db.BookingPayments.Where(x => x.ID == id).OrderByDescending(x => x.instrument_date).AsQueryable().ToList();
 
             //db.BookingPayments.Where(x=>x.ID==id).ToList();
 
@@ -122,9 +122,9 @@ namespace FiveGApi.Controllers
         {
             List<BookingPayment> Booking_Payments = new List<BookingPayment>();
             if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                Booking_Payments = db.BookingPayments.Where(x => x.ID == id && x.Ins_Type == instype && x.SecurityGroupId == userSecurityGroup.SecurityGroupId).ToList();
+                Booking_Payments = db.BookingPayments.Where(x => x.ID == id && x.Ins_Type == instype && x.SecurityGroupId == userSecurityGroup.SecurityGroupId).OrderByDescending(x => x.instrument_date).AsQueryable().ToList();
             else
-                Booking_Payments = db.BookingPayments.Where(x => x.ID == id && x.Ins_Type == instype).ToList();
+                Booking_Payments = db.BookingPayments.Where(x => x.ID == id && x.Ins_Type == instype).OrderByDescending(x => x.instrument_date).AsQueryable().ToList();
 
 
             if (Booking_Payments == null)

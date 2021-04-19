@@ -37,9 +37,9 @@ namespace FiveGApi.Controllers
         public IQueryable<Resale_Form> GetAllResale_Form(int RDID)
         {
             if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                return db.Resale_Form.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId);
+                return db.Resale_Form.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId).OrderByDescending(x => x.Created_On).AsQueryable();
             else
-                return db.Resale_Form;
+                return db.Resale_Form.OrderByDescending(x => x.Created_On).AsQueryable();
         }
         [Route("GetResale_FormByID")]
         // GET: api/Resale_Form/5

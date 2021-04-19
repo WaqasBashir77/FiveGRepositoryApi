@@ -15,7 +15,7 @@ using System.Web.UI.WebControls;
 
 namespace FiveGApi.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [RoutePrefix("api/Reporting")]
     public class ReportingController : ApiController
     {
@@ -330,6 +330,80 @@ namespace FiveGApi.Controllers
                 FileStream file;//=new FileStream();
                 string path2 = System.Web.Hosting.HostingEnvironment.MapPath(@"~\Attachments\NewFiles\");
                 string fileName = "BalanceSheetReport-" + DateTime.Now.ToFileTime() + ".xls";
+                dynamic savePath2 = (path2 + fileName);
+                file = new FileStream(savePath2, FileMode.Create);
+                file.Write(mybytes, 0, mybytes.Length);
+                file.Close();
+                file.Dispose();
+                byte[] bytes = File.ReadAllBytes(savePath2);
+                HttpResponseMessage response = null;
+                //Create HTTP Response.
+                response = Request.CreateResponse(HttpStatusCode.OK);
+                //Set the Response Content.
+                response.Content = new ByteArrayContent(bytes);
+
+                //Set the Response Content Length.
+                response.Content.Headers.ContentLength = bytes.LongLength;
+
+                //Set the Content Disposition Header Value and FileName.
+                response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
+                response.Content.Headers.ContentDisposition.FileName = fileName;
+
+                //Set the File Content Type.
+                response.Content.Headers.ContentType = new MediaTypeHeaderValue(MimeMapping.GetMimeMapping(fileName));
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                var message = String.Format("Not Found Or Error Message", ex.Message);
+                var errorResponse = Request.CreateErrorResponse(HttpStatusCode.NotFound, message);
+                throw new HttpResponseException(errorResponse);
+            }
+        }
+        [Route("ProfiLossReport")]
+        public HttpResponseMessage ProfiLossReport()
+        {
+            try
+            {
+                Warning[] warnings;
+                string[] streamids;
+                string mimeType;
+                string encoding;
+                string extension;
+                ReportViewer ReportViewerRSFReports = new ReportViewer();
+                ReportViewerRSFReports.Height = Unit.Parse("100%");
+                ReportViewerRSFReports.Width = Unit.Parse("100%");
+                ReportViewerRSFReports.CssClass = "table";
+                var rptPath = System.Web.Hosting.HostingEnvironment.MapPath(@"~/Reports/PandLReport.rdlc");
+                ReportViewerRSFReports.LocalReport.ReportPath = rptPath;
+                DataTable dt = reportDate("ProfitLossSheetData");
+                ReportViewerRSFReports.ProcessingMode = ProcessingMode.Local;
+                ////Revenue Parameter
+                //ReportParameter Revenue = new ReportParameter();
+                //Revenue.Name = "@Revenue";
+                //double rValue = 911.0;//new Uri(Server.MapPath(@"~/" + logoPath.FirstOrDefault().Logo)).AbsoluteUri;
+                //Revenue.Values.Add(rValue.ToString());
+                //ReportViewerRSFReports.LocalReport.SetParameters(Revenue);
+                ////Expense
+                //ReportParameter Expense = new ReportParameter();
+                //Expense.Name = "@Expense";
+                //double eValue = 909.0;//new Uri(Server.MapPath(@"~/" + logoPath.FirstOrDefault().Logo)).AbsoluteUri;
+                //Revenue.Values.Add(eValue.ToString());
+                //ReportViewerRSFReports.LocalReport.SetParameters(Expense);
+                //double rValue = 911.0;
+                //ReportParameter rp = new ReportParameter("Revenue", rValue.ToString()); 
+                //double eValue = 911.0;
+                //ReportParameter ep = new ReportParameter("Expense", eValue.ToString());
+                ReportViewerRSFReports.LocalReport.DataSources.Clear();
+                //ReportViewerRSFReports.LocalReport.SetParameters(new ReportParameter[] { rp, ep });
+                ReportViewerRSFReports.LocalReport.DataSources.Add(new ReportDataSource("DataSet1", dt));
+                //ReportViewerRSFReports.LocalReport.SetParameters(new ReportParameter[] { rp,ep });
+                ReportViewerRSFReports.LocalReport.Refresh();
+                byte[] mybytes = ReportViewerRSFReports.LocalReport.Render("Excel", null, out mimeType, out encoding, out extension, out streamids, out warnings);
+                FileStream file;//=new FileStream();
+                string path2 = System.Web.Hosting.HostingEnvironment.MapPath(@"~\Attachments\NewFiles\");
+                string fileName = "ProfitLossReport-" + DateTime.Now.ToFileTime() + ".xls";
                 dynamic savePath2 = (path2 + fileName);
                 file = new FileStream(savePath2, FileMode.Create);
                 file.Write(mybytes, 0, mybytes.Length);

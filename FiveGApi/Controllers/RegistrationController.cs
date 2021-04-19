@@ -34,9 +34,9 @@ namespace FiveGApi.Controllers
         public IQueryable<FiveGApi.Models.Registration> GetALLRegistrations()//[FromUri] PagingParameterModel pagingparametermodel)
         {
             if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                return db.Registrations.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId);
+                return db.Registrations.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId).OrderByDescending(x => x.Created_ON).AsQueryable();
             else
-                return db.Registrations;
+                return db.Registrations.OrderByDescending(x => x.Created_ON).AsQueryable();
             ////Get All Registration From DB
             //var source = db.Registrations.OrderBy(x=>x.ID);
             //// Get's No of Rows Count   

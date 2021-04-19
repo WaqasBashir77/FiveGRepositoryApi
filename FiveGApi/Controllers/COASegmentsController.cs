@@ -30,13 +30,13 @@ namespace FiveGApi.Controllers
         [ResponseType(typeof(IQueryable<COA_Segments>))]
         public IQueryable<COA_Segments> GetAllCOA_Segments()
         {
-            return db.COA_Segments;
+            return db.COA_Segments.OrderByDescending(x => x.Created_ON).AsQueryable();
         }
         [Route("GetCOA_SegmentsBySegment")]
         [ResponseType(typeof(IList<COA_Segments>))]
         public IList<COA_Segments> GetCOA_SegmentsBySegment(string segment)
         {
-            return db.COA_Segments.Where(s=>s.Segment==segment).ToList();
+            return db.COA_Segments.Where(s=>s.Segment==segment).OrderByDescending(x => x.Created_ON).AsQueryable().ToList();
         }
         [Route("GetCOA_SegmentBySegment_Value")]
         [ResponseType(typeof(COA_Segments))]

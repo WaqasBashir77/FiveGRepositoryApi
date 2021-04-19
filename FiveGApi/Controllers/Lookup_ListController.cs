@@ -39,7 +39,7 @@ namespace FiveGApi.Controllers
             //    }
             //    else
             //    {
-                    return db.Lookup_List;
+                    return db.Lookup_List.OrderByDescending(x => x.Created_On).AsQueryable();
 
             //    }
 

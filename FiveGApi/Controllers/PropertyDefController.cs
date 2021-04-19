@@ -35,9 +35,9 @@ namespace FiveGApi.Controllers
         public IQueryable<PropertyDef> GetALLPropertyDef()
         {
             if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                return db.PropertyDefs.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId);
+                return db.PropertyDefs.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId).OrderByDescending(x => x.Created_ON).AsQueryable();
             else
-                return db.PropertyDefs;
+                return db.PropertyDefs.OrderByDescending(x => x.Created_ON).AsQueryable();
         }
 
         // GET: api/PropertyDef/5

@@ -40,9 +40,9 @@ namespace FiveGApi.Controllers
             try
             {
                 if (!SecurityGroupDTO.CheckSuperAdmin(groupId))
-                    prospects = db.Prospects.Where(x => x.SecurityGroupId == groupId).AsQueryable();
+                    prospects = db.Prospects.Where(x => x.SecurityGroupId == groupId).OrderByDescending(x => x.Created_Date).AsQueryable();
                 else
-                    prospects = db.Prospects.AsQueryable();
+                    prospects = db.Prospects.OrderByDescending(x => x.Created_Date).AsQueryable();
             }
             catch (Exception ex)
             {

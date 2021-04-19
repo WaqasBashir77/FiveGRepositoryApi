@@ -42,9 +42,9 @@ namespace FiveGApi.Controllers
             try
             {
                 if (!SecurityGroupDTO.CheckSuperAdmin(groupId))
-                    projects = db.Projects.Where(x => x.SecurityGroupId == groupId).AsQueryable();
+                    projects = db.Projects.Where(x => x.SecurityGroupId == groupId).OrderByDescending(x => x.Created_Date).AsQueryable();
                 else
-                    projects = db.Projects;
+                    projects = db.Projects.OrderByDescending(x => x.Created_Date).AsQueryable();
             }
             catch (Exception ex)
             {

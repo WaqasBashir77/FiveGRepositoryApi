@@ -42,7 +42,7 @@ namespace FiveGApi.Controllers
             {
                 return NotFound();
             }
-            return Ok(propertySale);
+            return Ok(propertySale.OrderByDescending(x => x.Created_ON).AsQueryable());
         }
         //[HttpGet]
         //public IHttpActionResult GetPropertySaleLsit(int Id)
@@ -144,7 +144,7 @@ namespace FiveGApi.Controllers
             {
                 return NotFound();
             }
-            return Ok(propertySale);
+            return Ok(propertySale.OrderByDescending(x => x.Created_ON).AsQueryable());
         }
 
         // GET api/values
@@ -333,7 +333,7 @@ namespace FiveGApi.Controllers
                     _cOA_Segments.Segment = "Party";
                     _cOA_Segments.Segment_Value = OriginalPropertySale.BuyerMemberCode;
                     _cOA_Segments.Status = "Active";
-                    _cOA_Segments.Name = OriginalPropertySale.Description; ;
+                    _cOA_Segments.Name = OriginalPropertySale.Buyer_Name; 
                     _cOA_Segments.Created_By =userSecurityGroup.UserName;
                     _cOA_Segments.Created_ON =DateTime.Now;
                     _cOA_Segments.Control_Account = "false";

@@ -32,7 +32,7 @@ namespace FiveGApi.Controllers
         [ResponseType(typeof(IQueryable<Rebate_Details>))]
         public IQueryable<Rebate_Details> GetAllRebate_Details(int RDID)
         {
-            return db.Rebate_Details;
+            return db.Rebate_Details.OrderByDescending(x => x.Created_ON).AsQueryable();
         }
 
         // GET: api/Rebate_Details/5

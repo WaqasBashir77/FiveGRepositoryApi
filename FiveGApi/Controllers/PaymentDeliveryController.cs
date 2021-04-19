@@ -33,9 +33,9 @@ namespace FiveGApi.Controllers
             public IQueryable<Payment_Delivery> GetALLPayment_Delivery()
         {
             if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                return db.Payment_Delivery.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId);
+                return db.Payment_Delivery.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId).OrderByDescending(x => x.instrument_date).AsQueryable();
             else
-                return db.Payment_Delivery;
+                return db.Payment_Delivery.OrderByDescending(x => x.instrument_date).AsQueryable();
 
         }
 

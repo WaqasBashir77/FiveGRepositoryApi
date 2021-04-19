@@ -37,9 +37,9 @@ namespace FiveGApi.Controllers
         public IQueryable<PropertyTransfer> GetAllPropertyTransfer(int RDID)
         {
             if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                return db.PropertyTransfers.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId);
+                return db.PropertyTransfers.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId).OrderByDescending(x => x.Created_On).AsQueryable();
             else
-                return db.PropertyTransfers;
+                return db.PropertyTransfers.OrderByDescending(x => x.Created_On).AsQueryable();
         }
         [Route("GetPropertyTransferByID")]
         // GET: api/PropertyTransfer/5

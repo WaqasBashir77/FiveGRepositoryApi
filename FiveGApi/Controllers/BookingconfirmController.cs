@@ -98,7 +98,7 @@ namespace FiveGApi.Controllers
                                                 Authorize_Date = f.Authorize_Date,
                                                 ProjectName = p.Name,
                                                 EmployeeName = r.StaffName
-                                            }).AsQueryable().ToList();
+                                            }).OrderByDescending(x => x.Created_ON).AsQueryable().ToList();
                     return Ok(bookingConfirmtt);
                 }else
                 {
@@ -160,7 +160,7 @@ namespace FiveGApi.Controllers
                                                 Authorize_Date = f.Authorize_Date,
                                                 ProjectName = p.Name,
                                                 EmployeeName = r.StaffName
-                                            }).AsQueryable().ToList();
+                                            }).OrderByDescending(x => x.Created_ON).AsQueryable().ToList();
                     return Ok(bookingConfirmtt);
                 }
                 //bookingConfirm = db.BookingConfirms;
@@ -252,6 +252,7 @@ namespace FiveGApi.Controllers
                 existBookingConfirm.Book_Emp = BookingConfirm.Book_Emp;
                 existBookingConfirm.Book_Dealer = BookingConfirm.Book_Dealer;
                 existBookingConfirm.MS_amount = BookingConfirm.MS_amount;
+                existBookingConfirm.Rebate_Percent = BookingConfirm.Rebate_Percent;
                 existBookingConfirm.Remarks = BookingConfirm.Remarks;
                 existBookingConfirm.Confirmation_Date = BookingConfirm.Confirmation_Date;
                 existBookingConfirm.Updated_By = BookingConfirm.Updated_By;
@@ -269,7 +270,9 @@ namespace FiveGApi.Controllers
                 existBookingConfirm.SecurityGroupId = userSecurityGroup.SecurityGroupId;
                 existBookingConfirm.Updated_On = DateTime.Now.ToString();
                 existBookingConfirm.Updated_By = userSecurityGroup.UserName;
-
+                existBookingConfirm.Tax_Percent = BookingConfirm.Tax_Percent;
+                existBookingConfirm.Emp_Rebate = BookingConfirm.Emp_Rebate;
+                existBookingConfirm.Dealer_Rebate = BookingConfirm.Dealer_Rebate;
                 try
                 {
                     db.SaveChanges();
@@ -288,7 +291,7 @@ namespace FiveGApi.Controllers
                 }
                 if (BookingConfirm.Authorize_Status == "Authorized")
                 {
-                if (BookingConfirm.File_Status== "Cancelled"  || BookingConfirm.File_Status == "Replaced")
+                if (BookingConfirm.File_Status== "Canceled"  || BookingConfirm.File_Status == "Replaced")
                 {
                     
                         var glheader = db.GL_Headers.Where(x => x.Source_Tran_Id == BookingConfirm.ID).AsQueryable().FirstOrDefault();

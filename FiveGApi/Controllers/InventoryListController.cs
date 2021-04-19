@@ -36,9 +36,9 @@ namespace FiveGApi.Controllers
         public IQueryable<Inventory_List> GetAllInventory_List(int RDID)
         {
             if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                return db.Inventory_List.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId);
+                return db.Inventory_List.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId).OrderByDescending(x => x.Created_On).AsQueryable();
             else
-                return db.Inventory_List;
+                return db.Inventory_List.OrderByDescending(x => x.Created_On).AsQueryable();
             //return db.Inventory_List;
         }
 

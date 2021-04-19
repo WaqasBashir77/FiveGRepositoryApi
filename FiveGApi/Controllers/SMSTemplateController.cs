@@ -27,14 +27,14 @@ namespace FiveGApi.Controllers
         // GET: api/SMS_Template
         public IQueryable<SMS_Template> GetSMS_TemplateAll()
         {
-            return db.SMS_Template;
+            return db.SMS_Template.OrderByDescending(x => x.Created_On).AsQueryable();
         }
 
         // GET: api/SMS_Template/5
         [ResponseType(typeof(SMS_Template))]
         public IHttpActionResult GetSMS_Template(int id)
         {
-            List<SMS_Template> SMS_Template = db.SMS_Template.Where(x => x.ID == id ).ToList();
+            List<SMS_Template> SMS_Template = db.SMS_Template.Where(x => x.ID == id ).OrderByDescending(x => x.Created_On).AsQueryable().ToList();
             if (SMS_Template == null)
             {
                 return NotFound();

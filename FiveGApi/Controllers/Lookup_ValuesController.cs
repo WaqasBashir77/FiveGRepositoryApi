@@ -21,7 +21,7 @@ namespace FiveGApi.Controllers
         // GET: api/Lookup_Values
         public IQueryable<Lookup_Values> GetLookup_ValuesAll()
         {
-            return db.Lookup_Values;
+            return db.Lookup_Values.OrderByDescending(x => x.Created_ON).AsQueryable();
         }
 
         // GET: api/Lookup_Values/5

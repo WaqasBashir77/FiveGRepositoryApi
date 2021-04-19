@@ -29,7 +29,7 @@ namespace FiveGApi.Controllers
         [HttpGet]
         public IQueryable<GL_Balances> GetALLGL_Balances()
         {
-            return db.GL_Balances;
+            return db.GL_Balances.OrderByDescending(x => x.Created_On).AsQueryable();
         }
 
         // GET: api/GL_Balances/5

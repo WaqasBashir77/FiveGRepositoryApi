@@ -138,7 +138,7 @@ namespace FiveGApi.Controllers
                                 IsActive= (bool)u.IsActive,
                                 IsDeleted=(bool)u.IsDeleted
                             })
-                .AsQueryable()
+                .OrderByDescending(x => x.UserID).AsQueryable()
                .ToList();
             return Ok(userList);
         }
@@ -191,6 +191,7 @@ namespace FiveGApi.Controllers
         [Route("GetRoles")]
         public IHttpActionResult GetAllRoles()
         {
+                
             return Ok(db.Roles.ToList());
         }
         [HttpPost]

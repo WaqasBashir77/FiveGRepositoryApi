@@ -32,13 +32,10 @@ namespace FiveGApi.Controllers
         // GET: api/GL_Headers
         public IQueryable<GL_Headers> GetAllGL_Headers()
         {
-            IQueryable<GL_Headers> GL_Headers;
-
             if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                return db.GL_Headers.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId);
+                return db.GL_Headers.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId).OrderByDescending(x => x.Created_On).AsQueryable();
             else
-                return db.GL_Headers;
-           // return GL_Headers;
+                return db.GL_Headers.OrderByDescending(x => x.Created_On).AsQueryable();
         }
 
         // GET: api/GL_Headers/5
@@ -54,7 +51,6 @@ namespace FiveGApi.Controllers
             {
                 return NotFound();
             }
-
             return Ok(gL_Headers);
         }
 
@@ -98,6 +94,9 @@ namespace FiveGApi.Controllers
                     existgL_Headers.Trans_Status = gL_Headers.Trans_Status;
                     existgL_Headers.SecurityGroupId = gL_Headers.SecurityGroupId;
                     existgL_Headers.Payment_Mode = gL_Headers.Payment_Mode;
+                    existgL_Headers.ChequeNumber = gL_Headers.ChequeNumber;
+                    existgL_Headers.ChequeDate = gL_Headers.ChequeDate;
+                    existgL_Headers.PayeeName = gL_Headers.PayeeName;
                     ///changes on 15-03-2021-------
                     if (gL_Headers.Trans_Status == "Posted")
                     {
@@ -168,6 +167,9 @@ namespace FiveGApi.Controllers
                 existgL_Headers.Flex_2 = gL_Headers.Flex_2;
                 existgL_Headers.Updated_By = userSecurityGroup.UserName;
                 existgL_Headers.Updated_On = DateTime.Now;
+                existgL_Headers.ChequeNumber = gL_Headers.ChequeNumber;
+                existgL_Headers.ChequeDate = gL_Headers.ChequeDate;
+                existgL_Headers.PayeeName = gL_Headers.PayeeName;
                 gL_LinesUpdate(existgL_Headers.H_ID, gL_Headers.GL_Lines);
 
                 try
@@ -548,9 +550,9 @@ namespace FiveGApi.Controllers
             }
             
                 if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                return gL_Headers.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId).ToList();
+                return gL_Headers.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId).OrderByDescending(x => x.Created_On).AsQueryable().ToList();
             else
-                return gL_Headers;
+                return gL_Headers.OrderByDescending(x => x.Created_On).AsQueryable().ToList();
            // return null;
             
         }
