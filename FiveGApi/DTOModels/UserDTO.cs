@@ -27,6 +27,7 @@ namespace FiveGApi.DTOModels
         [Required]
         public Nullable<int> RoleID { get; set; }
         public string RoleName { get; set; }
+        public int? StaffID { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
     }

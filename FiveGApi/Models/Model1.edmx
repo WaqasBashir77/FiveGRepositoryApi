@@ -664,6 +664,7 @@
           <Property Name="AuthorizeStatus" Type="bit" />
           <Property Name="Nominee_Father_Name" Type="varchar(max)" />
           <Property Name="BuyerMemberCode" Type="varchar" MaxLength="250" />
+          <Property Name="nomineeGContact" Type="varchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="PropertyTransfer">
           <Key>
@@ -927,6 +928,7 @@
           <Property Name="LastModifiedDate" Type="datetime" />
           <Property Name="IsActive" Type="bit" />
           <Property Name="IsDeleted" Type="bit" />
+          <Property Name="StaffID" Type="int" />
         </EntityType>
         <Association Name="FK_Forms_Module">
           <End Role="Module" Type="Self.Module" Multiplicity="0..1" />
@@ -1413,6 +1415,7 @@
           <Property Name="AuthorizeStatus" Type="Boolean" />
           <Property Name="Nominee_Father_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="BuyerMemberCode" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="nomineeGContact" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Prospect">
           <Key>
@@ -1681,6 +1684,7 @@
           <Property Name="SecurityGroupId" Type="Int32" />
           <Property Name="IsActive" Type="Boolean" />
           <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="StaffID" Type="Int32" />
         </EntityType>
         <EntityType Name="COA_Combinations">
           <Key>
@@ -2500,6 +2504,7 @@
           <EntitySetMapping Name="PropertySales">
             <EntityTypeMapping TypeName="MIS_DBModel.PropertySale">
               <MappingFragment StoreEntitySet="PropertySale">
+                <ScalarProperty Name="nomineeGContact" ColumnName="nomineeGContact" />
                 <ScalarProperty Name="BuyerMemberCode" ColumnName="BuyerMemberCode" />
                 <ScalarProperty Name="Nominee_Father_Name" ColumnName="Nominee_Father_Name" />
                 <ScalarProperty Name="AuthorizeStatus" ColumnName="AuthorizeStatus" />
@@ -2664,6 +2669,7 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="MIS_DBModel.User">
               <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="StaffID" ColumnName="StaffID" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="SecurityGroupId" ColumnName="SecurityGroupId" />

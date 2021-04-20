@@ -54,6 +54,50 @@ namespace FiveGApi.Custom
                     db.SaveChanges();
                 }
             }
+
+        }
+        public static void UpdateGLBalancesWithOldValues(int H_ID, User userSecurityGroup)
+        {
+            var GLLines = db.GL_Lines.Where(x => x.H_ID == H_ID).AsQueryable().ToList();
+            foreach (var gllines in GLLines)
+            {
+                var glBalance = db.GL_Balances.Where(x => x.C_CODE == gllines.C_CODE).AsQueryable().FirstOrDefault();
+                if (glBalance != null)
+                {
+                    if (gllines.Credit != null)
+                    {
+                        if (glBalance.Credit == 0 || glBalance.Credit == null)
+                        {
+                        }
+                        else { 
+                            glBalance.Credit = glBalance.Credit - gllines.Credit;
+                            if (glBalance.Credit<0)
+                            {
+                                glBalance.Credit = 0;
+                            }
+                        }
+                       
+                    }
+                    if (gllines.Debit != null)
+                    {
+                        if (glBalance.Debit == 0 || glBalance.Debit == null)
+                        {
+                        }
+                        else
+                        {
+                            glBalance.Debit = glBalance.Debit - gllines.Debit;
+                            if (glBalance.Debit < 0)
+                            {
+                                glBalance.Debit = 0;
+                            }
+                        }
+                    }
+                    glBalance.Effect_Trans_ID = gllines.L_ID.ToString();
+                    glBalance.Updated_By = userSecurityGroup.UserName; ;
+                    glBalance.Updated_On = DateTime.Now;
+                    db.SaveChanges();
+                }                
+            }
         }
     }
 }

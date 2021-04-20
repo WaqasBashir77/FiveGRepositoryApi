@@ -30,13 +30,135 @@ namespace FiveGApi.Controllers
         // GET: api/AllRegistrations
         [Route("GetALLRegistrations")]
         [HttpGet]
-        [ResponseType(typeof(IQueryable<FiveGApi.Models.Registration>))]
-        public IQueryable<FiveGApi.Models.Registration> GetALLRegistrations()//[FromUri] PagingParameterModel pagingparametermodel)
+        //[ResponseType(typeof(IQueryable<FiveGApi.DTOModels.RegistrationsDTO>))]
+        public List<RegistrationsDTO> GetALLRegistrations()//[FromUri] PagingParameterModel pagingparametermodel)
         {
+            List<RegistrationsDTO> registrationList  = new List<RegistrationsDTO>();
+            List<RegistrationsDTO> registrationList2 = new List<RegistrationsDTO>();
             if (!SecurityGroupDTO.CheckSuperAdmin((int)userSecurityGroup.SecurityGroupId))
-                return db.Registrations.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId).OrderByDescending(x => x.Created_ON).AsQueryable();
+            {
+                registrationList = db.Registrations.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId && x.Type != "Dealer")
+                 .Select(x => new RegistrationsDTO
+                 {
+                     ID = x.ID,
+                     Code = x.Code,
+                     Name = x.Name,
+                     StaffName = x.StaffName,
+                     Designation = x.Designation,
+                     Type = x.Type,
+                     Contact_no = x.Contact_no,
+                     CNIC = x.CNIC,
+                     Affliate_Staff_ID = x.Affliate_Staff_ID,
+                     Company = x.Company,
+                     Sub_Office = x.Sub_Office,
+                     GL_Mapping_ID = x.GL_Mapping_ID,
+                     Resale_Comm = x.Resale_Comm,
+                     Remarks = x.Remarks,
+                     Flex_1 = x.Flex_1,
+                     Flex_2 = x.Flex_2,
+                     Created_By = x.Created_By,
+                     Created_ON = x.Created_ON,
+                     Updated_By = x.Updated_By,
+                     Updated_On = x.Updated_On,
+                     SecurityGroupId = x.SecurityGroupId,
+                     Rebate_Details = x.Rebate_Details,
+                     StaffCode =x.Code
+
+                 }).OrderByDescending(x => x.Created_ON).AsQueryable().ToList();
+                registrationList2 = db.Registrations.Where(x => x.SecurityGroupId == userSecurityGroup.SecurityGroupId && x.Type == "Dealer")
+                .Select(x => new RegistrationsDTO
+                {
+                    ID = x.ID,
+                    Code = x.Code,
+                    Name = x.Name,
+                    StaffName = db.Registrations.Where(u => u.ID==x.Affliate_Staff_ID).Select(u=>u.StaffName).FirstOrDefault(),
+                    Designation = x.Designation,
+                    Type = x.Type,
+                    Contact_no = x.Contact_no,
+                    CNIC = x.CNIC,
+                    Affliate_Staff_ID = x.Affliate_Staff_ID,
+                    Company = x.Company,
+                    Sub_Office = x.Sub_Office,
+                    GL_Mapping_ID = x.GL_Mapping_ID,
+                    Resale_Comm = x.Resale_Comm,
+                    Remarks = x.Remarks,
+                    Flex_1 = x.Flex_1,
+                    Flex_2 = x.Flex_2,
+                    Created_By = x.Created_By,
+                    Created_ON = x.Created_ON,
+                    Updated_By = x.Updated_By,
+                    Updated_On = x.Updated_On,
+                    SecurityGroupId = x.SecurityGroupId,
+                    Rebate_Details = x.Rebate_Details,
+                    StaffCode= db.Registrations.Where(u => u.ID == x.Affliate_Staff_ID).Select(u => u.Code).FirstOrDefault()
+
+                }).OrderByDescending(x => x.Created_ON).AsQueryable().ToList();
+                registrationList.AddRange(registrationList2);
+                registrationList.OrderByDescending(u => u.Created_ON);
+            }
             else
-                return db.Registrations.OrderByDescending(x => x.Created_ON).AsQueryable();
+            {
+                registrationList = db.Registrations.Where(x =>x.Type != "Dealer")
+                 .Select(x => new RegistrationsDTO
+                 {
+                     ID = x.ID,
+                     Code = x.Code,
+                     Name = x.Name,
+                     StaffName = x.StaffName,
+                     Designation = x.Designation,
+                     Type = x.Type,
+                     Contact_no = x.Contact_no,
+                     CNIC = x.CNIC,
+                     Affliate_Staff_ID = x.Affliate_Staff_ID,
+                     Company = x.Company,
+                     Sub_Office = x.Sub_Office,
+                     GL_Mapping_ID = x.GL_Mapping_ID,
+                     Resale_Comm = x.Resale_Comm,
+                     Remarks = x.Remarks,
+                     Flex_1 = x.Flex_1,
+                     Flex_2 = x.Flex_2,
+                     Created_By = x.Created_By,
+                     Created_ON = x.Created_ON,
+                     Updated_By = x.Updated_By,
+                     Updated_On = x.Updated_On,
+                     SecurityGroupId = x.SecurityGroupId,
+                     Rebate_Details = x.Rebate_Details,
+                     StaffCode = x.Code
+
+
+                 }).OrderByDescending(x => x.Created_ON).AsQueryable().ToList();
+                registrationList2 = db.Registrations.Where(x => x.Type == "Dealer")
+                .Select(x => new RegistrationsDTO
+                {
+                    ID = x.ID,
+                    Code = x.Code,
+                    Name = x.Name,
+                    StaffName = db.Registrations.Where(u => u.ID == x.Affliate_Staff_ID).Select(u => u.StaffName).FirstOrDefault(),
+                    Designation = x.Designation,
+                    Type = x.Type,
+                    Contact_no = x.Contact_no,
+                    CNIC = x.CNIC,
+                    Affliate_Staff_ID = x.Affliate_Staff_ID,
+                    Company = x.Company,
+                    Sub_Office = x.Sub_Office,
+                    GL_Mapping_ID = x.GL_Mapping_ID,
+                    Resale_Comm = x.Resale_Comm,
+                    Remarks = x.Remarks,
+                    Flex_1 = x.Flex_1,
+                    Flex_2 = x.Flex_2,
+                    Created_By = x.Created_By,
+                    Created_ON = x.Created_ON,
+                    Updated_By = x.Updated_By,
+                    Updated_On = x.Updated_On,
+                    SecurityGroupId = x.SecurityGroupId,
+                    Rebate_Details = x.Rebate_Details,
+                    StaffCode = db.Registrations.Where(u => u.ID == x.Affliate_Staff_ID).Select(u => u.Code).FirstOrDefault()
+
+                }).OrderByDescending(x => x.Created_ON).AsQueryable().ToList();
+                registrationList.AddRange(registrationList2);
+                registrationList.OrderByDescending(u => u.Created_ON);
+            } 
+            return registrationList;
             ////Get All Registration From DB
             //var source = db.Registrations.OrderBy(x=>x.ID);
             //// Get's No of Rows Count   

@@ -49,6 +49,7 @@ namespace FiveGApi.Controllers
                     newUser.FirstName = _userDTO.FirstName;
                     newUser.LastName = _userDTO.LastName;
                     newUser.SecurityGroupId = _userDTO.SecurityGroupId;
+                    newUser.StaffID = _userDTO.StaffID;
                     newUser.IsActive = true;
                     newUser.IsDeleted = false;
                     db.Users.Add(newUser);
@@ -98,6 +99,8 @@ namespace FiveGApi.Controllers
                 UserExisted.IsDeleted = _userDTO.IsDeleted;
                 UserExisted.LastModifiedBy = 1;
                 UserExisted.LastModifiedDate = DateTime.Now;
+                UserExisted.StaffID = _userDTO.StaffID;
+
                 db.SaveChanges();
 
                 var usertoroles = db.RolesToUsers.Where(x => x.UserId == UserExisted.UserId).FirstOrDefault();
@@ -136,7 +139,8 @@ namespace FiveGApi.Controllers
                                 RoleName = r.Name,
                                 SecurityGroupId = u.SecurityGroupId,
                                 IsActive= (bool)u.IsActive,
-                                IsDeleted=(bool)u.IsDeleted
+                                IsDeleted=(bool)u.IsDeleted,
+                                StaffID=u.StaffID
                             })
                 .OrderByDescending(x => x.UserID).AsQueryable()
                .ToList();
@@ -164,6 +168,8 @@ namespace FiveGApi.Controllers
                 userDTO.RoleName = db.Roles.Where(x => x.Id == userDTO.RoleID).Select(x => x.Name).AsQueryable().FirstOrDefault();
                 userDTO.IsActive = (bool)user.IsActive;
                 userDTO.IsDeleted = (bool)user.IsDeleted;
+                userDTO.StaffID = user.StaffID;
+
                 return Ok(userDTO);
             }
             else

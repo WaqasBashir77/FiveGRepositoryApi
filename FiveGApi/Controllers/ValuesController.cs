@@ -12,6 +12,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using FiveGApi.Custom;
 
 namespace FiveGApi.Controllers
 {
@@ -92,6 +93,7 @@ namespace FiveGApi.Controllers
                     Nominee_CNIC = x.Nominee_CNIC,
                     CNIC = x.CNIC,
                     Nominee_G_Number = x.Nominee_G_Number,
+                    nomineeGContact = x.nomineeGContact,
                     Description = x.Description,
                     Created_By = x.Created_By,
                     Created_ON = x.Created_ON,
@@ -128,6 +130,7 @@ namespace FiveGApi.Controllers
                     Nominee_CNIC = x.Nominee_CNIC,
                     CNIC = x.CNIC,
                     Nominee_G_Number = x.Nominee_G_Number,
+                    nomineeGContact = x.nomineeGContact,
                     Description = x.Description,
                     Created_By = x.Created_By,
                     Created_ON = x.Created_ON,
@@ -255,7 +258,7 @@ namespace FiveGApi.Controllers
                     OriginalPropertySale.SecurityGroupId = propertySale.SecurityGroupId;
                     OriginalPropertySale.differentiableAmount = propertySale.differentiableAmount;
                     OriginalPropertySale.BuyerMemberCode = propertySale.memberRegNo.ToString();
-                    //OriginalPropertySale.Nominee_Picture = propertySale.Nominee_Picture;
+                    OriginalPropertySale.nomineeGContact = propertySale.nomineeGContact;
                     if (propertySale.Purchaser_Picture != "")
                     {
                         string[] image = propertySale.Purchaser_Picture.Split(',');
@@ -489,6 +492,8 @@ namespace FiveGApi.Controllers
                 var EntriesProject = db.Project_Entries.Where(x => x.Transaction_ID == paymentID && x.Entry_Type == "Rebate" && x.Status != "Transferred").ToList();
                 if (EntriesProject != null)
                 {
+                    GLBalanceUpdater.UpdateGLBalancesWithOldValues(gL_Headers.H_ID, userSecurityGroup);
+
                     foreach (var item in EntriesProject)
                     {
                         GL_Lines gL_Lines = new GL_Lines();
@@ -508,47 +513,49 @@ namespace FiveGApi.Controllers
                         be.Updated_On = DateTime.Now;
                         db.SaveChanges();
                         #region update Gl Balances
-                        ///-----------------GL_Blances Update on insert into GL Lines-----------------//
-                        var glBalance = db.GL_Balances.Where(x => x.C_CODE == gL_Lines.C_CODE).AsQueryable().FirstOrDefault();
-                        if (glBalance != null)
-                        {
-                            if (gL_Lines.Credit != null)
-                            {
-                                glBalance.Credit = glBalance.Credit + gL_Lines.Credit;
-                            }
-                            if (gL_Lines.Debit != null)
-                            {
-                                glBalance.Debit = glBalance.Debit + gL_Lines.Debit;
+                        /////-----------------GL_Blances Update on insert into GL Lines-----------------//
+                        //var glBalance = db.GL_Balances.Where(x => x.C_CODE == gL_Lines.C_CODE).AsQueryable().FirstOrDefault();
+                        //if (glBalance != null)
+                        //{
+                        //    if (gL_Lines.Credit != null)
+                        //    {
+                        //        glBalance.Credit = glBalance.Credit + gL_Lines.Credit;
+                        //    }
+                        //    if (gL_Lines.Debit != null)
+                        //    {
+                        //        glBalance.Debit = glBalance.Debit + gL_Lines.Debit;
 
-                            }
-                            glBalance.Effect_Trans_ID = gL_Lines.L_ID.ToString();
-                            glBalance.Updated_By = userSecurityGroup.UserName;
-                            glBalance.Updated_On = DateTime.Now;
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            GL_Balances gL_Balances = new GL_Balances();
-                            if (gL_Lines.Credit != null)
-                            {
-                                gL_Balances.Credit = gL_Lines.Credit;
-                            }
-                            if (gL_Lines.Debit != null)
-                            {
-                                gL_Balances.Debit = gL_Lines.Debit;
+                        //    }
+                        //    glBalance.Effect_Trans_ID = gL_Lines.L_ID.ToString();
+                        //    glBalance.Updated_By = userSecurityGroup.UserName;
+                        //    glBalance.Updated_On = DateTime.Now;
+                        //    db.SaveChanges();
+                        //}
+                        //else
+                        //{
+                        //    GL_Balances gL_Balances = new GL_Balances();
+                        //    if (gL_Lines.Credit != null)
+                        //    {
+                        //        gL_Balances.Credit = gL_Lines.Credit;
+                        //    }
+                        //    if (gL_Lines.Debit != null)
+                        //    {
+                        //        gL_Balances.Debit = gL_Lines.Debit;
 
-                            }
-                            //gL_Balances.Debit = gL_Lines.Debit;
-                            gL_Balances.C_CODE = gL_Lines.C_CODE;
-                            gL_Balances.Bal_Date = DateTime.Now;
-                            gL_Balances.Effect_Trans_ID = gL_Lines.L_ID.ToString();
-                            gL_Balances.Created_By = userSecurityGroup.UserName; ;
-                            gL_Balances.Created_On = DateTime.Now;
-                            db.GL_Balances.Add(gL_Balances);
-                            db.SaveChanges();
-                        }
+                        //    }
+                        //    //gL_Balances.Debit = gL_Lines.Debit;
+                        //    gL_Balances.C_CODE = gL_Lines.C_CODE;
+                        //    gL_Balances.Bal_Date = DateTime.Now;
+                        //    gL_Balances.Effect_Trans_ID = gL_Lines.L_ID.ToString();
+                        //    gL_Balances.Created_By = userSecurityGroup.UserName; ;
+                        //    gL_Balances.Created_On = DateTime.Now;
+                        //    db.GL_Balances.Add(gL_Balances);
+                        //    db.SaveChanges();
+                        //}
                         #endregion  update Gl Balances
                     }
+                    GLBalanceUpdater.UpdateGLBalances(gL_Headers.H_ID, userSecurityGroup);
+
 
                 }
                 saleinstallment.AuthorizeStatus = true;
@@ -669,7 +676,8 @@ namespace FiveGApi.Controllers
                 Nominee_CNIC=x.Nominee_CNIC,
                 CNIC=x.CNIC,
                 Nominee_G_Number=x.Nominee_G_Number,
-                Discount_Amount=x.Discount_Amount,
+                nomineeGContact = x.nomineeGContact,
+                Discount_Amount =x.Discount_Amount,
                 Description=x.Description,
                 Employee=x.Employee,
                 Employee_Com=x.Employee_Com,
@@ -685,7 +693,8 @@ namespace FiveGApi.Controllers
                 AuthorizeStatus=x.AuthorizeStatus,
                 Nominee_Father_Name=x.Nominee_Father_Name,
                 SaleInstallments=x.SaleInstallments,
-                BuyerMemberCode=x.BuyerMemberCode
+                BuyerMemberCode=x.BuyerMemberCode,
+                
                     }).AsQueryable().FirstOrDefault();
             else
                 propertySale = db.PropertySales.Where(x => x.Booking_ID == general.Id).Select(x => new PropertySaleNewDTO
@@ -710,6 +719,7 @@ namespace FiveGApi.Controllers
                     Nominee_CNIC = x.Nominee_CNIC,
                     CNIC = x.CNIC,
                     Nominee_G_Number = x.Nominee_G_Number,
+                    nomineeGContact = x.nomineeGContact,
                     Discount_Amount = x.Discount_Amount,
                     Description = x.Description,
                     Employee = x.Employee,
@@ -727,6 +737,7 @@ namespace FiveGApi.Controllers
                     Nominee_Father_Name = x.Nominee_Father_Name,
                     SaleInstallments = x.SaleInstallments,
                     BuyerMemberCode = x.BuyerMemberCode
+                   
 
                 }).AsQueryable().FirstOrDefault();
 
@@ -774,7 +785,8 @@ namespace FiveGApi.Controllers
                     MasterObj.Created_By = propertySale.Created_By;
                     MasterObj.SecurityGroupId = propertySale.SecurityGroupId;
                     MasterObj.differentiableAmount = propertySale.differentiableAmount;
-                    MasterObj.BuyerMemberCode = propertySale.Member_Reg_No;
+                    MasterObj.BuyerMemberCode = propertySale.Member_Reg_No;                   
+                    MasterObj.nomineeGContact = propertySale.nomineeGContact;
                     ////OriginalPropertySale.Nominee_Picture = propertySale.Nominee_Picture;
                     //if (propertySale.Purchaser_Picture != null)
                     //{

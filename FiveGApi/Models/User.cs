@@ -30,5 +30,6 @@ namespace FiveGApi.Models
         public Nullable<int> SecurityGroupId { get; set; }
         public Nullable<bool> IsActive { get; set; }
         public Nullable<bool> IsDeleted { get; set; }
+        public Nullable<int> StaffID { get; set; }
     }
 }

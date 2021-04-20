@@ -10,8 +10,8 @@ namespace FiveGApi.DTOModels
         public int ID { get; set; }
         public int unitId { get; set; }
         public int projectId { get; set; }
-        public int mobile_1 { get; set; }
-        public int mobile_2 { get; set; }
+        public string mobile_1 { get; set; }
+        public string mobile_2 { get; set; }
         public int memberRegNo { get; set; }
         public int discountAmount { get; set; }
         public int employeeId { get; set; }
@@ -31,6 +31,7 @@ namespace FiveGApi.DTOModels
         public int nomineeContact { get; set; }
         public string cnic { get; set; }
         public string nomineeGNumber{ get; set; }
+        public string nomineeGContact{ get; set; }
         public string Purchaser_Picture { get; set; }
         public string PaymentCode { get; set; }
         public DateTime Created_Date { get; set; }

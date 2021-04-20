@@ -379,22 +379,6 @@ namespace FiveGApi.Controllers
                 ReportViewerRSFReports.LocalReport.ReportPath = rptPath;
                 DataTable dt = reportDate("ProfitLossSheetData");
                 ReportViewerRSFReports.ProcessingMode = ProcessingMode.Local;
-                ////Revenue Parameter
-                //ReportParameter Revenue = new ReportParameter();
-                //Revenue.Name = "@Revenue";
-                //double rValue = 911.0;//new Uri(Server.MapPath(@"~/" + logoPath.FirstOrDefault().Logo)).AbsoluteUri;
-                //Revenue.Values.Add(rValue.ToString());
-                //ReportViewerRSFReports.LocalReport.SetParameters(Revenue);
-                ////Expense
-                //ReportParameter Expense = new ReportParameter();
-                //Expense.Name = "@Expense";
-                //double eValue = 909.0;//new Uri(Server.MapPath(@"~/" + logoPath.FirstOrDefault().Logo)).AbsoluteUri;
-                //Revenue.Values.Add(eValue.ToString());
-                //ReportViewerRSFReports.LocalReport.SetParameters(Expense);
-                //double rValue = 911.0;
-                //ReportParameter rp = new ReportParameter("Revenue", rValue.ToString()); 
-                //double eValue = 911.0;
-                //ReportParameter ep = new ReportParameter("Expense", eValue.ToString());
                 ReportViewerRSFReports.LocalReport.DataSources.Clear();
                 //ReportViewerRSFReports.LocalReport.SetParameters(new ReportParameter[] { rp, ep });
                 ReportViewerRSFReports.LocalReport.DataSources.Add(new ReportDataSource("DataSet1", dt));

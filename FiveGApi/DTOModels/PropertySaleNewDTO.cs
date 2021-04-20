@@ -8,6 +8,7 @@ namespace FiveGApi.DTOModels
 {
     public class PropertySaleNewDTO
     {
+        public string nomineeGContact { get; set; }
 
         public int Booking_ID { get; set; }
         public Nullable<int> Project_ID { get; set; }

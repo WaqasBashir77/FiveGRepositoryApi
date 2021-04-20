@@ -299,6 +299,7 @@ namespace FiveGApi.Controllers
                         {
                             try
                             {
+                                GLBalanceUpdater.UpdateGLBalancesWithOldValues(glheader.H_ID, userSecurityGroup);
 
                                 foreach (var gllines in glheader.GL_Lines.ToList())
                                 {
@@ -324,7 +325,7 @@ namespace FiveGApi.Controllers
 
                                 }
                                 db.SaveChanges();
-                               // GLBalanceUpdater.UpdateGLBalances(glheader.H_ID, userSecurityGroup);
+                                GLBalanceUpdater.UpdateGLBalances(glheader.H_ID, userSecurityGroup);
 
                             }
                             catch (Exception ex)
@@ -594,6 +595,8 @@ namespace FiveGApi.Controllers
                 var glheader = db.GL_Headers.Where(x => x.Source_Tran_Id == existBooking_Confirm.ID).FirstOrDefault();
                 if (BookingEntriesPayment != null)
                 {
+                    GLBalanceUpdater.UpdateGLBalancesWithOldValues(glheader.H_ID, userSecurityGroup);
+
                     foreach (var item in BookingEntriesPayment)
                     {
                         GL_Lines gL_Lines = new GL_Lines();
@@ -613,7 +616,7 @@ namespace FiveGApi.Controllers
                         be.Updated_On = DateTime.Now;
                         db.SaveChanges();
                     }
-                   // GLBalanceUpdater.UpdateGLBalances(glheader.H_ID, userSecurityGroup);
+                    GLBalanceUpdater.UpdateGLBalances(glheader.H_ID, userSecurityGroup);
 
                 }
 

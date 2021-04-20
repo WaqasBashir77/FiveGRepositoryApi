@@ -110,7 +110,11 @@ namespace FiveGApi.Controllers
                     existgL_Headers.Flex_2 = gL_Headers.Flex_2;
                     existgL_Headers.Updated_By = userSecurityGroup.UserName;
                     existgL_Headers.Updated_On = DateTime.Now;
+                    // Maintain Old Balance
+                    GLBalanceUpdater.UpdateGLBalancesWithOldValues(gL_Headers.H_ID, userSecurityGroup);
                     gL_LinesUpdate(existgL_Headers.H_ID, gL_Headers.GL_Lines);
+                    // Maintain New Balance
+                    GLBalanceUpdater.UpdateGLBalances(gL_Headers.H_ID, userSecurityGroup);
 
                     try
                     {
@@ -170,7 +174,10 @@ namespace FiveGApi.Controllers
                 existgL_Headers.ChequeNumber = gL_Headers.ChequeNumber;
                 existgL_Headers.ChequeDate = gL_Headers.ChequeDate;
                 existgL_Headers.PayeeName = gL_Headers.PayeeName;
+                GLBalanceUpdater.UpdateGLBalancesWithOldValues(gL_Headers.H_ID, userSecurityGroup);
                 gL_LinesUpdate(existgL_Headers.H_ID, gL_Headers.GL_Lines);
+                GLBalanceUpdater.UpdateGLBalances(gL_Headers.H_ID, userSecurityGroup);
+
 
                 try
                 {
@@ -292,48 +299,8 @@ namespace FiveGApi.Controllers
                 db.GL_Headers.Add(gL_Headers);
                 db.SaveChanges();
                 GLBalanceUpdater.UpdateGLBalances(gL_Headers.H_ID, userSecurityGroup);
-                //foreach (var gllines in gL_Headers.GL_Lines)
-                //{
-                //    var glBalance = db.GL_Balances.Where(x => x.C_CODE == gllines.C_CODE).AsQueryable().FirstOrDefault();
-                //    if(glBalance!=null)
-                //    {
-                //        if(gllines.Credit!=null)
-                //        {
-                //            glBalance.Credit = glBalance.Credit + gllines.Credit;
-                //        }
-                //        if(gllines.Debit!=null)
-                //        {
-                //            glBalance.Debit = glBalance.Debit + gllines.Debit;
-
-                //        }
-                //        glBalance.Effect_Trans_ID = gllines.L_ID.ToString();
-                //        glBalance.Updated_By = userSecurityGroup.UserName; ;
-                //        glBalance.Updated_On = DateTime.Now;
-                //        db.SaveChanges();
-                //    }
-                //    else
-                //    {
-                //        GL_Balances gL_Balances = new GL_Balances();
-                //        if (gllines.Credit != null)
-                //        {
-                //            gL_Balances.Credit =  gllines.Credit;
-                //        }
-                //        if (gllines.Debit != null)
-                //        {
-                //            gL_Balances.Debit =  gllines.Debit;
-
-                //        }                        
-                //        //gL_Balances.Debit = gllines.Debit;
-                //        gL_Balances.C_CODE = gllines.C_CODE;
-                //        gL_Balances.Bal_Date = DateTime.Now;
-                //        gL_Balances.Effect_Trans_ID = gllines.L_ID.ToString();
-                //        gL_Balances.Created_By = userSecurityGroup.UserName; ;
-                //        gL_Balances.Created_On =DateTime.Now;
-                //        db.GL_Balances.Add(gL_Balances);
-                //        db.SaveChanges();
-                //    }
-
-                //}
+               
+                
             }
             catch (Exception ex)
             {

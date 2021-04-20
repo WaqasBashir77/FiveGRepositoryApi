@@ -1,4 +1,5 @@
-﻿using FiveGApi.DTOModels;
+﻿using FiveGApi.Custom;
+using FiveGApi.DTOModels;
 using FiveGApi.Helper;
 using FiveGApi.Models;
 using Newtonsoft.Json;
@@ -198,6 +199,8 @@ namespace FiveGApi.Controllers
                 var BookingEntriesPayment = db.Booking_Entries.Where(x => x.Flex_1 == existBooking_Payments.Payment_ID.ToString() && x.Entry_Type == "Payments" && x.Transaction_ID == existBooking_Payments.ID &&x.Status!= "Transferred").ToList();
                 if (BookingEntriesPayment != null)
                 {
+                    GLBalanceUpdater.UpdateGLBalancesWithOldValues(glhv, userSecurityGroup);
+
                     foreach (var item in BookingEntriesPayment)
                     {
                         GL_Lines gL_Lines = new GL_Lines();
@@ -216,8 +219,10 @@ namespace FiveGApi.Controllers
                         be.Updated_By = "1";
                         be.Updated_On = DateTime.Now;
                         db.SaveChanges();
-                    } 
-                    
+                    }
+                    GLBalanceUpdater.UpdateGLBalances(glhv, userSecurityGroup);
+
+
                 }
                 return StatusCode(HttpStatusCode.OK);
             }

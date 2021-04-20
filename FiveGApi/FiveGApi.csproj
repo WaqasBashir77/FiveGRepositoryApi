@@ -278,6 +278,7 @@
     <Compile Include="DTOModels\PropertySaleNewDTO.cs" />
     <Compile Include="DTOModels\PropertyTransferDTO.cs" />
     <Compile Include="DTOModels\RegistrationModel.cs" />
+    <Compile Include="DTOModels\RegistrationsDTO.cs" />
     <Compile Include="DTOModels\ResponseModel.cs" />
     <Compile Include="DTOModels\ResultViewModel.cs" />
     <Compile Include="DTOModels\RoleAndPermissions.cs" />
@@ -288,25 +289,10 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\SecurityGroupDTO.cs" />
-    <Compile Include="mis_dbDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>mis_dbDataSet.xsd</DependentUpon>
-    </Compile>
     <Compile Include="MIS_DBDataSet2.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>MIS_DBDataSet2.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="MIS_DBDataSetSecond.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MIS_DBDataSetSecond.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="mis_dbDataSetTrailBalance.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>mis_dbDataSetTrailBalance.xsd</DependentUpon>
     </Compile>
     <Compile Include="mis_dbDataSetTrailBalances.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -522,9 +508,6 @@
     <Content Include="Models\Model1.edmx.diagram">
       <DependentUpon>Model1.edmx</DependentUpon>
     </Content>
-    <Content Include="mis_dbDataSet.xsc">
-      <DependentUpon>mis_dbDataSet.xsd</DependentUpon>
-    </Content>
     <Content Include="libman.json" />
     <Content Include="BalanceSheetDataSet.xsc">
       <DependentUpon>BalanceSheetDataSet.xsd</DependentUpon>
@@ -537,17 +520,6 @@
     <Content Include="BalanceSheetDataSet.xss">
       <DependentUpon>BalanceSheetDataSet.xsd</DependentUpon>
     </Content>
-    <None Include="mis_dbDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>mis_dbDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <Content Include="mis_dbDataSet.xss">
-      <DependentUpon>mis_dbDataSet.xsd</DependentUpon>
-    </Content>
-    <Content Include="MIS_DBDataSetSecond.xsc">
-      <DependentUpon>MIS_DBDataSetSecond.xsd</DependentUpon>
-    </Content>
     <Content Include="MIS_DBDataSet2.xsc">
       <DependentUpon>MIS_DBDataSet2.xsd</DependentUpon>
     </Content>
@@ -559,27 +531,8 @@
     <Content Include="MIS_DBDataSet2.xss">
       <DependentUpon>MIS_DBDataSet2.xsd</DependentUpon>
     </Content>
-    <None Include="MIS_DBDataSetSecond.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>MIS_DBDataSetSecond.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <Content Include="MIS_DBDataSetSecond.xss">
-      <DependentUpon>MIS_DBDataSetSecond.xsd</DependentUpon>
-    </Content>
     <Content Include="mis_dbDataSetTrailBalances.xsc">
       <DependentUpon>mis_dbDataSetTrailBalances.xsd</DependentUpon>
-    </Content>
-    <Content Include="mis_dbDataSetTrailBalance.xsc">
-      <DependentUpon>mis_dbDataSetTrailBalance.xsd</DependentUpon>
-    </Content>
-    <None Include="mis_dbDataSetTrailBalance.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>mis_dbDataSetTrailBalance.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <Content Include="mis_dbDataSetTrailBalance.xss">
-      <DependentUpon>mis_dbDataSetTrailBalance.xsd</DependentUpon>
     </Content>
     <None Include="mis_dbDataSetTrailBalances.xsd">
       <Generator>MSDataSetGenerator</Generator>
@@ -696,16 +649,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Reports\BalanceSheetReport.rdlc" />
     <EmbeddedResource Include="Reports\MasterProjectReportData.rdlc" />
-    <EmbeddedResource Include="Reports\MasterSheetReport.rdlc">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
     <EmbeddedResource Include="Reports\MasterSheetReport2.rdlc" />
-    <EmbeddedResource Include="Reports\MISMasterSheetReport1.rdlc">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
     <EmbeddedResource Include="Reports\PandLReport.rdlc" />
-    <EmbeddedResource Include="Reports\ProfitLossReport.rdlc" />
-    <EmbeddedResource Include="Reports\ProfitLossReportSecond.rdlc" />
     <EmbeddedResource Include="Reports\Trail.rdlc" />
     <EmbeddedResource Include="Reports\TrailBalanceReport.rdlc" />
   </ItemGroup>

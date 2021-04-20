@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Web.Http;
 using System.Web.Http.Description;
+using FiveGApi.Custom;
 using FiveGApi.DTOModels;
 using FiveGApi.Helper;
 using FiveGApi.Models;
@@ -20,9 +21,12 @@ namespace FiveGApi.Controllers
     public class ProjectsController : ApiController
     {
         private string UserId;
+        private User userSecurityGroup = new User();
+
         public ProjectsController()
         {
             UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault().Value;
+            userSecurityGroup = db.Users.Where(x => x.UserName == UserId).AsQueryable().FirstOrDefault();
 
         }
         //private FiveG_DBEntities db = new FiveG_DBEntities();
@@ -394,6 +398,7 @@ namespace FiveGApi.Controllers
                     var EntriesProject = db.Project_Entries.Where(x => x.Transaction_ID == id && x.Entry_Type == "Rebate" && x.Status != "Transferred").ToList();
                     if (EntriesProject != null)
                     {
+                       GLBalanceUpdater.UpdateGLBalancesWithOldValues(glhv, userSecurityGroup);
                         foreach (var item in EntriesProject)
                         {
                             GL_Lines gL_Lines = new GL_Lines();
@@ -413,6 +418,8 @@ namespace FiveGApi.Controllers
                             be.Updated_On = DateTime.Now;
                             db.SaveChanges();
                         }
+                        GLBalanceUpdater.UpdateGLBalances(glhv, userSecurityGroup);
+
 
                     }
                     #endregion

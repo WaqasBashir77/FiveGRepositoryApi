@@ -38,6 +38,7 @@ namespace FiveGApi.DTOModels
         public Nullable<decimal> differentiableAmount { get; set; }
         public Nullable<bool> AuthorizeStatus { get; set; }
         public string BuyerMemberCode { get; set; }
+        public string nomineeGContact { get; set; }
 
     }
 }
